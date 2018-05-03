@@ -102,6 +102,10 @@
         <activity
             android:name="com.odoo.addons.customers.CustomerDetails"
             android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name="com.suez.addons.tank_truck.activity.TankTruckActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

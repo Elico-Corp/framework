@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/theme_text_white"
+              android:orientation="vertical">
+
+    <include layout="@layout/base_appbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/theme_text_white"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnSuezConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/suez_confirm_button"
+                android:text="@string/dialog_confirm"/>
+
+            <com.suez.view.ClearEditText
+                android:id="@+id/txtTankNum"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/btnSuezConfirm"
+                android:background="@drawable/suez_bg_edittext"
+                android:drawableRight="@drawable/delete_selector"
+                android:hint="@string/label_input_tank_truck"
+                android:padding="5dp"
+                android:singleLine="true"
+                android:textColorHint="#AAAAAA"
+                android:textSize="13sp"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/loading_progress"
+                layout="@layout/listview_data_loading_progress"
+                android:visibility="gone"/>
+
+            <com.jcodecraeer.xrecyclerview.XRecyclerView
+                android:id="@+id/xTankTrackList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@string/font_normal">
+
+            </com.jcodecraeer.xrecyclerview.XRecyclerView>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

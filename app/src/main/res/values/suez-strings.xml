@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dialogs -->
+    <string name="dialog_confirm">Confirm</string>
+    <string name="dialog_title_warning">Warning</string>
+    <string name="dialog_cancel">Cancel</string>
+    <!-- Labels -->
+    <string name="label_input_tank_truck">INPUT TANK TRUCK NUMBER</string>
+    <string name="suez_label_suez">Suez</string>
+    <!-- Titles -->
+    <string name="title_suez_tanktruck">Tank Truck</string>
+    <string name="title_searching">Searching&#8230;</string>
+    <!--Messages-->
+    <string name="message_tank_truck_pumping">Tank truck %1$s will be sent to pumping.</string>
+    <string name="message_no_tank_truck_number">No tank truck number: %1$s</string>
+    <string name="exit_app">Press again to exit the program.</string>
+    <!--Toast-->
+    <string name="toast_successful">Successful</string>
+    <string name="toast_fail">Fail</string>
+    <!-- Colums -->
+    <string name="column_name">Name</string>
+    <string name="column_plate_number">Plate Number</string>
+    <string name="column_state">State</string>
+    <string name="column_truck_weight">Truck Weight</string>
+    <string name="column_gross_weight">Truck and Waste Weight</string>
+    <string name="column_copy_no">5-copy No</string>
+</resources>

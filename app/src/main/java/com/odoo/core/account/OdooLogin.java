@@ -80,6 +80,9 @@ public class OdooLogin extends AppCompatActivity implements View.OnClickListener
             }
         }
         init();
+        // Add by Joesph 18-04-27: hide views about login by odoo account
+        toggleSelfHostedURL();
+        hideToogle();
     }
 
     private void init() {
@@ -125,6 +128,13 @@ public class OdooLogin extends AppCompatActivity implements View.OnClickListener
                 IntentUtils.openURLInBrowser(this, OConstants.URL_ODOO_SIGN_UP);
                 break;
         }
+    }
+
+    // Add by Joesph 18-04-27: hide views about login by odoo account
+    private void hideToogle(){
+        findViewById(R.id.txvAddSelfHosted).setVisibility(View.GONE);
+        findViewById(R.id.forgot_password).setVisibility(View.GONE);
+        findViewById(R.id.create_account).setVisibility(View.GONE);
     }
 
     private void toggleSelfHostedURL() {

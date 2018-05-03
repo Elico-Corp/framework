@@ -94,11 +94,37 @@ public class ServerDataHelper {
     }
 
     public List<ODataRow> searchRecords(OdooFields fields, ODomain domain, int limit) {
+        return searchRecords(fields, domain, limit, null);
+    }
+
+    //add by mark
+    public List<ODataRow> searchRecords(OdooFields fields, ODomain domain, int limit, String sort) {
         List<ODataRow> items = new ArrayList<>();
-        if (mApp.inNetwork()) {
+        // TODO
+        if (mApp.inNetwork() && null != mOdoo) {
             OdooResult result = mOdoo
-                    .withRetryPolicy(OConstants.RPC_REQUEST_TIME_OUT, OConstants.RPC_REQUEST_RETRIES)
-                    .searchRead(mModel.getModelName(), fields, domain, 0, limit, null);
+                    .withRetryPolicy(OConstants.RPC_REQUEST_TIME_OUT, OConstants
+                            .RPC_REQUEST_RETRIES)
+                    .searchRead(mModel.getModelName(), fields, domain, 0, limit, sort);
+            if (result != null && !result.getRecords().isEmpty()) {
+                for (OdooRecord record : result.getRecords()) {
+                    items.add(OdooRecordUtils.toDataRow(record));
+                }
+            }
+        }
+        return items;
+    }
+
+    public List<ODataRow> searchRecords(OdooFields fields, ODomain domain, int offset, int limit,
+                                        String sort) {
+        List<ODataRow> items = new ArrayList<>();
+        // TODO
+        if (mApp.inNetwork() && null != mOdoo) {
+            OdooResult result = mOdoo
+                    .withRetryPolicy(OConstants.RPC_REQUEST_TIME_OUT, OConstants
+                            .RPC_REQUEST_RETRIES)
+                    .searchRead(mModel.getModelName(), fields, domain, offset,
+                            limit, sort);
             if (result != null && !result.getRecords().isEmpty()) {
                 for (OdooRecord record : result.getRecords()) {
                     items.add(OdooRecordUtils.toDataRow(record));
