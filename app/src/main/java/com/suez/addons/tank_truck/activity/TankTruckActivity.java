@@ -13,6 +13,7 @@ import com.suez.SuezActivity;
 import com.suez.addons.tank_truck.adapter.TankTruckListAdapter;
 import com.suez.addons.tank_truck.jsonutils.TankTruckJsonUtils;
 import com.suez.addons.tank_truck.models.DeliveryRoute;
+import com.suez.utils.LogUtils;
 import com.suez.utils.ToastUtil;
 import com.suez.view.ClearEditText;
 
@@ -26,7 +27,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -323,7 +323,7 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
                 return TankTruckJsonUtils.setTankTruck(results);
             } catch (Exception e){
                 e.printStackTrace();
-                Log.e(TAG, e.toString());
+                LogUtils.e(TAG, e.toString());
             }
             return null;
         }

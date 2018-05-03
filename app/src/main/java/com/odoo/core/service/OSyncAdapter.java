@@ -51,6 +51,7 @@ import com.odoo.core.utils.OResource;
 import com.odoo.core.utils.OdooRecordUtils;
 import com.odoo.core.utils.logger.OLog;
 import com.odoo.datas.OConstants;
+import com.suez.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,7 +119,7 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
             mOdoo = createOdooInstance(mContext, mUser);
             if (mOdoo != null) {
                 dataUtils = new OSyncDataUtils(mContext, mOdoo);
-                Log.i(TAG, "User        : " + mModel.getUser().getAndroidName());
+                LogUtils.i(TAG, "User        : " + mModel.getUser().getAndroidName());
                 Log.i(TAG, "Model       : " + mModel.getModelName());
                 Log.i(TAG, "Database    : " + mModel.getDatabaseName());
                 Log.i(TAG, "Odoo Version: " + mUser.getOdooVersion().getServerSerie());

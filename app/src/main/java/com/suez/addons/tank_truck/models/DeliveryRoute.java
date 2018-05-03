@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.odoo.BaseAbstractListener;
 import com.odoo.BuildConfig;
@@ -19,6 +18,7 @@ import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.support.OUser;
 import com.odoo.core.utils.OResource;
+import com.suez.utils.LogUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -107,7 +107,7 @@ public class DeliveryRoute extends OModel {
                     return results;
                 } catch (Exception e){
                     e.printStackTrace();
-                    Log.e(TAG, e.toString());
+                    LogUtils.e(TAG, e.toString());
                 }
                 return null;
             }
@@ -147,7 +147,7 @@ public class DeliveryRoute extends OModel {
                     return (Boolean) getServerDataHelper().callMethod("delivery.route", "action_pumping", loc, null,null);
                 } catch (Exception e){
                     e.printStackTrace();
-                    Log.e(TAG, e.toString());
+                    LogUtils.e(TAG, e.toString());
                     return null;
                 }
             }

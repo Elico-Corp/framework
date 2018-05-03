@@ -1,6 +1,5 @@
 package com.suez.utils;
 
-import android.util.Log;
 
 import com.odoo.core.utils.JSONUtils;
 
@@ -30,7 +29,7 @@ public class SuezJsonUtils extends JSONUtils {
             return jsonArray;
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e(TAG, "JSON Error is " + e);
+            LogUtils.e(TAG, "JSON Error is " + e);
             return null;
         }
     }

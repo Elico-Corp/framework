@@ -1,8 +1,8 @@
 package com.suez.addons.tank_truck.jsonutils;
 
-import android.util.Log;
 
 import com.odoo.core.orm.ODataRow;
+import com.suez.utils.LogUtils;
 import com.suez.utils.SuezJsonUtils;
 
 import org.json.JSONException;
@@ -34,7 +34,7 @@ public class TankTruckJsonUtils extends SuezJsonUtils {
             return list;
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e(TAG, "setTankTruck error is " + e);
+            LogUtils.e(TAG, "setTankTruck error is " + e);
             return null;
         }
     }
