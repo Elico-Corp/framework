@@ -249,9 +249,14 @@ public class OUser {
 
     public String getDBName() {
         String db_name = "OdooSQLite";
-        db_name += "_" + getUsername();
         db_name += "_" + getDatabase();
         return db_name + ".db";
+    }
+
+    public String getIncrDBName() {
+        String db_name = "OdooSQLite";
+        db_name += "_" + getDatabase();
+        return db_name + "_incr.db";
     }
 
     @Override

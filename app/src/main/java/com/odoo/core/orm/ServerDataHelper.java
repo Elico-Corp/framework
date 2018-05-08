@@ -97,10 +97,8 @@ public class ServerDataHelper {
         return searchRecords(fields, domain, limit, null);
     }
 
-    //add by mark
     public List<ODataRow> searchRecords(OdooFields fields, ODomain domain, int limit, String sort) {
         List<ODataRow> items = new ArrayList<>();
-        // TODO
         if (mApp.inNetwork() && null != mOdoo) {
             OdooResult result = mOdoo
                     .withRetryPolicy(OConstants.RPC_REQUEST_TIME_OUT, OConstants
@@ -118,7 +116,6 @@ public class ServerDataHelper {
     public List<ODataRow> searchRecords(OdooFields fields, ODomain domain, int offset, int limit,
                                         String sort) {
         List<ODataRow> items = new ArrayList<>();
-        // TODO
         if (mApp.inNetwork() && null != mOdoo) {
             OdooResult result = mOdoo
                     .withRetryPolicy(OConstants.RPC_REQUEST_TIME_OUT, OConstants

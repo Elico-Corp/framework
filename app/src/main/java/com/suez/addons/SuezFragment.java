@@ -17,7 +17,7 @@ import com.odoo.core.support.drawer.ODrawerItem;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezConstants;
 import com.suez.addons.tank_truck.activity.TankTruckActivity;
-import com.suez.addons.tank_truck.models.DeliveryRoute;
+import com.suez.addons.models.DeliveryRoute;
 import com.suez.utils.ToastUtil;
 
 import java.util.ArrayList;

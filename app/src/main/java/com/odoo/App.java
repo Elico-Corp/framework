@@ -19,8 +19,10 @@
  */
 package com.odoo;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -30,6 +32,7 @@ import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.OSQLite;
 import com.odoo.core.rpc.Odoo;
 import com.odoo.core.support.OUser;
+import com.odoo.core.utils.OResource;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -38,6 +41,7 @@ public class App extends Application {
 
     public static final String TAG = App.class.getSimpleName();
     public static String APPLICATION_NAME;
+    public static boolean networkState;
     private static HashMap<String, Odoo> mOdooInstances = new HashMap<>();
     private static HashMap<String, OSQLite> mSQLiteObjecs = new HashMap<>();
     private static ModelRegistryUtils modelRegistryUtils = new ModelRegistryUtils();
@@ -47,6 +51,7 @@ public class App extends Application {
         super.onCreate();
         App.APPLICATION_NAME = getPackageManager().getApplicationLabel(getApplicationInfo()).toString();
         App.modelRegistryUtils.makeReady(getApplicationContext());
+        networkState = inNetwork();
     }
 
     public static OSQLite getSQLite(String userName) {
@@ -82,6 +87,23 @@ public class App extends Application {
             isConnected = true;
         }
         return isConnected;
+    }
+
+    public void checkNetwork(Context context) {
+        if (networkState != inNetwork()){
+            AlertDialog dialog = new AlertDialog.Builder(context)
+                    .setIcon(R.drawable.ic_odoo)
+                    .setTitle(R.string.title_network_not_match)
+                    .setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setMessage(String.format(OResource.string(context, R.string.message_work_mode), networkState == true? OResource.string(context, R.string.label_online): OResource.string(context, R.string.label_offline)))
+                    .create();
+            dialog.show();
+        }
     }
 
     /**

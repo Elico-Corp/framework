@@ -59,8 +59,7 @@ public class SuezActivity extends OdooCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         this.app = (App) this.getApplication();
-        // FIXME
-        this.isNetwork = app.inNetwork();
+        this.isNetwork = app.networkState;
         this.changeAppLanguage();
     }
 

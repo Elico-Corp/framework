@@ -1,4 +1,4 @@
-package com.suez.addons.tank_truck.models;
+package com.suez.addons.models;
 
 import android.app.ProgressDialog;
 import android.content.Context;

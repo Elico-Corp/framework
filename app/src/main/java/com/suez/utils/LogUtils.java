@@ -19,30 +19,28 @@ public class LogUtils {
 
     public static void i (String tag, String message, Throwable thr) {
         Log.i(tag, message, thr);
-        writeToFile(tag, message, ODateUtils.getUTCDate(), "INFO");
     }
 
     public static void i (String tag, String message){
         Log.i(tag, message);
-        writeToFile(tag, message, ODateUtils.getUTCDate(), "INFO");
     }
 
     public static void d (String tag, String message, Throwable thr) {
         Log.d(tag, message, thr);
+        writeToFile(tag, message, ODateUtils.getUTCDate(), "DEBUG");
     }
 
     public static void d (String tag, String message){
         Log.d(tag, message);
+        writeToFile(tag, message, ODateUtils.getUTCDate(), "DEBUG");
     }
 
     public static void v (String tag, String message, Throwable thr) {
         Log.v(tag, message, thr);
-        writeToFile(tag, message, ODateUtils.getUTCDate(), "VERBOSE");
     }
 
     public static void v (String tag, String message){
         Log.v(tag, message);
-        writeToFile(tag, message, ODateUtils.getUTCDate(), "VERBOSE");
     }
 
     public static void w (String tag, String message, Throwable thr) {

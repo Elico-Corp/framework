@@ -12,7 +12,7 @@ import com.odoo.core.utils.OResource;
 import com.suez.SuezActivity;
 import com.suez.addons.tank_truck.adapter.TankTruckListAdapter;
 import com.suez.addons.tank_truck.jsonutils.TankTruckJsonUtils;
-import com.suez.addons.tank_truck.models.DeliveryRoute;
+import com.suez.addons.models.DeliveryRoute;
 import com.suez.utils.LogUtils;
 import com.suez.utils.ToastUtil;
 import com.suez.view.ClearEditText;
