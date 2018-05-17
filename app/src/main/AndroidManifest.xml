@@ -85,11 +85,6 @@
             android:label="Delivery Route"
             android:multiprocess="true"/>
 
-        <provider
-            android:authorities="${applicationId}.core.provider.content.sync.plate_number"
-            android:name="com.suez.addons.providers.PlateNumberSyncProvider"
-            android:multiprocess="true"/>
-
         <!-- Sync Provider & Service  // -->
         <provider
             android:name="com.odoo.addons.customers.providers.CustomersSyncProvider"
@@ -127,6 +122,15 @@
 
         <activity
             android:name="com.suez.addons.tank_truck.activity.TankTruckActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.scan.ScanZbarActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.wac_info.WacInfoDrlLIstActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.wac_info.WacInfoActivity"
             android:screenOrientation="portrait"/>
     </application>
 

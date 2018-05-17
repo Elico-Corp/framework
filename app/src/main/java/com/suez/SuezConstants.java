@@ -25,5 +25,13 @@ public class SuezConstants {
     public static final int OFFLINE_DB_INT_KEY = 1;
     public static final int INCREMENTAL_DB_INT_KEY = 2;
     private static final long DEVELOPMENT_KEY = 4007770876L;
+    public static final int OFFLINE_URL_ERROR_KEY = 0;
+    public static final int INCR_URL_ERROR_KEY = 1;
+    public static final int HTTP_RETURN_404 = 2;
+    public static final int DB_SIZE_GET_ZERO = 3;
+    public static final int SEARCH_RECORD_DEFAULT_LIMIT = 100;
+    public static final String PRODLOT_ID_KEY = "prodlot_id";
+    public static final String WAC_ID_KEY = "wac_id";
+    public static final String DELIVERY_ROUTE_LINE_ID_KEY = "delivery_route_line_id";
 
 }

@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/theme_primary"
+              android:orientation="vertical">
+
+    <include layout="@layout/base_appbar"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/main_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_8dp"
+                android:orientation="vertical">
+
+                <!-- offline begin -->
+                <odoo.controls.OForm
+                    android:id="@+id/delivery_route_line_form_offline1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="delivery.route.line">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="dts_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                </odoo.controls.OForm>
+
+                <odoo.controls.OForm
+                    android:id="@+id/product_wac_form_offline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="product.wac">
+
+                    <odoo.controls.OField
+                        android:id="@+id/move_wac_name_en_offline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="name_en"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:id="@+id/move_wac_name_cn_offline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="name_cn"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="wac_version"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:id="@+id/move_name_english"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="partner_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:id="@+id/move_name_chinese"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="partner_name_cn"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                </odoo.controls.OForm>
+
+                <odoo.controls.OForm
+                    android:id="@+id/delivery_route_line_form_offline2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="delivery.route.line">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="internal_weight"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="wac_processing"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                </odoo.controls.OForm>
+
+                <!--   hide   -->
+                <odoo.controls.OForm
+                    android:id="@+id/delivery_route_line_form_offline_hide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="delivery.route.line">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="route_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:id="@+id/wac_info_customer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="address_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="pretreatment_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="origin"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="prodlot_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                </odoo.controls.OForm>
+
+                <odoo.controls.OForm
+                    android:id="@+id/product_wac_form_offline_hide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="product.wac">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="waste_cate"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                </odoo.controls.OForm>
+                <!--   hide   -->
+                <!-- offline end -->
+
+                <!-- online begin -->
+                <odoo.controls.OForm
+                    android:id="@+id/delivery_route_line_form_online1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="delivery.route.line">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_dts_id"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="dts_name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                </odoo.controls.OForm>
+
+                <odoo.controls.OForm
+                    android:id="@+id/product_wac_form_online"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="product.wac">
+
+                    <odoo.controls.OField
+                        android:id="@+id/move_wac_name_en_online"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="name_en"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:id="@+id/move_wac_name_cn_online"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="name_cn"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="wac_version"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:id="@+id/name_en_online"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:controlLabel="@string/column_partner_id"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="partner_name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:id="@+id/name_zh_online"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="partner_name_cn"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                </odoo.controls.OForm>
+
+                <odoo.controls.OForm
+                    android:id="@+id/delivery_route_line_form_online2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="delivery.route.line">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="internal_weight"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="wac_processing"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                </odoo.controls.OForm>
+                <!-- hide -->
+                <odoo.controls.OForm
+                    android:id="@+id/delivery_route_line_form_online_hide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="delivery.route.line">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_route_id"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="route_name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_address_id"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="address_name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_pretreatment_id"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="pretreatment_name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="origin"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_prodlot_id"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="prodlot_name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                </odoo.controls.OForm>
+
+                <odoo.controls.OForm
+                    android:id="@+id/product_wac_form_online_hide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="product.wac">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_waste_cate"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="waste_cate_name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                </odoo.controls.OForm>
+                <!-- hide -->
+                <!-- online end-->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="6dp"
+                    android:paddingTop="6dp"
+                    android:text="@string/label_wac_info_package"
+                    android:textColor="@color/theme_secondary"
+                    android:textSize="15sp"/>
+
+                <com.jcodecraeer.xrecyclerview.XRecyclerView
+                    android:id="@+id/xr_packaging_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/hide_form"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginBottom="@dimen/default_8dp"
+                android:layout_marginRight="20dp"
+                android:text="@string/label_more"/>
+
+            <LinearLayout
+                android:id="@+id/linear_qc_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical|left"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/label_qc_list"
+                    android:textSize="17sp"
+                    android:textStyle="bold"/>
+
+                <include layout="@layout/base_line"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <com.jcodecraeer.xrecyclerview.XRecyclerView
+                        android:id="@+id/xr_qc_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/no_item"
+        layout="@layout/base_no_items_layout"
+        android:visibility="gone"/>
+</LinearLayout>

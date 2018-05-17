@@ -53,7 +53,7 @@ public class DownloadUtil {
         return downloadUtil;
     }
 
-    public String downloadDB(String url, OSQLite sqlite, OnDownloadListener listener) {
+    public String downloadDB(String url, String path, OnDownloadListener listener) {
         String res = null;
         try {
             // Ignore SSL Warning
@@ -73,14 +73,14 @@ public class DownloadUtil {
 
             res = String.valueOf(connection.getHeaderFieldDate("Last-Modified", 0));
 
-            createDownload(connection, sqlite.databaseLocalPath(), listener);
+            createDownload(connection, path, listener);
         } catch (Exception e){
             e.printStackTrace();
         }
         return res;
     }
 
-    public String downloadDB(String url, String version, OSQLite sqlite, OnDownloadListener listener) {
+    public String downloadDB(String url, String version, String path, OnDownloadListener listener) {
         String res = null;
         try {
             // Ignore SSL Warning
@@ -102,7 +102,7 @@ public class DownloadUtil {
             if (version != null && Long.parseLong(version) >= Long.parseLong(res)) {
                 return res;
             }
-            createDownload(connection, sqlite.databaseLocalPath(), listener);
+            createDownload(connection, path, listener);
         } catch (Exception e){
             e.printStackTrace();
         }

@@ -1,0 +1,246 @@
+package com.suez.addons.scan;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+
+import com.odoo.BaseAbstractListener;
+import com.odoo.R;
+import com.odoo.core.orm.ODataRow;
+import com.odoo.core.rpc.helper.ODomain;
+import com.odoo.core.rpc.helper.OdooFields;
+import com.odoo.core.utils.OResource;
+import com.suez.SuezActivity;
+import com.suez.SuezConstants;
+import com.suez.addons.models.ProductWac;
+import com.suez.addons.models.StockProductionLot;
+import com.suez.addons.wac_info.WacInfoDrlLIstActivity;
+import com.suez.addons.wac_info.WacInfoActivity;
+import com.suez.utils.SearchRecordsOnlineUtils;
+import com.suez.utils.SuezJsonUtils;
+import com.suez.view.ClearEditText;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+/**
+ * Created by joseph on 18-5-11.
+ */
+
+public class ScanZbarActivity extends SuezActivity {
+
+    @BindView(R.id.txt_scan)
+    ClearEditText txtScan;
+
+    private String code;
+    private StockProductionLot stockProductionLot;
+    private ProductWac productWac;
+    private AlertDialog scanDialog;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.suez_activity_scanzbar);
+        ButterKnife.bind(this);
+        checkNetwork(this);
+        initToolbar(R.string.title_scan_sn);
+        txtScan.setFocusable(true);
+        txtScan.addTextChangedListener(new TextScanClass(R.id.txt_scan));
+        stockProductionLot = new StockProductionLot(this, null);
+        productWac = new ProductWac(this, null);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (scanDialog != null) {
+            scanDialog.dismiss();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.suez_menu_scan, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.home:
+                finish();
+                break;
+            case R.id.menu_scan_input_code:
+                LinearLayout layout = new LinearLayout(this);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+                layout.setLayoutParams(params);
+                final EditText input = new EditText(this);
+                input.setSingleLine();
+                input.setLayoutParams(params);
+                layout.addView(input);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.dialog_title_input);
+                builder.setView(layout);
+                builder.setNegativeButton(R.string.dialog_cancel, null);
+                builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        code = input.getText().toString().trim();
+                        intentUtil(code);
+                    }
+                });
+                scanDialog = builder.create();
+                scanDialog.show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void checkNetwork(Context context) {
+        if (app.networkState != app.inNetwork()) {
+            AlertDialog dialog = new AlertDialog.Builder(context)
+                    .setIcon(R.drawable.ic_odoo)
+                    .setTitle(R.string.title_network_not_match)
+                    .setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setMessage(String.format(OResource.string(context, R.string.message_work_mode), app.networkState == true ? OResource.string(context, R.string.label_online) : OResource.string(context, R.string.label_offline)))
+                    .create();
+            dialog.show();
+        }
+    }
+
+    private void intentUtil(final String code) {
+        if (isNetwork) {
+            OdooFields fields = new OdooFields(stockProductionLot.getColumns());
+            ODomain domain = new ODomain();
+            domain.add("name", "=", code.toUpperCase());
+            BaseAbstractListener listener = new BaseAbstractListener() {
+
+                @Override
+                public void OnSuccessful(List<ODataRow> listRow) {
+                    if (listRow != null && !listRow.isEmpty()) {
+                        listRow = SuezJsonUtils.parseRecords(stockProductionLot, listRow);
+                        startIntent(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, listRow.get(0).getInt("delivery_route_line"));
+                        scanDialog.dismiss();
+                    } else {
+                        OdooFields wacFields = new OdooFields(productWac.getColumns());
+                        ODomain wacDomain = new ODomain();
+                        wacDomain.add("wac_code", "=", code.toUpperCase());
+                        BaseAbstractListener wacListener = new BaseAbstractListener() {
+                            @Override
+                            public void OnSuccessful(List<ODataRow> listRow) {
+                                if (listRow != null && !listRow.isEmpty()) {
+                                    listRow = SuezJsonUtils.parseRecords(productWac, listRow);
+                                    startIntent(SuezConstants.WAC_ID_KEY, listRow.get(0).getInt("id"));
+                                    scanDialog.dismiss();
+                                } else {
+                                    alertWarning();
+                                }
+                            }
+                        };
+                        SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(productWac, wacFields, wacDomain).setListener(wacListener);
+                        utils.searchRecordsOnServer();
+                    }
+                }
+            };
+            SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(stockProductionLot, fields, domain).setListener(listener);
+            utils.searchRecordsOnServer();
+        } else {
+            List<ODataRow> rows = stockProductionLot.select(null, "name = ?", new String[]{code.toUpperCase()});
+            if (!rows.isEmpty()) {
+                startIntent(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, rows.get(0).getInt("delivery_route_line"));
+            } else {
+                List<ODataRow> wacRows = productWac.select(new String[]{"_id"}, "wac_code = ?", new String[]{code.toUpperCase()});
+                if (!wacRows.isEmpty()) {
+                    startIntent(SuezConstants.PRODLOT_ID_KEY, rows.get(0).getInt("_id"));
+                } else {
+                    alertWarning();
+                }
+            }
+        }
+    }
+
+    private void startIntent(String key, int id) {
+        Intent intent;
+        switch (key) {
+            case SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY:
+                intent = new Intent(this, WacInfoActivity.class);
+                break;
+            case SuezConstants.WAC_ID_KEY:
+                intent = new Intent(this, WacInfoDrlLIstActivity.class);
+                break;
+            default:
+                intent = new Intent();
+        }
+        intent.putExtra(key, id);
+        startActivity(intent);
+    }
+
+    private void alertWarning() {
+        if (scanDialog != null) {
+            scanDialog.dismiss();
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialog_title_warning);
+        builder.setMessage(String.format(OResource.string(this, R.string.message_no_wac_code), code));
+        builder.setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                code = null;
+                txtScan.setText(null);
+                txtScan.setFocusable(true);
+            }
+        });
+        AlertDialog warningDialog = builder.create();
+        warningDialog.show();
+    }
+
+    private class TextScanClass implements TextWatcher {
+        private int id;
+
+        public TextScanClass(int id) {
+            this.id = id;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int start, int count, int after){}
+
+        @Override
+        public void onTextChanged (CharSequence charSequence, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (id == R.id.txt_scan) {
+                if (editable != null && !editable.toString().isEmpty() && code == null) {
+                    code = editable.toString().trim();
+                    txtScan.setFocusable(false);
+                    intentUtil(code);
+                }
+            } else {
+                if (editable.toString().isEmpty() || editable.length() <1) {
+                    scanDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    scanDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+        }
+    }
+}

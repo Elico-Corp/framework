@@ -16,6 +16,7 @@ public class ToastUtil {
         } else {
             toast.setText(text);
         }
+        toast.show();
     }
 
     public static void toastShow(int resId, Context context){
@@ -24,5 +25,6 @@ public class ToastUtil {
         } else {
             toast.setText(resId);
         }
+        toast.show();
     }
 }

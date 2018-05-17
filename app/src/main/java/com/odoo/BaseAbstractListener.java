@@ -32,6 +32,14 @@ public class BaseAbstractListener {
     public void OnSuccessful(String str) {
     }
 
+    public void OnFail(String str) {
+
+    }
+
+    public void OnFail(int i) {
+
+    }
+
     public void OnCancelled() {
     }
 }

@@ -4,6 +4,7 @@
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_title_warning">Warning</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_title_input">Input code or S/N</string>
     <!-- Labels -->
     <string name="label_input_tank_truck">INPUT TANK TRUCK NUMBER</string>
     <string name="suez_label_suez">Suez</string>
@@ -14,6 +15,16 @@
     <string name="label_offline">Offline</string>
     <string name="label_offline_db">offline DB</string>
     <string name="label_incremental_db">incremental DB</string>
+    <string name="label_wac_info_package">Packaging</string>
+    <string name="label_btn_input_code">Input code</string>
+    <string name="label_hide">Hide</string>
+    <string name="label_drl_list">DRL List</string>
+    <string name="label_list_rpt">RPT</string>
+    <string name="label_list_sn">S/N</string>
+    <string name="label_list_prodlot">Production Lot</string>
+    <string name="label_wac_info">Wac Info</string>
+    <string name="label_menu_operation">Operations</string>
+
     <!-- Titles -->
     <string name="title_suez_tanktruck">Tank Truck</string>
     <string name="title_searching">Searching&#8230;</string>
@@ -26,6 +37,9 @@
     <string name="title_network_not_match">Network not match with work mode</string>
     <string name="title_progress_downloading">Downloading Database(s)</string>
     <string name="title_merge_db">Merging Databases</string>
+    <string name="title_suez_wacinfo">WAC Information</string>
+    <string name="title_scan_sn">Scan S/N</string>
+    <string name="title_suez_scan_wac_list">WAC List</string>
 
     <!--Messages-->
     <string name="message_tank_truck_pumping">Tank truck %1$s will be sent to pumping.</string>
@@ -34,7 +48,7 @@
     <string name="message_work_mode">You are now %s</string>
     <string name="message_progress_downloading">Downloading Database(s), please wait</string>
     <string name="message_merge_db">Merging Databases, Please Wait</string>
-
+    <string name="message_no_wac_code">\"%1$s\" \n is neither S/N or WAC code</string>
     <!--Toast-->
     <string name="toast_successful">Successful</string>
     <string name="toast_fail">Fail</string>
@@ -43,6 +57,9 @@
     <string name="toast_incr_success">Download Incremental DB Success!</string>
     <string name="toast_db_not_found">Database Not Found, please check the url and network</string>
     <string name="toast_db_zero">Database size is 0</string>
+    <string name="toast_no_data">No Data</string>
+    <string name="toast_no_delivery_route_line">No delivery route line found</string>
+
 
     <!-- Colums -->
     <string name="column_name">Name</string>
@@ -51,6 +68,52 @@
     <string name="column_truck_weight">Truck Weight</string>
     <string name="column_gross_weight">Truck and Waste Weight</string>
     <string name="column_copy_no">5-copy No</string>
+    <string name="column_action_type">Action Type</string>
+    <string name="column_model_name">Model Name</string>
+    <string name="column_sync_finished">Sync Done</string>
+    <string name="column_serial_number">Lot/Serial Number</string>
+    <string name="column_delivery_route">Delivery Route</string>
+    <string name="column_qty">Quantity</string>
+    <string name="column_desc_en">Description (English)</string>
+    <string name="column_desc_local">Description (Local)</string>
+    <string name="column_product">Product</string>
+    <string name="column_reference">Reference</string>
+    <string name="column_product_qty">Quantity to Purchase</string>
+    <string name="column_partner_name_cn">Customer Name Chinese</string>
+    <string name="column_partner_id">Customer</string>
+    <string name="column_route_id">Delivery Truck</string>
+    <string name="column_dts_id">Delivery Time</string>
+    <string name="column_pretreatment_id">Pretreatment</string>
+    <string name="column_prodlot_id">Production Lot</string>
+    <string name="column_wac_id">WAC NO.</string>
+    <string name="column_hw_code">HW Code</string>
+    <string name="column_deviation_reasons">Reason for weight deviation</string>
+    <string name="column_component">Component</string>
+    <string name="column_min">Min (%)</string>
+    <string name="column_max">Max (%)</string>
+    <string name="column_average">Average (%)</string>
+    <string name="column_wac_code">WAC Code</string>
+    <string name="column_name_en">Name of the Waste (English)</string>
+    <string name="column_name_local">Name of the Waste (Local)</string>
+    <string name="column_wac_version">Wac Version</string>
+    <string name="column_customer_name">Customer Name</string>
+    <string name="column_sequence">Sequence</string>
+    <string name="column_customer_weight">Customer Weight (t)</string>
+    <string name="column_weighing_weight">Weighing Weight (t)</string>
+    <string name="column_total_packaging_quantity">Packaging Weight (t)</string>
+    <string name="column_internal_weight">Internal Weight (t)</string>
+    <string name="column_deduction_weight">Deduction Weight (t)</string>
+    <string name="column_invoice_weight">Invoice Weight (t)</string>
+    <string name="column_wac_number">Waste Name</string>
+    <string name="column_packaging">Inbound Package</string>
+    <string name="column_wac_processing">Wac Processing</string>
+    <string name="column_delivery_date">Delivery Date</string>
+    <string name="column_origin">Origin</string>
+    <string name="column_order_line_weight">Customer Weight</string>
+    <string name="column_actual_packaging">Actual Packaging</string>
+    <string name="column_remark">notes</string>
+    <string name="column_delivery_route_line">Delivery Route Line</string>
+    <string name="column_waste_category">Waste Category</string>
     <!--Summaries-->
     <string name="summary_work_online">Start Work Online</string>
     <!--String Arrays-->

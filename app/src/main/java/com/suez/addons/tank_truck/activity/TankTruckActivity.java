@@ -6,22 +6,24 @@ import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezActivity;
-import com.suez.addons.tank_truck.adapter.TankTruckListAdapter;
-import com.suez.addons.tank_truck.jsonutils.TankTruckJsonUtils;
+import com.suez.addons.adapters.CommonTextAdapter;
 import com.suez.addons.models.DeliveryRoute;
-import com.suez.utils.LogUtils;
+import com.suez.utils.CallMethodsOnlineUtils;
+import com.suez.utils.SearchRecordsOnlineUtils;
+import com.suez.utils.SuezJsonUtils;
 import com.suez.utils.ToastUtil;
 import com.suez.view.ClearEditText;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
@@ -30,6 +32,8 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +46,7 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
         TextWatcher {
     private Button btnSuezConfirm;
     private XRecyclerView mTankTruckList;
-    private TankTruckListAdapter adapter;
+    private CommonTextAdapter adapter;
     private List<ODataRow> records;
     private ClearEditText mTankNUm;
     private DeliveryRoute deliveryRoute;
@@ -107,11 +111,11 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
         this.btnSuezConfirm.setOnClickListener(this);
     }
 
-    private void getDataOnServer(int offset, Boolean offDialog){
-        this.deliveryRoute.searchData(new BaseAbstractListener(){
+    private void getDataOnServer(int offset, Boolean showDialog){
+        BaseAbstractListener listener = new BaseAbstractListener() {
             @Override
-            public void OnSuccessful(List<ODataRow> listRow){
-                records.addAll(TankTruckJsonUtils.setTankTruck(listRow));
+            public void OnSuccessful(List<ODataRow> row) {
+                records.addAll(SuezJsonUtils.parseRecords(deliveryRoute, row));
                 if (loadNumber == 0){
                     loadData();
                 } else {
@@ -119,7 +123,11 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
                     adapter.notifyDataSetChanged();
                 }
             }
-        }, offset, offDialog);
+        };
+        OdooFields fields = getCommonFields();
+        ODomain domain = getCommonDomain();
+        SearchRecordsOnlineUtils onlineUtils = new SearchRecordsOnlineUtils(deliveryRoute, fields, domain, 100, offset).setListener(listener).setShowDialog(showDialog);
+        onlineUtils.searchRecordsOnServer();
     }
 
     private void getLocalData(int offset){
@@ -140,16 +148,16 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
         this.mTankTruckList.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         this.mTankTruckList.setArrowImageView(R.drawable.iconfont_downgrey);
 
-        adapter = new TankTruckListAdapter(this.records, R.layout.suez_tanktruck_list_items);
+        adapter = new CommonTextAdapter(this.records, R.layout.suez_tanktruck_list_items, new String[]{"name"}, new int[]{R.id.txtTankItemNum});
         mTankTruckList.setAdapter(adapter);
-        adapter.setmOnItemClickListener(new TankTruckListAdapter.OnItemClickListener() {
+        adapter.setmOnItemClickListener(new CommonTextAdapter.OnItemClickListener() {
             @Override
-            public void ItemOnClick(int position) {
+            public void onItemClick(int position) {
                 dialogPumping(records.get(position).getString("name"), records.get(position).getInt("id"), position);
             }
 
             @Override
-            public void ItemOnLongClick(int position) {}
+            public void onItemLongClick(int position) {}
         });
     }
 
@@ -196,7 +204,7 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
     }
 
     private void setState(final int id, final int position){
-        this.deliveryRoute.setState(new BaseAbstractListener() {
+        BaseAbstractListener listener = new BaseAbstractListener() {
             @Override
             public void OnSuccessful(Boolean flag){
                 if (flag){
@@ -210,7 +218,11 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
                     return;
                 }
             }
-        }, id);
+        };
+        OArguments loc = new OArguments();
+        loc.add(new JSONArray().put(id));
+        CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(deliveryRoute, "action_pumping", loc).setListener(listener);
+        utils.callMethodOnServer();
     }
 
     @Override
@@ -232,12 +244,18 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
                     return;
                 }
                 if (this.isNetwork){
-                    this.deliveryRoute.searchName(new BaseAbstractListener() {
+                    BaseAbstractListener listener = new BaseAbstractListener() {
                         @Override
                         public void OnSuccessful(List<ODataRow> listRow){
-                            confirmName(TankTruckJsonUtils.setTankTruck(listRow), textTankNum);
+                            confirmName(SuezJsonUtils.parseRecords(deliveryRoute, listRow), textTankNum);
                         }
-                    }, textTankNum);
+                    };
+                    OdooFields fields = getCommonFields();
+                    ODomain domain = getCommonDomain();
+                    domain.add("&");
+                    domain.add("name", "=ilike", "%" + textTankNum + "%");
+                    SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(deliveryRoute, fields, domain).setListener(listener);
+                    utils.searchRecordsOnServer();
                 } else {
                     rows = deliveryRoute.select(new String[]{"id", "name", "state"},
                             "name=? and state=? and truck_weight=? and gross_weight!=?",
@@ -273,7 +291,23 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count){
         if (s.length() > 2){
-            new LiveSearch().execute(mTankNUm.getText().toString());
+            mTankTruckList.setVisibility(View.GONE);
+            findViewById(R.id.loading_progress).setVisibility(View.VISIBLE);
+            BaseAbstractListener listener = new BaseAbstractListener() {
+                @Override
+                public void OnSuccessful(List<ODataRow> listRow) {
+                    findViewById(R.id.loading_progress).setVisibility(View.GONE);
+                    mTankTruckList.setVisibility(View.VISIBLE);
+                    records.clear();
+                    records.addAll(listRow);
+                    adapter.notifyDataSetChanged();
+                }
+            };
+            OdooFields fields = getCommonFields();
+            ODomain domain = getCommonDomain();
+            domain.add("&");
+            domain.add("name", "=ilike", "%" + mTankNUm.getText().toString() + "%");
+            SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(deliveryRoute, fields, domain).setListener(listener).setShowDialog(false);
         } else {
             if (isNetwork){
                 records.clear();
@@ -288,54 +322,20 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
     @Override
     public void afterTextChanged(Editable s){}
 
-    private class LiveSearch extends AsyncTask<String, Void, List<ODataRow>>{
+    @NonNull
+    private OdooFields getCommonFields() {
+        return new OdooFields(new String[] {"id", "name", "state"});
+    }
 
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            findViewById(R.id.loading_progress).setVisibility(View.VISIBLE);
-            mTankTruckList.setVisibility(View.GONE);
-        }
-
-        @Override
-        protected List<ODataRow> doInBackground(String... params){
-            try {
-                List<ODataRow> results = null;
-                if (isNetwork) {
-                    OdooFields fields = new OdooFields("id", "name", "state", "truck_weight");
-                    ODomain domain = new ODomain();
-                    domain.add("&");
-                    domain.add("name", "=ilike", "%" + params[0] + "%");
-                    domain.add("&");
-                    domain.add("state", "=", "truck_in");
-                    domain.add("&");
-                    domain.add("gross_weight", "<>", 0);
-                    domain.add("|");
-                    domain.add("truck_weight", "=", 0);
-                    domain.add("truck_weight", "=", null); // is null
-                    results = deliveryRoute.getServerDataHelper().searchRecords(
-                            fields, domain, 30, null);
-                } else {
-                    results = deliveryRoute.select(new String[]{"id", "name", "state"},
-                            "name like ? and state = ?, and truck_weight = ? and gross_weight != ?",
-                            new String[]{"%" + params[0] + "%", "truck_in", "0", "0"}, "id limit 30");
-                }
-                return TankTruckJsonUtils.setTankTruck(results);
-            } catch (Exception e){
-                e.printStackTrace();
-                LogUtils.e(TAG, e.toString());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<ODataRow> result){
-            super.onPostExecute(result);
-            findViewById(R.id.loading_progress).setVisibility(View.GONE);
-            mTankTruckList.setVisibility(View.VISIBLE);
-            records.clear();
-            records.addAll(result);
-            adapter.notifyDataSetChanged();
-        }
+    private ODomain getCommonDomain() {
+        ODomain domain = new ODomain();
+        domain.add("&");
+        domain.add("state", "=", "truck_in");
+        domain.add("&");
+        domain.add("gross_weight", "<>", 0);
+        domain.add("|");
+        domain.add("truck_weight", "=", 0);
+        domain.add("truck_weight", "=", null);
+        return domain;
     }
 }

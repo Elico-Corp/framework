@@ -27,6 +27,7 @@ import com.odoo.core.support.sync.SyncUtils;
 import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
 import com.suez.addons.models.DeliveryRoute;
+import com.suez.offlinelayer.OfflineDBUtil;
 import com.suez.utils.DownloadUtil;
 
 import java.io.File;
@@ -123,22 +124,54 @@ public class SuezSettings extends BaseSettings {
                     Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
                     startActivity(intent);
                 } else {
-                    // Close auto sync
+//                     Close auto sync
                     new SyncUtils(mContext, mUser).setAutoSync(DeliveryRoute.AUTHORITY, false);
-                    final HashMap versionMap = new HashMap<String, String>();
-                    versionMap.put(SuezConstants.OFFLINE_DB_VERSION_KEY, preferenceManager.getString(SuezConstants.OFFLINE_DB_VERSION_KEY, "0"));
-                    versionMap.put(SuezConstants.INCREMENTAL_DB_VERSION_KEY, preferenceManager.getString(SuezConstants.INCREMENTAL_DB_VERSION_KEY, "0"));
-                    String offline_url = offlineDBUrlPreference.getText();
-                    String incr_url = incrementalDBUrlPreference.getText();
-                    downloadDB(versionMap, offline_url, incr_url, new BaseAbstractListener(){
-                        @Override
-                        public void OnSuccessful(String str){
-                            // todo
-//                            toast(R.string.toast_successful);
-                            MergeTask mergeDB = new MergeTask();
-                            mergeDB.execute();
-                        }
-                    });
+//                    String offline_url = offlineDBUrlPreference.getText();
+//                    String incr_url = incrementalDBUrlPreference.getText();
+//                    BaseAbstractListener listener = new BaseAbstractListener(){
+//                        @Override
+//                        public void OnSuccessful(String str){
+////                            toast(R.string.toast_successful);
+//                            OfflineDBUtil.MergeTask mergeDB = layer.new MergeTask();
+//                            BaseAbstractListener listener = new BaseAbstractListener() {
+//                                @Override
+//                                public void OnSuccessful(String str) {
+//                                    toast(R.string.toast_successful);
+//                                }
+//                            };
+//                            mergeDB.setListener(listener);
+//                            mergeDB.execute(incrSqlite);
+//                        }
+//                        @Override
+//                        public void OnFail(int i) {
+//                            switch (i) {
+//                                case SuezConstants.OFFLINE_URL_ERROR_KEY:
+//                                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_offline)));
+//                                    workModePreference.setChecked(true);
+//                                    break;
+//                                case SuezConstants.INCR_URL_ERROR_KEY:
+//                                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_incremental_db)));
+//                                    workModePreference.setChecked(true);
+//                                    break;
+//                                case SuezConstants.HTTP_RETURN_404:
+//                                    toast(R.string.toast_db_not_found);
+//                                    break;
+//                                case SuezConstants.DB_SIZE_GET_ZERO:
+//                                    toast(R.string.toast_db_zero);
+//                                    break;
+//                                default:
+//                                    toast(R.string.toast_fail);
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void OnFail(String str) {
+//                            toast(str);
+//                        }
+//                    };
+//                    OfflineDBUtil.DownloadDBTask downloadTask = layer.new DownloadDBTask();
+//                    downloadTask.setListener(listener);
+//                    downloadTask.execute(offline_url, incr_url, offlineSqlite.databaseLocalPath(), incrSqlite.databaseLocalPath(), preferenceManager.getString(SuezConstants.OFFLINE_DB_VERSION_KEY, "0"));
                     app.networkState = false;
                 }
                 return true;
@@ -159,129 +192,122 @@ public class SuezSettings extends BaseSettings {
         return 0f;
     }
 
-    private void downloadDB(final HashMap<String, String> version, final String offline_url, final String incr_url, final BaseAbstractListener listener) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                if (!checkUrl(offline_url)) {
-                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_offline)));
-                    workModePreference.setChecked(true);
-                    return;
-                }
-                if (!checkUrl(incr_url)){
-                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_incremental_db)));
-                    workModePreference.setChecked(true);
-                    return;
-                }
-                progressDialog.setTitle(R.string.title_progress_downloading);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setMessage(OResource.string(mContext, R.string.message_progress_downloading));
-                progressDialog.setMax(100);
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                DownloadUtil.get().downloadDB(incr_url, incrSqlite, new DownloadUtil.OnDownloadListener() {
-                    @Override
-                    public void onDownloadSuccess(Long size) {
-                        Log.v(TAG, "Download incremental DB success");
-                    }
-
-                    @Override
-                    public void onDownloading(int progress, Long size) {
-                        Log.v(TAG, "Downloading incremental progress = " + progress + " size = " + size);
-                        progressDialog.setProgress(progress);
-                    }
-
-                    @Override
-                    public void onDownloadFailed(String error) {
-                        Log.v(TAG, "Download failed: " + error);
-                        progressDialog.dismiss();
-                        if (error.equals("404")) {
-                            toast(R.string.toast_db_not_found);
-                        } else if (error.equals("0")) {
-                            toast(R.string.toast_db_zero);
-                        } else {
-                            toast(error);
-                        }
-                    }
-                });
-                String offline_version = DownloadUtil.get().downloadDB(offline_url, version.get(SuezConstants.OFFLINE_DB_VERSION_KEY), offlineSqlite, new DownloadUtil.OnDownloadListener() {
-                    @Override
-                    public void onDownloadSuccess(Long size) {
-                        Log.v(TAG, "Download Offline Success");
-                    }
-
-                    @Override
-                    public void onDownloading(int progress, Long size) {
-                        Log.v(TAG, "Downloading offline progress = " + progress + " size = " + size);
-                        progressDialog.setProgress(progress);
-                    }
-
-                    @Override
-                    public void onDownloadFailed(String error) {
-                        Log.v(TAG, "Download failed: " + error);
-                        progressDialog.dismiss();
-                        if (error.equals("404")) {
-                            toast(R.string.toast_db_not_found);
-                        } else if (error.equals("0")) {
-                            toast(R.string.toast_db_zero);
-                        } else {
-                            toast(error);
-                        }
-                    }
-                });
-                preferenceManager.putString(SuezConstants.OFFLINE_DB_VERSION_KEY, offline_version);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void v) {
-                super.onPostExecute(v);
-                progressDialog.dismiss();
-                if (listener != null) {
-                    listener.OnSuccessful("Success");
-                }
-            }
-        }.execute();
-    }
-
-    private class MergeTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog.setTitle(R.string.title_merge_db);
-            progressDialog.setMessage(OResource.string(mContext, R.string.message_merge_db));
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            // TODO: add param: date
-            offlineSqlite.mergeSqlite(incrSqlite);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void v) {
-            super.onPostExecute(v);
-            progressDialog.dismiss();
-            toast(R.string.toast_successful);
-        }
-
-    }
-
-    private boolean checkUrl(String url) {
-        if (url == null || !new File(url).getName().endsWith(".db")){
-            return false;
-        }
-        return true;
-    }
+//    private void downloadDB(final HashMap<String, String> version, final String offline_url, final String incr_url, final BaseAbstractListener listener) {
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected void onPreExecute() {
+//                super.onPreExecute();
+//                if (!checkUrl(offline_url)) {
+//                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_offline)));
+//                    workModePreference.setChecked(true);
+//                    return;
+//                }
+//                if (!checkUrl(incr_url)){
+//                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_incremental_db)));
+//                    workModePreference.setChecked(true);
+//                    return;
+//                }
+//                progressDialog.setTitle(R.string.title_progress_downloading);
+//                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//                progressDialog.setMessage(OResource.string(mContext, R.string.message_progress_downloading));
+//                progressDialog.setMax(100);
+//                progressDialog.setCancelable(false);
+//                progressDialog.show();
+//            }
+//
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                DownloadUtil.get().downloadDB(incr_url, incrSqlite, new DownloadUtil.OnDownloadListener() {
+//                    @Override
+//                    public void onDownloadSuccess(Long size) {
+//                        Log.v(TAG, "Download incremental DB success");
+//                    }
+//
+//                    @Override
+//                    public void onDownloading(int progress, Long size) {
+//                        Log.v(TAG, "Downloading incremental progress = " + progress + " size = " + size);
+//                        progressDialog.setProgress(progress);
+//                    }
+//
+//                    @Override
+//                    public void onDownloadFailed(String error) {
+//                        Log.v(TAG, "Download failed: " + error);
+//                        progressDialog.dismiss();
+//                        if (error.equals("404")) {
+//                            toast(R.string.toast_db_not_found);
+//                        } else if (error.equals("0")) {
+//                            toast(R.string.toast_db_zero);
+//                        } else {
+//                            toast(error);
+//                        }
+//                    }
+//                });
+//                String offline_version = DownloadUtil.get().downloadDB(offline_url, version.get(SuezConstants.OFFLINE_DB_VERSION_KEY), offlineSqlite, new DownloadUtil.OnDownloadListener() {
+//                    @Override
+//                    public void onDownloadSuccess(Long size) {
+//                        Log.v(TAG, "Download Offline Success");
+//                    }
+//
+//                    @Override
+//                    public void onDownloading(int progress, Long size) {
+//                        Log.v(TAG, "Downloading offline progress = " + progress + " size = " + size);
+//                        progressDialog.setProgress(progress);
+//                    }
+//
+//                    @Override
+//                    public void onDownloadFailed(String error) {
+//                        Log.v(TAG, "Download failed: " + error);
+//                        progressDialog.dismiss();
+//                        if (error.equals("404")) {
+//                            toast(R.string.toast_db_not_found);
+//                        } else if (error.equals("0")) {
+//                            toast(R.string.toast_db_zero);
+//                        } else {
+//                            toast(error);
+//                        }
+//                    }
+//                });
+//                preferenceManager.putString(SuezConstants.OFFLINE_DB_VERSION_KEY, offline_version);
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void v) {
+//                super.onPostExecute(v);
+//                progressDialog.dismiss();
+//                if (listener != null) {
+//                    listener.OnSuccessful("Success");
+//                }
+//            }
+//        }.execute();
+//    }
+//
+//    private class MergeTask extends AsyncTask<Void, Void, Void> {
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progressDialog.setTitle(R.string.title_merge_db);
+//            progressDialog.setMessage(OResource.string(mContext, R.string.message_merge_db));
+//            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//            progressDialog.setCancelable(false);
+//            progressDialog.show();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//            // TODO: add param: date
+//            offlineSqlite.mergeSqlite(incrSqlite);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void v) {
+//            super.onPostExecute(v);
+//            progressDialog.dismiss();
+//            toast(R.string.toast_successful);
+//        }
+//
+//    }
 
     private void toast(final int id) {
         Handler handler = new Handler(Looper.getMainLooper());
