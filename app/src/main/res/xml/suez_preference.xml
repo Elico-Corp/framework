@@ -19,11 +19,11 @@
             android:summary=""
             android:title="@string/title_offline_db_url">
         </EditTextPreference>
-        <EditTextPreference
-            android:key="incremental_db_url"
-            android:summary=""
-            android:title="@string/title_increment_db_url">
-        </EditTextPreference>
+        <!--<EditTextPreference-->
+            <!--android:key="incremental_db_url"-->
+            <!--android:summary=""-->
+            <!--android:title="@string/title_increment_db_url">-->
+        <!--</EditTextPreference>-->
         <!--TODO-->
         <!--<Preference-->
         <!--android:key="download_db"-->

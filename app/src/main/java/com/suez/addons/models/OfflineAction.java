@@ -18,13 +18,8 @@ import odoo.controls.OSelectionField;
 
 public class OfflineAction extends OModel {
     private static final String TAG = OfflineAction.class.getSimpleName();
-    OColumn type = new OColumn(getContext(), R.string.column_action_type, OInteger.class).setRequired();
-    OColumn model_name = new OColumn(getContext(), R.string.column_model_name, OVarchar.class).setSize(64).setRequired();
-    OColumn isSynced = new OColumn(getContext(), R.string.column_sync_finished, OBoolean.class).setDefaultValue(false);
-    private Context mContext;
 
     public OfflineAction (Context context, OUser user) {
         super(context, "offline.action", user);
-        mContext = context;
     }
 }

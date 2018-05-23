@@ -35,6 +35,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.odoo.App;
+import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OModel;
@@ -45,6 +47,7 @@ import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.support.list.OListAdapter;
 import com.odoo.core.utils.OControls;
 import com.odoo.core.utils.OResource;
+import com.suez.utils.SearchRecordsOnlineUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +70,7 @@ public class SearchableItemActivity extends ActionBarActivity implements
     private LiveSearch mLiveDataLoader = null;
     private Bundle formData;
     private ODomain liveDomain = new ODomain();
+    private boolean isNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,7 @@ public class SearchableItemActivity extends ActionBarActivity implements
         setResult(RESULT_CANCELED);
         edt_searchable_input = (EditText) findViewById(R.id.edt_searchable_input);
         edt_searchable_input.addTextChangedListener(this);
+        isNetwork = ((App) getApplication()).networkState;
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
             if (extra.containsKey("resource_id")) {
@@ -107,14 +112,34 @@ public class SearchableItemActivity extends ActionBarActivity implements
                 }
             } else {
                 if (extra.containsKey("column_name")) {
-                    OColumn mCol = mModel.getColumn(extra.getString("column_name"));
-                    mRelModel = mModel.createInstance(mCol.getType());
+                        OColumn mCol = mModel.getColumn(extra.getString("column_name"));
+                        mRelModel = mModel.createInstance(mCol.getType());
 
-                    if (mCol.hasDomainFilterColumn()) {
-                        formData = extra.getBundle("form_data");
-                        liveDomain = mCol.getDomainFilterParser(mModel).getRPCDomain(formData);
+                        if (mCol.hasDomainFilterColumn()) {
+                            formData = extra.getBundle("form_data");
+                            liveDomain = mCol.getDomainFilterParser(mModel).getRPCDomain(formData);
+                        }
+
+                        if (!mCol.getDomains().values().isEmpty()){
+                            for (OColumn.ColumnDomain domain: mCol.getDomains().values()) {
+                                liveDomain.add(domain.getColumn(), domain.getOperator(), domain.getValue());
+                                if (domain.getConditionalOperator() != null) {
+                                    liveDomain.add(domain.getConditionalOperator());
+                                }
+                            }
+                        }
+                    // Add by Joseph 180521
+                    if (!isNetwork) {
+                        objects.addAll(OSelectionField.getRecordItems(mRelModel, mCol, formData));
+                    } else {
+                        SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(mRelModel, new OdooFields(mRelModel.getDefaultNameColumn()), liveDomain).setListener(new BaseAbstractListener(){
+                            @Override
+                            public void OnSuccessful(List<ODataRow> listRow) {
+                                objects.addAll(listRow);
+                            }
+                        });
+                        utils.searchRecordsOnServer();
                     }
-                    objects.addAll(OSelectionField.getRecordItems(mRelModel, mCol, formData));
                 }
             }
 
@@ -214,7 +239,7 @@ public class SearchableItemActivity extends ActionBarActivity implements
         if (newRecords.size() <= 0) {
             if (mLiveDataLoader != null)
                 mLiveDataLoader.cancel(true);
-            if (edt_searchable_input.getText().length() >= 3) {
+            if (edt_searchable_input.getText().length() >= 1) {
                 mLiveDataLoader = new LiveSearch();
                 mLiveDataLoader.execute(edt_searchable_input.getText()
                         .toString());

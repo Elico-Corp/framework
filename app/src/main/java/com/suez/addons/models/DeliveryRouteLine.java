@@ -1,6 +1,7 @@
 package com.suez.addons.models;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.odoo.BuildConfig;
 import com.odoo.R;
@@ -44,5 +45,10 @@ public class DeliveryRouteLine extends OModel {
 
     public DeliveryRouteLine(Context context, OUser user) {
         super(context, "delivery.route.line", user);
+    }
+
+    @Override
+    public Uri uri() {
+        return buildURI(AUTHORITY);
     }
 }

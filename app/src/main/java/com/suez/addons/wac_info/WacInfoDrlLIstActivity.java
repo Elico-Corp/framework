@@ -102,15 +102,10 @@ public class WacInfoDrlLIstActivity extends SuezActivity implements CommonTextAd
 
     private void initDataOffline() {
         wacInfoForm.initForm(productWac.browse(wac_id));
-        List<ODataRow> drlRecords = deliveryRouteLine.select(null, "wac_id = ? and prodlot_id > ?",
-                new String[]{String.valueOf(wac_id), "0"});
+        List<ODataRow> drlRecords = deliveryRouteLine.select(null, "wac_id = ?",
+                new String[]{String.valueOf(wac_id)});
         if (drlRecords != null && drlRecords.size() > 0) {
-            records = new ArrayList<>();
-            for (ODataRow record: drlRecords) {
-                ODataRow row = record.getM2ORecord("prodlot_id").browse();
-                record.put("prodlot_name", row.getString("name"));
-                records.add(record);
-            }
+            records = drlRecords;
             loadData(records);
         } else {
             linearDrlList.setVisibility(View.GONE);
@@ -127,7 +122,7 @@ public class WacInfoDrlLIstActivity extends SuezActivity implements CommonTextAd
         xRecyWACList.setNestedScrollingEnabled(false);
 
         CommonTextAdapter adapter = new CommonTextAdapter(records, R.layout.suez_wacinfo_drl_list_items,
-                new String[]{"name", "prodlot_name"}, new int[]{R.id.txtProductName, R.id.txtRPTSN});
+                new String[]{"name"}, new int[]{R.id.txtProductName});
         xRecyWACList.setAdapter(adapter);
         adapter.setmOnItemClickListener(this);
     }
@@ -138,7 +133,11 @@ public class WacInfoDrlLIstActivity extends SuezActivity implements CommonTextAd
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(this, WacInfoActivity.class);
-        intent.putExtra(SuezConstants.PRODLOT_ID_KEY, records.get(position).getInt("prodlot_id"));
+        if (isNetwork) {
+            intent.putExtra(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, records.get(position).getInt("id"));
+        } else {
+            intent.putExtra(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, records.get(position).getInt("_id"));
+        }
         startActivity(intent);
     }
 }

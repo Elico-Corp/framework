@@ -55,11 +55,11 @@ public class SuezJsonUtils extends JSONUtils {
                         resRow.put(column.getName(), row.getFloat(column.getName()).intValue());
                     }
                     // TODO: M2M and O2M columns
-                    else if (column.getRelationType() == null) {
-                        resRow.put(column.getName(), row.getString(column.getName()));
-                    } else {
+                    else if (column.getRelationType() == OColumn.RelationType.ManyToOne) {
                         resRow.put(column.getName(), (int) Float.parseFloat((String) formatStringToJSON(row.getString(column.getName())).get(0)));
                         resRow.put(column.getName() + "_name", formatStringToJSON(row.getString(column.getName())).get(1));
+                    } else {
+                        resRow.put(column.getName(), row.getString(column.getName()));
                     }
                 }
                 res.add(resRow);

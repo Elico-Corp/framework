@@ -23,6 +23,8 @@ public class CommonTextAdapter extends RecyclerView.Adapter<CommonTextAdapter.Co
     private int[] resIds;
     private List<HashMap<String, Object>> specify;
     private CommonTextAdapter.OnItemClickListener mOnItemClickListener;
+    CommonTextViewHolder holder;
+
 
     public CommonTextAdapter(List datas, int itemLayout, String[] fields, int[] resIds) {
         this.datas = datas;
@@ -43,7 +45,8 @@ public class CommonTextAdapter extends RecyclerView.Adapter<CommonTextAdapter.Co
     }
 
     @Override
-    public void onBindViewHolder(final CommonTextViewHolder holder, int position) {
+    public void onBindViewHolder(final CommonTextViewHolder vHolder, int position) {
+        this.holder = vHolder;
         for (int i=0; i<fields.length||i<resIds.length; i++) {
             holder.itemView.setBackgroundResource(R.drawable.suez_recycler_bg);
             ((TextView) holder.itemView.findViewById(resIds[i])).setText(((ODataRow)datas.get(position)).getString(fields[i]));
@@ -59,17 +62,21 @@ public class CommonTextAdapter extends RecyclerView.Adapter<CommonTextAdapter.Co
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnItemClickListener.onItemClick(holder.getAdapterPosition());
+                    mOnItemClickListener.onItemClick(vHolder.getAdapterPosition());
                 }
             });
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    mOnItemClickListener.onItemLongClick(holder.getAdapterPosition());
+                    mOnItemClickListener.onItemLongClick(vHolder.getAdapterPosition());
                     return true;
                 }
             });
         }
+    }
+
+    public CommonTextViewHolder getHolder() {
+        return holder;
     }
 
     public void setmOnItemClickListener(OnItemClickListener listener) {
@@ -81,7 +88,7 @@ public class CommonTextAdapter extends RecyclerView.Adapter<CommonTextAdapter.Co
         return datas.size();
     }
 
-    class CommonTextViewHolder extends RecyclerView.ViewHolder {
+    public class CommonTextViewHolder extends RecyclerView.ViewHolder {
         public CommonTextViewHolder(View itemView) {
             super(itemView);
         }

@@ -85,6 +85,24 @@
             android:label="Delivery Route"
             android:multiprocess="true"/>
 
+        <provider
+            android:authorities="${applicationId}.core.provider.content.sync.stock_quant"
+            android:name="com.suez.addons.providers.StockQuantSyncProvider"
+            android:label="Stock Quant"
+            android:multiprocess="true"/>
+
+        <provider
+            android:authorities="${applicationId}.core.provider.content.sync.stock_production_lot"
+            android:name="com.suez.addons.providers.StockProductionLotSyncProvider"
+            android:label="Stock Production Lot"
+            android:multiprocess="true"/>
+
+        <provider
+            android:authorities="${applicationId}.core.provider.content.sync.delivery_route_line"
+            android:name="com.suez.addons.providers.DeliveryRouteLineSyncProvider"
+            android:label="Delivery Route Line"
+            android:multiprocess="true"/>
+
         <!-- Sync Provider & Service  // -->
         <provider
             android:name="com.odoo.addons.customers.providers.CustomersSyncProvider"
@@ -116,6 +134,41 @@
                 android:resource="@xml/customer_sync_adapter" />
         </service>
 
+        <service android:name="com.suez.addons.services.StockQuantSyncService"
+            android:exported="true"
+            android:process=":sync_stock_quant">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/stock_quant_sync_adapter"/>
+        </service>
+
+        <service android:name="com.suez.addons.services.StockProductionLotSyncService"
+            android:exported="true"
+            android:process=":sync_stock_production_lot">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/stock_production_lot_sync_adapter"/>
+        </service>
+
+        <service android:name="com.suez.addons.services.DeliveryRouteLineSyncService"
+            android:exported="true"
+            android:process=":sync_delivery_route_line">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+
+            <meta-data android:resource="@xml/delivery_route_line_sync_adapter"
+                android:name="android.content.SyncAdapter"/>
+        </service>
+
         <activity
             android:name="com.odoo.addons.customers.CustomerDetails"
             android:windowSoftInputMode="adjustPan" />
@@ -131,6 +184,9 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name="com.suez.addons.wac_info.WacInfoActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.pretreatment.PretreatmentActivity"
             android:screenOrientation="portrait"/>
     </application>
 

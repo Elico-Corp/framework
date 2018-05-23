@@ -18,7 +18,7 @@ import com.odoo.core.support.OUser;
 
 public class ProductWac extends OModel {
     public static final String TAG = ProductWac.class.getSimpleName();
-    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".core.provider.content.sync.product_wac";
+//    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".core.provider.content.sync.product_wac";
 
     OColumn wac_code = new OColumn(getContext(), R.string.column_wac_code, OVarchar.class).setSize(64);
     OColumn name = new OColumn(getContext(), R.string.column_name_en, OVarchar.class);
@@ -33,8 +33,8 @@ public class ProductWac extends OModel {
         super(context, "product.wac", user);
     }
 
-    @Override
-    public Uri uri() {
-        return buildURI(AUTHORITY);
-    }
+//    @Override
+//    public Uri uri() {
+//        return buildURI(AUTHORITY);
+//    }
 }

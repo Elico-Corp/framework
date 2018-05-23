@@ -46,7 +46,7 @@ public class SuezSettings extends BaseSettings {
     private OPreferenceManager preferenceManager;
     private ListPreference keyLanguagePreference;
     private EditTextPreference offlineDBUrlPreference;
-    private EditTextPreference incrementalDBUrlPreference;
+//    private EditTextPreference incrementalDBUrlPreference;
     private SwitchPreference workModePreference;
     public ProgressDialog progressDialog;
     private OSQLite offlineSqlite;
@@ -98,15 +98,15 @@ public class SuezSettings extends BaseSettings {
             }
         });
 
-        incrementalDBUrlPreference = (EditTextPreference) findPreference(SuezConstants.INCREMENTAL_DB_URL_KEY);
-        incrementalDBUrlPreference.setSummary(String.format(OResource.string(mContext, R.string.label_database_size), getFileSize(new File(mContext.getDatabasePath("db"), mUser.getIncrDBName()))));
-        incrementalDBUrlPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                ((EditTextPreference) preference).setText((String) newValue);
-                return true;
-            }
-        });
+//        incrementalDBUrlPreference = (EditTextPreference) findPreference(SuezConstants.INCREMENTAL_DB_URL_KEY);
+//        incrementalDBUrlPreference.setSummary(String.format(OResource.string(mContext, R.string.label_database_size), getFileSize(new File(mContext.getDatabasePath("db"), mUser.getIncrDBName()))));
+//        incrementalDBUrlPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+//            @Override
+//            public boolean onPreferenceChange(Preference preference, Object newValue) {
+//                ((EditTextPreference) preference).setText((String) newValue);
+//                return true;
+//            }
+//        });
 
         workModePreference = (SwitchPreference) findPreference(SuezConstants.WORK_MODE_KEY);
         workModePreference.setDefaultValue(app.inNetwork());
@@ -126,12 +126,12 @@ public class SuezSettings extends BaseSettings {
                 } else {
 //                     Close auto sync
                     new SyncUtils(mContext, mUser).setAutoSync(DeliveryRoute.AUTHORITY, false);
-//                    String offline_url = offlineDBUrlPreference.getText();
+                    String offline_url = offlineDBUrlPreference.getText();
 //                    String incr_url = incrementalDBUrlPreference.getText();
-//                    BaseAbstractListener listener = new BaseAbstractListener(){
-//                        @Override
-//                        public void OnSuccessful(String str){
-////                            toast(R.string.toast_successful);
+                    BaseAbstractListener listener = new BaseAbstractListener(){
+                        @Override
+                        public void OnSuccessful(String str){
+                            toast(R.string.toast_successful);
 //                            OfflineDBUtil.MergeTask mergeDB = layer.new MergeTask();
 //                            BaseAbstractListener listener = new BaseAbstractListener() {
 //                                @Override
@@ -141,34 +141,34 @@ public class SuezSettings extends BaseSettings {
 //                            };
 //                            mergeDB.setListener(listener);
 //                            mergeDB.execute(incrSqlite);
-//                        }
-//                        @Override
-//                        public void OnFail(int i) {
-//                            switch (i) {
-//                                case SuezConstants.OFFLINE_URL_ERROR_KEY:
-//                                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_offline)));
-//                                    workModePreference.setChecked(true);
-//                                    break;
+                        }
+                        @Override
+                        public void OnFail(int i) {
+                            switch (i) {
+                                case SuezConstants.OFFLINE_URL_ERROR_KEY:
+                                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_offline)));
+                                    workModePreference.setChecked(true);
+                                    break;
 //                                case SuezConstants.INCR_URL_ERROR_KEY:
 //                                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_incremental_db)));
 //                                    workModePreference.setChecked(true);
 //                                    break;
-//                                case SuezConstants.HTTP_RETURN_404:
-//                                    toast(R.string.toast_db_not_found);
-//                                    break;
-//                                case SuezConstants.DB_SIZE_GET_ZERO:
-//                                    toast(R.string.toast_db_zero);
-//                                    break;
-//                                default:
-//                                    toast(R.string.toast_fail);
-//                            }
-//                        }
+                                case SuezConstants.HTTP_RETURN_404:
+                                    toast(R.string.toast_db_not_found);
+                                    break;
+                                case SuezConstants.DB_SIZE_GET_ZERO:
+                                    toast(R.string.toast_db_zero);
+                                    break;
+                                default:
+                                    toast(R.string.toast_fail);
+                            }
+                        }
 //
 //                        @Override
 //                        public void OnFail(String str) {
 //                            toast(str);
 //                        }
-//                    };
+                    };
 //                    OfflineDBUtil.DownloadDBTask downloadTask = layer.new DownloadDBTask();
 //                    downloadTask.setListener(listener);
 //                    downloadTask.execute(offline_url, incr_url, offlineSqlite.databaseLocalPath(), incrSqlite.databaseLocalPath(), preferenceManager.getString(SuezConstants.OFFLINE_DB_VERSION_KEY, "0"));

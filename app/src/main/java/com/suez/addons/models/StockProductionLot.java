@@ -23,6 +23,7 @@ public class StockProductionLot extends OModel {
     OColumn product_qty = new OColumn(getContext(), R.string.column_qty, OFloat.class);
     OColumn product_id = new OColumn(getContext(), R.string.column_product, ProductProduct.class, OColumn.RelationType.ManyToOne);
     OColumn delivery_route_line = new OColumn(getContext(), R.string.column_delivery_route_line, DeliveryRouteLine.class, OColumn.RelationType.ManyToOne);
+    OColumn quant_ids = new OColumn(getContext(), R.string.column_quant_ids, StockQuant.class, OColumn.RelationType.OneToMany);
 
     public StockProductionLot(Context context, OUser user) {
         super(context, "stock.production.lot", user);

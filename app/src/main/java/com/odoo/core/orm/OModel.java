@@ -35,6 +35,7 @@ import com.odoo.core.auth.OdooAccountManager;
 import com.odoo.core.orm.annotation.Odoo;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.orm.fields.types.OBoolean;
+import com.odoo.core.orm.fields.types.ODate;
 import com.odoo.core.orm.fields.types.ODateTime;
 import com.odoo.core.orm.fields.types.OInteger;
 import com.odoo.core.orm.fields.types.OSelection;
@@ -1171,6 +1172,26 @@ public class OModel implements ISyncServiceListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<ODataRow> parseMany2oneRecords(List<ODataRow> rows, String[] many2oneFields, String[] many2oneFieldsName) {
+        for (ODataRow row: rows) {
+            for (int i=0; i<many2oneFields.length && i< many2oneFieldsName.length; i++) {
+                if (getColumn(many2oneFields[i]).getRelationType().equals(OColumn.RelationType.ManyToOne)) {
+                    row.put(many2oneFields[i] + "_name", row.getM2ORecord(many2oneFields[i]).browse().getString(many2oneFieldsName[i]));
+                }
+            }
+        }
+        return rows;
+    }
+
+    public ODataRow parseMany2oneRecords(ODataRow row, String[] many2oneFields, String[] many2oneFieldsName) {
+        for (int i = 0; i < many2oneFields.length && i < many2oneFieldsName.length; i++) {
+            if (getColumn(many2oneFields[i]).getRelationType().equals(OColumn.RelationType.ManyToOne)) {
+                row.put(many2oneFields[i] + "_name", row.getM2ORecord(many2oneFields[i]).browse().getString(many2oneFieldsName[i]));
+            }
+        }
+        return row;
     }
 
     @Override

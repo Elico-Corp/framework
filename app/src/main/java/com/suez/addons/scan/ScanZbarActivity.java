@@ -48,6 +48,7 @@ public class ScanZbarActivity extends SuezActivity {
     private StockProductionLot stockProductionLot;
     private ProductWac productWac;
     private AlertDialog scanDialog;
+    private int prodlotId = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,6 +139,7 @@ public class ScanZbarActivity extends SuezActivity {
                 public void OnSuccessful(List<ODataRow> listRow) {
                     if (listRow != null && !listRow.isEmpty()) {
                         listRow = SuezJsonUtils.parseRecords(stockProductionLot, listRow);
+                        prodlotId = listRow.get(0).getInt("id");
                         startIntent(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, listRow.get(0).getInt("delivery_route_line"));
                         scanDialog.dismiss();
                     } else {
@@ -166,11 +168,12 @@ public class ScanZbarActivity extends SuezActivity {
         } else {
             List<ODataRow> rows = stockProductionLot.select(null, "name = ?", new String[]{code.toUpperCase()});
             if (!rows.isEmpty()) {
+                prodlotId = rows.get(0).getInt("_id");
                 startIntent(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, rows.get(0).getInt("delivery_route_line"));
             } else {
                 List<ODataRow> wacRows = productWac.select(new String[]{"_id"}, "wac_code = ?", new String[]{code.toUpperCase()});
                 if (!wacRows.isEmpty()) {
-                    startIntent(SuezConstants.PRODLOT_ID_KEY, rows.get(0).getInt("_id"));
+                    startIntent(SuezConstants.WAC_ID_KEY, rows.get(0).getInt("_id"));
                 } else {
                     alertWarning();
                 }
@@ -189,6 +192,9 @@ public class ScanZbarActivity extends SuezActivity {
                 break;
             default:
                 intent = new Intent();
+        }
+        if (prodlotId != 0) {
+            intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
         }
         intent.putExtra(key, id);
         startActivity(intent);

@@ -22,6 +22,6 @@ public class WmdsParameterMainComponent extends OModel {
     OColumn wac_id = new OColumn(getContext(), R.string.column_wac_id, ProductWac.class, OColumn.RelationType.ManyToOne);
 
     public WmdsParameterMainComponent(Context context, OUser user) {
-        super(context, "wmds.parameter.main.component", user);
+        super(context, "wmds.parameter.main_component", user);
     }
 }

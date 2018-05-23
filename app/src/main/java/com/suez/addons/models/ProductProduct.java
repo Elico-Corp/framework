@@ -15,7 +15,7 @@ import com.odoo.core.support.OUser;
  */
 
 public class ProductProduct extends OModel {
-    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".core.provider.content.sync.product_product";
+//    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".core.provider.content.sync.product_product";
     private static final String TAG = ProductProduct.class.getSimpleName();
 
     OColumn name = new OColumn(getContext(), R.string.column_desc_en, OVarchar.class).setSize(64);
@@ -25,8 +25,8 @@ public class ProductProduct extends OModel {
         super(context, "product.product", user);
     }
 
-    @Override
-    public Uri uri() {
-        return buildURI(AUTHORITY);
-    }
+//    @Override
+//    public Uri uri() {
+//        return buildURI(AUTHORITY);
+//    }
 }

@@ -24,8 +24,10 @@ import android.content.Context;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.annotation.Odoo;
 import com.odoo.core.orm.fields.utils.DomainFilterParser;
+import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.utils.OResource;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -394,7 +396,7 @@ public class OColumn {
                 '}';
     }
 
-    public static class ColumnDomain {
+    public static class ColumnDomain implements Serializable{
 
         private String column = null;
         private String operator = null;
@@ -459,6 +461,12 @@ public class OColumn {
             }
             domain.append("]");
             return domain.toString();
+        }
+
+        public ODomain toODomain() {
+            ODomain domain = new ODomain();
+            domain.add(column, operator, value);
+            return domain;
         }
     }
 }

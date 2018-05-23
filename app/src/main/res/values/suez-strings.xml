@@ -5,6 +5,7 @@
     <string name="dialog_title_warning">Warning</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_title_input">Input code or S/N</string>
+    <string name="dialog_change_quantity">Change Quantity</string>
     <!-- Labels -->
     <string name="label_input_tank_truck">INPUT TANK TRUCK NUMBER</string>
     <string name="suez_label_suez">Suez</string>
@@ -24,6 +25,10 @@
     <string name="label_list_prodlot">Production Lot</string>
     <string name="label_wac_info">Wac Info</string>
     <string name="label_menu_operation">Operations</string>
+    <string name="label_pretreatment">Pretreatment</string>
+    <string name="label_repacking">Repacking</string>
+    <string name="label_direct_burn">Direct Burn</string>
+    <string name="label_available_qty">Available Quantity</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">Tank Truck</string>
@@ -40,6 +45,7 @@
     <string name="title_suez_wacinfo">WAC Information</string>
     <string name="title_scan_sn">Scan S/N</string>
     <string name="title_suez_scan_wac_list">WAC List</string>
+    <string name="title_operations">Operations</string>
 
     <!--Messages-->
     <string name="message_tank_truck_pumping">Tank truck %1$s will be sent to pumping.</string>
@@ -49,6 +55,9 @@
     <string name="message_progress_downloading">Downloading Database(s), please wait</string>
     <string name="message_merge_db">Merging Databases, Please Wait</string>
     <string name="message_no_wac_code">\"%1$s\" \n is neither S/N or WAC code</string>
+    <string name="message_select_operation">Select an Operation</string>
+    <string name="message_no_qty_available">No quantity available for processing</string>
+    <string name="message_confirm_remove_record">Are you sure to remove the record ?</string>
     <!--Toast-->
     <string name="toast_successful">Successful</string>
     <string name="toast_fail">Fail</string>
@@ -114,6 +123,19 @@
     <string name="column_remark">notes</string>
     <string name="column_delivery_route_line">Delivery Route Line</string>
     <string name="column_waste_category">Waste Category</string>
+    <string name="column_is_int_location">Is Incineration Location?</string>
+    <string name="column_location_usage">Location Type</string>
+    <string name="column_location_id">Location</string>
+    <string name="column_quant_ids">Products</string>
+    <string name="column_quant_line_ids">Original Locations</string>
+    <string name="column_pretreatment_location_id">Pretreatment Location</string>
+    <string name="column_destination_location_id">Destination Location</string>
+    <string name="column_pretreatment_type_id">Pretreatment Type</string>
+    <string name="column_repacking_location_id">Repacking Location</string>
+    <string name="column_packaging_id">Packaging</string>
+    <string name="column_packaging_number">Nubmer of Packaging</string>
+    <string name="column_repacked_qty">Quantity to be Repacked</string>
+    <string name="column_remain_qty">Remaining Quantity</string>
     <!--Summaries-->
     <string name="summary_work_online">Start Work Online</string>
     <!--String Arrays-->
@@ -124,5 +146,10 @@
     <string-array name="languagesValues">
         <item name="zh">zh</item>
         <item name="en">en</item>
+    </string-array>
+    <string-array name="operations">
+        <item name='pretreatment'>Pretreatment</item>
+        <item name='repacking'>Repacking</item>
+        <item name='direct_burn'>Direct Burn</item>
     </string-array>
 </resources>

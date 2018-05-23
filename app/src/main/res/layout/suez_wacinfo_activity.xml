@@ -32,7 +32,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="name"
+                    app:fieldName="sequence"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="address_id"
+                    app:fieldName="address_id_name"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -89,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="route_id"
+                    app:fieldName="route_id_name"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -103,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="pretreatment_id"
+                    app:fieldName="pretreatment_id_name"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -124,21 +124,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="prodlot_id"
+                    app:fieldName="wac_number"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="wac_id"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
-
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="hw_code"
+                    app:fieldName="hw_code_name"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -152,7 +145,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="weight_get"
+                    app:fieldName="weighing_weight"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -194,7 +187,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="deviation_reasons"
+                    app:fieldName="deviation_reasons_id_name"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <!-- hide -->

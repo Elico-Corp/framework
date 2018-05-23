@@ -1,8 +1,13 @@
 package com.suez.addons.wac_info;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,6 +24,7 @@ import com.suez.addons.models.ActualPackaging;
 import com.suez.addons.models.DeliveryRouteLine;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.WmdsParameterMainComponent;
+import com.suez.addons.pretreatment.PretreatmentActivity;
 import com.suez.utils.SearchRecordsOnlineUtils;
 import com.suez.utils.SuezJsonUtils;
 import com.suez.utils.ToastUtil;
@@ -57,19 +63,10 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
     OForm deliveryRouteLineFormOnline;
     @BindView(R.id.delivery_route_line_form_online_hide)
     OForm deliveryRouteLineFormOnlineHide;
-    @BindView(R.id.prodlot)
-    OField prodlot;
-    @BindView(R.id.txt_component)
-    TextView txtComponent;
-    @BindView(R.id.txt_min)
-    TextView txtMin;
-    @BindView(R.id.txt_average)
-    TextView txtAverage;
-    @BindView(R.id.txt_max)
-    TextView txtMax;
 
 
     private int delivery_route_line_id;
+    private int prodlotId;
     private DeliveryRouteLine deliveryRouteLine;
     private WmdsParameterMainComponent component;
     private StockProductionLot stockProductionLot;
@@ -78,6 +75,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
     private CommonTextAdapter packagingAdapter;
     private OForm deliveryRouteLineForm;
     private OForm deliveryRouteLineFormHide;
+    private int itemId = 0;
 
 
     @Override
@@ -87,6 +85,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         initToolbar(R.string.title_suez_wacinfo);
         ButterKnife.bind(this);
         delivery_route_line_id = getIntent().getIntExtra(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, 0);
+        prodlotId = getIntent().getIntExtra(SuezConstants.PRODLOT_ID_KEY, 0);
         initView();
 
         deliveryRouteLine = new DeliveryRouteLine(this, null);
@@ -197,6 +196,8 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
             deliveryRouteLineFormHide.initForm(null);
             return;
         }
+        drlRow = deliveryRouteLine.parseMany2oneRecords(drlRow, new String[]{"address_id", "route_id", "pretreatment_id", "hw_code", "deviation_reasons_id"},
+                new String[]{"name", "name", "name", "name", "name"});
         drlRow.put("address_name_zh", drlRow.getM2ORecord("wac_id").browse().getString("partner_name_cn"));
         deliveryRouteLineForm.initForm(drlRow);
         deliveryRouteLineFormHide.initForm(drlRow);
@@ -233,4 +234,53 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         xrPackagingList.setAdapter(packagingAdapter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.suez_menu_operation, menu);
+        if (prodlotId == 0) {
+            ((MenuItem) findViewById(R.id.menu_operation)).setVisible(false);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.home:
+                finish();
+                break;
+            case R.id.menu_operation:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.title_operations);
+//                builder.setMessage(R.string.message_select_operation);
+                builder.setSingleChoiceItems(R.array.operations, itemId, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        itemId = which;
+                    }
+                });
+                builder.setNegativeButton(R.string.label_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setPositiveButton(R.string.label_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent;
+                        switch (itemId) {
+                            case 0:
+                                intent = new Intent(WacInfoActivity.this, PretreatmentActivity.class);
+                                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                                startActivity(intent);
+                                break;
+                        }
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
