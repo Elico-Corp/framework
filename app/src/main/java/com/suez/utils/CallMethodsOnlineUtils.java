@@ -53,13 +53,13 @@ public class CallMethodsOnlineUtils {
         task.execute();
     }
 
-    public class CallMethodTask extends AsyncTask<Void, Void, Boolean> {
+    public class CallMethodTask extends AsyncTask<Void, Void, Object> {
         private ProgressDialog dialog;
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected Object doInBackground(Void... voids) {
             try {
-                return (Boolean) mModel.getServerDataHelper().callMethod(method, args, context, kwargs);
+                return mModel.getServerDataHelper().callMethod(method, args, context, kwargs);
             } catch (Exception e) {
                 e.printStackTrace();
                 LogUtils.e(TAG, e.getMessage());
@@ -78,7 +78,7 @@ public class CallMethodsOnlineUtils {
         }
 
         @Override
-        protected void onPostExecute(Boolean o) {
+        protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             if (listener != null) {
                 listener.OnSuccessful(o);

@@ -18,6 +18,7 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
+import com.odoo.core.orm.OValues;
 import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezActivity;
@@ -27,6 +28,7 @@ import com.suez.addons.models.OperationsWizard;
 import com.suez.addons.models.StockLocation;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
+import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
 import com.suez.utils.SuezJsonUtils;
 
@@ -74,6 +76,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     protected StockLocation stockLocation;
     protected CommonTextAdapter adapter;
     protected List<ODataRow> records;
+    protected OValues wizardValues;
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
 
@@ -103,9 +106,9 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     }
 
     protected void initDataOnline() {
-        ODomain stockquantDomain = new ODomain();
-        stockquantDomain.add("lot_id", "=", prodlot_id);
-        stockquantDomain.add("location_id.usage", "=", "internal");
+        ODomain stockQuantDomain = new ODomain();
+        stockQuantDomain.add("lot_id", "=", prodlot_id);
+        stockQuantDomain.add("location_id.usage", "=", "internal");
         BaseAbstractListener listener = new BaseAbstractListener() {
             @Override
             public void OnSuccessful(List<ODataRow> listRow) {
@@ -117,7 +120,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
                 }
             }
         };
-        SearchRecordsOnlineUtils searchUtils = new SearchRecordsOnlineUtils(stockQuant, stockquantDomain).setListener(listener);
+        SearchRecordsOnlineUtils searchUtils = new SearchRecordsOnlineUtils(stockQuant, stockQuantDomain).setListener(listener);
         searchUtils.searchRecordsOnServer();
     }
 
@@ -127,7 +130,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
         if (stockQuantRecords == null || stockQuantRecords.size() == 0) {
             alertWarning();
         }
-        records = initInputQty(stockQuant.parseMany2oneRecords(stockQuantRecords, new String[]{"location_id"}, new String[]{"name"}));
+        records = initInputQty(new RecordUtils(stockQuant).parseMany2oneRecords(stockQuantRecords, new String[]{"location_id"}, new String[]{"name"}));
         initForm();
     }
 
@@ -136,6 +139,10 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
                 new String[]{"location_id_name", "qty", "input_qty"}, new int[]{R.id.txt_location, R.id.txt_qty_available, R.id.txt_qty});
         stockQuantList.setAdapter(adapter);
         adapter.setmOnItemClickListener(this);
+        pretreatmentWizardForm.initForm(wizardValues.toDataRow());
+        pretreatmentQty.setEditable(false);
+        remainQty.setEditable(false);
+        refreshQty();
     }
 
     private List<ODataRow> initInputQty(List<ODataRow> rows) {
@@ -268,5 +275,10 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     }
 
     protected void performProcessing() {
+
+    }
+
+    protected void postProcessing() {
+
     }
 }

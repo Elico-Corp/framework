@@ -136,6 +136,7 @@
     <string name="column_packaging_number">Nubmer of Packaging</string>
     <string name="column_repacked_qty">Quantity to be Repacked</string>
     <string name="column_remain_qty">Remaining Quantity</string>
+    <string name="column_is_pretrement">Is pretreatment Location?</string>
     <!--Summaries-->
     <string name="summary_work_online">Start Work Online</string>
     <!--String Arrays-->

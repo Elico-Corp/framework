@@ -32,6 +32,9 @@ public class BaseAbstractListener {
     public void OnSuccessful(String str) {
     }
 
+    public void OnSuccessful(Object obj) {
+    }
+
     public void OnFail(String str) {
 
     }

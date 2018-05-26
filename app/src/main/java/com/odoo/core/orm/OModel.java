@@ -1174,26 +1174,6 @@ public class OModel implements ISyncServiceListener {
         }
     }
 
-    public List<ODataRow> parseMany2oneRecords(List<ODataRow> rows, String[] many2oneFields, String[] many2oneFieldsName) {
-        for (ODataRow row: rows) {
-            for (int i=0; i<many2oneFields.length && i< many2oneFieldsName.length; i++) {
-                if (getColumn(many2oneFields[i]).getRelationType().equals(OColumn.RelationType.ManyToOne)) {
-                    row.put(many2oneFields[i] + "_name", row.getM2ORecord(many2oneFields[i]).browse().getString(many2oneFieldsName[i]));
-                }
-            }
-        }
-        return rows;
-    }
-
-    public ODataRow parseMany2oneRecords(ODataRow row, String[] many2oneFields, String[] many2oneFieldsName) {
-        for (int i = 0; i < many2oneFields.length && i < many2oneFieldsName.length; i++) {
-            if (getColumn(many2oneFields[i]).getRelationType().equals(OColumn.RelationType.ManyToOne)) {
-                row.put(many2oneFields[i] + "_name", row.getM2ORecord(many2oneFields[i]).browse().getString(many2oneFieldsName[i]));
-            }
-        }
-        return row;
-    }
-
     @Override
     public void onSyncStarted() {
         // Will be over ride by extending model

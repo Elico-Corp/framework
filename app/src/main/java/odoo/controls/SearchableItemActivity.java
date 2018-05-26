@@ -35,6 +35,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.google.gson.JsonArray;
 import com.odoo.App;
 import com.odoo.BaseAbstractListener;
 import com.odoo.R;
@@ -48,6 +49,8 @@ import com.odoo.core.support.list.OListAdapter;
 import com.odoo.core.utils.OControls;
 import com.odoo.core.utils.OResource;
 import com.suez.utils.SearchRecordsOnlineUtils;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,9 +125,10 @@ public class SearchableItemActivity extends ActionBarActivity implements
 
                         if (!mCol.getDomains().values().isEmpty()){
                             for (OColumn.ColumnDomain domain: mCol.getDomains().values()) {
-                                liveDomain.add(domain.getColumn(), domain.getOperator(), domain.getValue());
                                 if (domain.getConditionalOperator() != null) {
                                     liveDomain.add(domain.getConditionalOperator());
+                                } else {
+                                    liveDomain.add(domain.getColumn(), domain.getOperator(), domain.getValue());
                                 }
                             }
                         }

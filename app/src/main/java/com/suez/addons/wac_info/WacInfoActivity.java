@@ -25,6 +25,7 @@ import com.suez.addons.models.DeliveryRouteLine;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.WmdsParameterMainComponent;
 import com.suez.addons.pretreatment.PretreatmentActivity;
+import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
 import com.suez.utils.SuezJsonUtils;
 import com.suez.utils.ToastUtil;
@@ -196,7 +197,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
             deliveryRouteLineFormHide.initForm(null);
             return;
         }
-        drlRow = deliveryRouteLine.parseMany2oneRecords(drlRow, new String[]{"address_id", "route_id", "pretreatment_id", "hw_code", "deviation_reasons_id"},
+        drlRow = new RecordUtils(deliveryRouteLine).parseMany2oneRecords(drlRow, new String[]{"address_id", "route_id", "pretreatment_id", "hw_code", "deviation_reasons_id"},
                 new String[]{"name", "name", "name", "name", "name"});
         drlRow.put("address_name_zh", drlRow.getM2ORecord("wac_id").browse().getString("partner_name_cn"));
         deliveryRouteLineForm.initForm(drlRow);
