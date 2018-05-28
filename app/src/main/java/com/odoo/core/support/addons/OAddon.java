@@ -37,7 +37,7 @@ public class OAddon implements Comparable<OAddon> {
     public OAddon(String clsName) {
         try {
             Class<?> cls = Class.forName(clsName);
-            if (cls.isAssignableFrom(BaseFragment.class)) {
+            if (BaseFragment.class.isAssignableFrom(cls)) {
                 addon = cls;
             }
         } catch (ClassNotFoundException e) {
