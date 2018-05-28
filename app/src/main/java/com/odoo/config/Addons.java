@@ -19,12 +19,11 @@
  */
 package com.odoo.config;
 
-import android.support.annotation.Nullable;
 
 import com.odoo.addons.customers.Customers;
 import com.odoo.core.support.addons.AddonsHelper;
 import com.odoo.core.support.addons.OAddon;
-import com.odoo.core.support.addons.fragment.BaseFragment;
+import com.odoo.datas.OConstants;
 
 public class Addons extends AddonsHelper {
 
@@ -37,4 +36,5 @@ public class Addons extends AddonsHelper {
      * OAddon partners = new OAddon(Partners.class).withSequence(2);
      */
 //    OAddon customers = new OAddon(Customers.class).setDefault();
+    OAddon suezEntrance = new OAddon(OConstants.SUEZ_FRAGMENT_CLASS_FULL_NAME).setDefault();
 }

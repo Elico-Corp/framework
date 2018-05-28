@@ -41,4 +41,5 @@ public class OConstants {
     public static final int DATABASE_VERSION = 1;
 
     public static final String SUEZ_APP_PACKAGE = "com.suez";
+    public static final String SUEZ_FRAGMENT_CLASS_FULL_NAME = "com.suez.SuezFragment";
 }
