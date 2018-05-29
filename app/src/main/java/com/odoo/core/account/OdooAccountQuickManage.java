@@ -126,13 +126,10 @@ public class OdooAccountQuickManage extends AppCompatActivity implements View.On
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.cancel:
-                finish();
-                break;
-            case R.id.save_password:
+        if (v.getId() == R.id.cancel) {
+            finish();
+        } else if (v.getId() == R.id.save_password) {
                 savePassword();
-                break;
         }
     }
 

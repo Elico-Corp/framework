@@ -163,25 +163,18 @@ public class CustomerDetails extends OdooCompatActivity
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.full_address:
-                IntentUtils.redirectToMap(this, record.getString("full_address"));
-                break;
-            case R.id.website:
-                IntentUtils.openURLInBrowser(this, record.getString("website"));
-                break;
-            case R.id.email:
-                IntentUtils.requestMessage(this, record.getString("email"));
-                break;
-            case R.id.phone_number:
-                IntentUtils.requestCall(this, record.getString("phone"));
-                break;
-            case R.id.mobile_number:
-                IntentUtils.requestCall(this, record.getString("mobile"));
-                break;
-            case R.id.captureImage:
-                fileManager.requestForFile(OFileManager.RequestType.IMAGE_OR_CAPTURE_IMAGE);
-                break;
+        if (v.getId() == R.id.full_address) {
+            IntentUtils.redirectToMap(this, record.getString("full_address"));
+        } else if (v.getId() == R.id.website) {
+            IntentUtils.openURLInBrowser(this, record.getString("website"));
+        } else if (v.getId() == R.id.email) {
+            IntentUtils.requestMessage(this, record.getString("email"));
+        } else if (v.getId() == R.id.phone_number) {
+            IntentUtils.requestCall(this, record.getString("phone"));
+        } else if (v.getId() == R.id.mobile_number) {
+            IntentUtils.requestCall(this, record.getString("mobile"));
+        } else if (v.getId() == R.id.captureImage) {
+            fileManager.requestForFile(OFileManager.RequestType.IMAGE_OR_CAPTURE_IMAGE);
         }
     }
 
@@ -220,11 +213,9 @@ public class CustomerDetails extends OdooCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            case R.id.menu_customer_save:
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        } else if (item.getItemId() == R.id.menu_customer_save) {
                 OValues values = mForm.getValues();
                 if (values != null) {
                     switch (partnerType) {
@@ -252,43 +243,37 @@ public class CustomerDetails extends OdooCompatActivity
                         }
                     }
                 }
-                break;
-            case R.id.menu_customer_cancel:
-            case R.id.menu_customer_edit:
-                if (hasRecordInExtra()) {
-                    mEditMode = !mEditMode;
-                    setMode(mEditMode);
-                    mForm.setEditable(mEditMode);
-                    mForm.initForm(record);
-                    setCustomerImage();
-                } else {
-                    finish();
-                }
-                break;
-            case R.id.menu_customer_share:
-                ShareUtil.shareContact(this, record, true);
-                break;
-            case R.id.menu_customer_import:
-                ShareUtil.shareContact(this, record, false);
-                break;
-            case R.id.menu_customer_delete:
-                OAlert.showConfirm(this, OResource.string(this,
-                        R.string.confirm_are_you_sure_want_to_delete),
-                        new OAlert.OnAlertConfirmListener() {
-                            @Override
-                            public void onConfirmChoiceSelect(OAlert.ConfirmType type) {
-                                if (type == OAlert.ConfirmType.POSITIVE) {
-                                    // Deleting record and finishing activity if success.
-                                    if (resPartner.delete(record.getInt(OColumn.ROW_ID))) {
-                                        Toast.makeText(CustomerDetails.this, R.string.toast_record_deleted,
-                                                Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
+        } else if (item.getItemId() == R.id.menu_customer_cancel || item.getItemId() == R.id.menu_customer_edit) {
+            if (hasRecordInExtra()) {
+                mEditMode = !mEditMode;
+                setMode(mEditMode);
+                mForm.setEditable(mEditMode);
+                mForm.initForm(record);
+                setCustomerImage();
+            } else {
+                finish();
+            }
+        } else if (item.getItemId() == R.id.menu_customer_share) {
+            ShareUtil.shareContact(this, record, true);
+        } else if (item.getItemId() == R.id.menu_customer_import) {
+            ShareUtil.shareContact(this, record, false);
+        } else if (item.getItemId() == R.id.menu_customer_delete) {
+            OAlert.showConfirm(this, OResource.string(this,
+                    R.string.confirm_are_you_sure_want_to_delete),
+                    new OAlert.OnAlertConfirmListener() {
+                        @Override
+                        public void onConfirmChoiceSelect(OAlert.ConfirmType type) {
+                            if (type == OAlert.ConfirmType.POSITIVE) {
+                                // Deleting record and finishing activity if success.
+                                if (resPartner.delete(record.getInt(OColumn.ROW_ID))) {
+                                    Toast.makeText(CustomerDetails.this, R.string.toast_record_deleted,
+                                            Toast.LENGTH_SHORT).show();
+                                    finish();
                                 }
                             }
-                        });
+                        }
+                    });
 
-                break;
         }
         return super.onOptionsItemSelected(item);
     }

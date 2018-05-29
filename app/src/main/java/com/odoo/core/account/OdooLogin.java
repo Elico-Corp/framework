@@ -117,19 +117,14 @@ public class OdooLogin extends AppCompatActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.txvAddSelfHosted:
-                toggleSelfHostedURL();
-                break;
-            case R.id.btnLogin:
-                loginUser();
-                break;
-            case R.id.forgot_password:
-                IntentUtils.openURLInBrowser(this, OConstants.URL_ODOO_RESET_PASSWORD);
-                break;
-            case R.id.create_account:
+        if (v.getId() == R.id.txvAddSelfHosted) {
+            toggleSelfHostedURL();
+        } else if(v.getId() == R.id.btnLogin) {
+            loginUser();
+        } else if(v.getId() == R.id.forgot_password) {
+            IntentUtils.openURLInBrowser(this, OConstants.URL_ODOO_RESET_PASSWORD);
+        } else if(v.getId() == R.id.create_account) {
                 IntentUtils.openURLInBrowser(this, OConstants.URL_ODOO_SIGN_UP);
-                break;
         }
     }
 

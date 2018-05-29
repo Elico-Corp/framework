@@ -140,16 +140,12 @@ public class MailChatterCompose extends OdooCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnSend:
-                sendMessage();
-                break;
-            case R.id.btnCancel:
-                finish();
-                break;
-            case R.id.btnAttachment:
+        if (v.getId() == R.id.btnSend) {
+            sendMessage();
+        } else if (v.getId() == R.id.btnCancel) {
+            finish();
+        } else if (v.getId() == R.id.btnAttachment) {
                 fileManager.requestForFile(OFileManager.RequestType.ALL_FILE_TYPE);
-                break;
         }
     }
 

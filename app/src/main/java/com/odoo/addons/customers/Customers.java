@@ -256,10 +256,8 @@ public class Customers extends BaseFragment implements ISyncStatusObserverListen
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fabButton:
-                loadActivity(null);
-                break;
+        if (v.getId() == R.id.fabButton) {
+            loadActivity(null);
         }
     }
 
