@@ -16,6 +16,7 @@ import com.odoo.core.support.addons.fragment.BaseFragment;
 import com.odoo.core.support.drawer.ODrawerItem;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezConstants;
+import com.suez.addons.blending.MixBlendingMenusActivity;
 import com.suez.addons.scan.ScanZbarActivity;
 import com.suez.addons.tank_truck.activity.TankTruckActivity;
 import com.suez.addons.models.DeliveryRoute;
@@ -88,7 +89,7 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
     }
 
     //TODO
-    @OnClick({R.id.btnTankTruck, R.id.btnWacInfo})
+    @OnClick({R.id.btnTankTruck, R.id.btnWacInfo, R.id.btnMixBlending})
     public void onClick(View view){
         Intent intent;
         switch (view.getId()){
@@ -99,6 +100,10 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
             case R.id.btnWacInfo:
                 intent = new Intent(getActivity(), ScanZbarActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
+                break;
+            case R.id.btnMixBlending:
+                intent = new Intent(getActivity(), MixBlendingMenusActivity.class);
                 startActivity(intent);
                 break;
         }

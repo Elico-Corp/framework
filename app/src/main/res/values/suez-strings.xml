@@ -6,6 +6,8 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_title_input">Input code or S/N</string>
     <string name="dialog_change_quantity">Change Quantity</string>
+    <string name="dialog_blending">Blending</string>
+    <string name="dialog_blending_finish">Blending &amp; Finish</string>
     <!-- Labels -->
     <string name="label_input_tank_truck">INPUT TANK TRUCK NUMBER</string>
     <string name="suez_label_suez">Suez</string>
@@ -29,6 +31,7 @@
     <string name="label_repacking">Repacking</string>
     <string name="label_direct_burn">Direct Burn</string>
     <string name="label_available_qty">Available Quantity</string>
+    <string name="label_scan">Scan</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">Tank Truck</string>
@@ -46,6 +49,9 @@
     <string name="title_scan_sn">Scan S/N</string>
     <string name="title_suez_scan_wac_list">WAC List</string>
     <string name="title_operations">Operations</string>
+    <string name="title_suez_mix_blending">Mix&amp;Blending</string>
+    <string name="title_suez_mix_blending_new">Create Blending</string>
+    <string name="title_suez_mix_blending_add">Add Blending</string>
 
     <!--Messages-->
     <string name="message_tank_truck_pumping">Tank truck %1$s will be sent to pumping.</string>
@@ -68,7 +74,7 @@
     <string name="toast_db_zero">Database size is 0</string>
     <string name="toast_no_data">No Data</string>
     <string name="toast_no_delivery_route_line">No delivery route line found</string>
-
+    <string name="toast_existing_lot">Lot already existed</string>
 
     <!-- Colums -->
     <string name="column_name">Name</string>
@@ -137,6 +143,9 @@
     <string name="column_repacked_qty">Quantity to be Repacked</string>
     <string name="column_remain_qty">Remaining Quantity</string>
     <string name="column_is_pretrement">Is pretreatment Location?</string>
+    <string name="column_blending_location_id">Blending Location</string>
+    <string name="column_blending_waste_category_id">Blending Waste Category</string>
+    <string name="column_exist_blending_id">Exist Blending</string>
     <!--Summaries-->
     <string name="summary_work_online">Start Work Online</string>
     <!--String Arrays-->

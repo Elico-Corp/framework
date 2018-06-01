@@ -87,7 +87,7 @@ public class PretreatmentActivity extends ProcessingActivity {
             ODataRow prodlot = stockProductionLot.browse(prodlot_id);
             OValues lotValues = prodlot.toValues();
             lotValues.put("product_qty", quantity);
-            lotValues.put("name", ODateUtils.getDate("yyMMdd") + stockProductionLot.count("", null));
+            lotValues.put("name", ODateUtils.getDate("yyMMdd") + stockProductionLot.count("name like ?", new String[]{"1%"}) % 10000);
             int newLotId = stockProductionLot.insert(lotValues);
             for (ODataRow record: records) {
                 // All pretreatment
@@ -100,7 +100,7 @@ public class PretreatmentActivity extends ProcessingActivity {
                     OValues remainValues = new OValues();
                     remainValues.put("lot_id", record.getInt("lot_id"));
                     remainValues.put("location_id", record.getInt("location_id"));
-                    remainValues.put("qty", remainQuantity);
+                    remainValues.put("qty", record.getFloat("qty") - record.getFloat("input_qty"));
                     stockQuant.update(record.getInt("_id"), remainValues);
                     OValues newValues = new OValues();
                     newValues.put("lot_id", record.getInt("lot_id"));

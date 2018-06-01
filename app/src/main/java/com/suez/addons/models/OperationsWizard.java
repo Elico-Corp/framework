@@ -35,6 +35,10 @@ public class OperationsWizard extends OModel {
     OColumn package_mumber = new OColumn(getContext(), R.string.column_packaging_number, OInteger.class).setLocalColumn().setDefaultValue(0);
     OColumn remain_qty = new OColumn(getContext(), R.string.column_remain_qty, OFloat.class).setLocalColumn().setDefaultValue(0);
     OColumn synced = new OColumn("Synced?", OBoolean.class).setDefaultValue(false).setLocalColumn();
+    OColumn new_mix = new OColumn("New Mix?", OBoolean.class).setLocalColumn();
+    OColumn blending_location_id = new OColumn(getContext(), R.string.column_blending_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn();
+    OColumn blending_waste_category_id = new OColumn(getContext(), R.string.column_blending_waste_category_id, BlendingWasteCategory.class, OColumn.RelationType.ManyToOne).setLocalColumn();
+    OColumn exist_blending_id = new OColumn(getContext(), R.string.column_exist_blending_id, StockProductionLot.class, OColumn.RelationType.ManyToOne).setLocalColumn();
 
     public OperationsWizard(Context context, OUser user) {
         super(context, "operations.wizard", user);

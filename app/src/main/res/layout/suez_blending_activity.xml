@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/base_appbar"/>
+
+    <LinearLayout
+        android:id="@+id/blending_quant_lines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:singleLine="false"
+                android:textSize="14sp"
+                android:text="@string/column_prodlot_id"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:singleLine="false"
+            android:textSize="14sp"
+            android:text="@string/column_location_id" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_weight="4"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:singleLine="false"
+                android:text="@string/label_available_qty"
+                android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:singleLine="false"
+            android:textSize="14sp"
+            android:text="@string/column_qty" />
+        </LinearLayout>
+            <com.jcodecraeer.xrecyclerview.XRecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/blending_quant_list"
+                android:scrollbars="vertical"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <RelativeLayout
+            android:id="@+id/pretreatment_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@string/font_light"
+                android:gravity="center"
+                android:text="@string/label_pretreatment"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#aaaaaa"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <odoo.controls.OForm
+                android:id="@+id/blending_wizard_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:background="@color/theme_text_white"
+                android:orientation="vertical"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                app:editableMode="true"
+                app:modelName="operations.wizard">
+
+                <odoo.controls.OField
+                    android:id="@+id/exist_blending"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:controlLabel="@string/column_exist_blending_id"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                <odoo.controls.OField
+                    android:id="@+id/blending_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:fieldName="blending_location_id"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"
+                    app:widgetType="SearchableLive"/>
+
+                <odoo.controls.OField
+                    android:id="@+id/destination_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:fieldName="destination_location_id"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"
+                    app:widgetType="SearchableLive"/>
+
+                <odoo.controls.OField
+                    android:id="@+id/blending_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:fieldName="blending_waste_category_id"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"
+                    app:widgetType="SearchableLive"/>
+
+                <odoo.controls.OField
+                    android:id="@+id/pretreatment_qty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:fieldName="qty"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"
+                    />
+
+                <odoo.controls.OField
+                    android:id="@+id/remain_qty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:fieldName="remain_qty"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"
+                    />
+
+            </odoo.controls.OForm>
+
+
+        </RelativeLayout>
+        </ScrollView>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/suez_home_button"
+            android:padding="@dimen/default_8dp"
+            android:text="@string/label_scan"
+            android:textColor="@android:color/white"/>
+
+        <Button
+            android:id="@+id/btn_blending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_8dp"
+            android:background="@drawable/suez_home_button"
+            android:padding="@dimen/default_8dp"
+            android:text="@string/dialog_blending"
+            android:textColor="@android:color/white"/>
+
+        <Button
+            android:id="@+id/btn_blending_finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_8dp"
+            android:background="@drawable/suez_home_button"
+            android:padding="@dimen/default_8dp"
+            android:text="@string/dialog_blending_finish"
+            android:textColor="@android:color/white"/>
+
+    </LinearLayout>
+</LinearLayout>

@@ -7,6 +7,7 @@ import com.odoo.BuildConfig;
 import com.odoo.R;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.fields.OColumn;
+import com.odoo.core.orm.fields.types.OBoolean;
 import com.odoo.core.orm.fields.types.OFloat;
 import com.odoo.core.orm.fields.types.OVarchar;
 import com.odoo.core.support.OUser;
@@ -24,6 +25,7 @@ public class StockProductionLot extends OModel {
     OColumn product_id = new OColumn(getContext(), R.string.column_product, ProductProduct.class, OColumn.RelationType.ManyToOne);
     OColumn delivery_route_line = new OColumn(getContext(), R.string.column_delivery_route_line, DeliveryRouteLine.class, OColumn.RelationType.ManyToOne);
     OColumn quant_ids = new OColumn(getContext(), R.string.column_quant_ids, StockQuant.class, OColumn.RelationType.OneToMany);
+    OColumn isFinished = new OColumn("Is Finished", OBoolean.class).setDefaultValue(false).setLocalColumn();
 
     public StockProductionLot(Context context, OUser user) {
         super(context, "stock.production.lot", user);

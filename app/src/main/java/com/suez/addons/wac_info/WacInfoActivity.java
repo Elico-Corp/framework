@@ -24,7 +24,9 @@ import com.suez.addons.models.ActualPackaging;
 import com.suez.addons.models.DeliveryRouteLine;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.WmdsParameterMainComponent;
+import com.suez.addons.pretreatment.DirectBurnActivity;
 import com.suez.addons.pretreatment.PretreatmentActivity;
+import com.suez.addons.pretreatment.RepackingActivity;
 import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
 import com.suez.utils.SuezJsonUtils;
@@ -273,6 +275,16 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
                         switch (itemId) {
                             case 0:
                                 intent = new Intent(WacInfoActivity.this, PretreatmentActivity.class);
+                                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                                startActivity(intent);
+                                break;
+                            case 1:
+                                intent = new Intent(WacInfoActivity.this, RepackingActivity.class);
+                                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                                startActivity(intent);
+                                break;
+                            case 2:
+                                intent = new Intent(WacInfoActivity.this, DirectBurnActivity.class);
                                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
                                 startActivity(intent);
                                 break;

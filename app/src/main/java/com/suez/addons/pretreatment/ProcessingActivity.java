@@ -125,7 +125,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     }
 
     protected void initDataOffline() {
-        List<ODataRow> stockQuantRecords = stockQuant.query("select * from stock_quant where lot_id=? and location_id = (select _id from stock_location where usage=?)",
+        List<ODataRow> stockQuantRecords = stockQuant.query("select * from stock_quant where lot_id=? and location_id in (select _id from stock_location where usage=?)",
                 new String[]{String.valueOf(prodlot_id), "internal"});
         if (stockQuantRecords == null || stockQuantRecords.size() == 0) {
             alertWarning();
@@ -145,14 +145,14 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
         refreshQty();
     }
 
-    private List<ODataRow> initInputQty(List<ODataRow> rows) {
+    public static List<ODataRow> initInputQty(List<ODataRow> rows) {
         for (ODataRow row : rows) {
             row.put("input_qty", row.getFloat("qty"));
         }
         return rows;
     }
 
-    private float sumField(List<ODataRow> rows, String field) {
+    public static float sumField(List<ODataRow> rows, String field) {
         float res = 0.00f;
         for (ODataRow row : rows) {
             res += row.getFloat(field);

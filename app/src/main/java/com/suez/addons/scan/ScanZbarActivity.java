@@ -22,6 +22,7 @@ import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezActivity;
 import com.suez.SuezConstants;
+import com.suez.addons.blending.AddBlendingActivity;
 import com.suez.addons.models.ProductWac;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.wac_info.WacInfoDrlLIstActivity;
@@ -49,6 +50,7 @@ public class ScanZbarActivity extends SuezActivity {
     private ProductWac productWac;
     private AlertDialog scanDialog;
     private int prodlotId = 0;
+    private String key;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class ScanZbarActivity extends SuezActivity {
         txtScan.addTextChangedListener(new TextScanClass(R.id.txt_scan));
         stockProductionLot = new StockProductionLot(this, null);
         productWac = new ProductWac(this, null);
+        key = getIntent().getStringExtra(SuezConstants.COMMON_KEY);
     }
 
     @Override
@@ -122,7 +125,7 @@ public class ScanZbarActivity extends SuezActivity {
                             dialog.dismiss();
                         }
                     })
-                    .setMessage(String.format(OResource.string(context, R.string.message_work_mode), app.networkState == true ? OResource.string(context, R.string.label_online) : OResource.string(context, R.string.label_offline)))
+                    .setMessage(String.format(OResource.string(context, R.string.message_work_mode), app.networkState ? OResource.string(context, R.string.label_online) : OResource.string(context, R.string.label_offline)))
                     .create();
             dialog.show();
         }
@@ -140,7 +143,8 @@ public class ScanZbarActivity extends SuezActivity {
                     if (listRow != null && !listRow.isEmpty()) {
                         listRow = SuezJsonUtils.parseRecords(stockProductionLot, listRow);
                         prodlotId = listRow.get(0).getInt("id");
-                        startIntent(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, listRow.get(0).getInt("delivery_route_line"));
+                        key = SuezConstants.WAC_INFO_PRODLOT_KEY;
+                        startIntent(listRow.get(0), listRow.get(0).getInt("delivery_route_line"));
                         scanDialog.dismiss();
                     } else {
                         OdooFields wacFields = new OdooFields(productWac.getColumns());
@@ -151,7 +155,8 @@ public class ScanZbarActivity extends SuezActivity {
                             public void OnSuccessful(List<ODataRow> listRow) {
                                 if (listRow != null && !listRow.isEmpty()) {
                                     listRow = SuezJsonUtils.parseRecords(productWac, listRow);
-                                    startIntent(SuezConstants.WAC_ID_KEY, listRow.get(0).getInt("id"));
+                                    key = SuezConstants.WAC_INFO_KEY;
+                                    startIntent(listRow.get(0), listRow.get(0).getInt("id"));
                                     scanDialog.dismiss();
                                 } else {
                                     alertWarning();
@@ -169,11 +174,13 @@ public class ScanZbarActivity extends SuezActivity {
             List<ODataRow> rows = stockProductionLot.select(null, "name = ?", new String[]{code.toUpperCase()});
             if (!rows.isEmpty()) {
                 prodlotId = rows.get(0).getInt("_id");
-                startIntent(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, rows.get(0).getInt("delivery_route_line"));
+                key = SuezConstants.WAC_INFO_PRODLOT_KEY;
+                startIntent(rows.get(0), rows.get(0).getInt("delivery_route_line"));
             } else {
                 List<ODataRow> wacRows = productWac.select(new String[]{"_id"}, "wac_code = ?", new String[]{code.toUpperCase()});
                 if (!wacRows.isEmpty()) {
-                    startIntent(SuezConstants.WAC_ID_KEY, rows.get(0).getInt("_id"));
+                    key = SuezConstants.WAC_INFO_KEY;
+                    startIntent(rows.get(0), rows.get(0).getInt("_id"));
                 } else {
                     alertWarning();
                 }
@@ -181,20 +188,28 @@ public class ScanZbarActivity extends SuezActivity {
         }
     }
 
-    private void startIntent(String key, int id) {
+    private void startIntent(ODataRow row, int id) {
         Intent intent;
         switch (key) {
-            case SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY:
+            case SuezConstants.WAC_INFO_PRODLOT_KEY:
                 intent = new Intent(this, WacInfoActivity.class);
+                intent.putExtra(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, id);
+                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
                 break;
-            case SuezConstants.WAC_ID_KEY:
+            case SuezConstants.WAC_INFO_KEY:
                 intent = new Intent(this, WacInfoDrlLIstActivity.class);
+                intent.putExtra(SuezConstants.WAC_ID_KEY, id);
                 break;
+            case SuezConstants.CREATE_BLENDING_KEY:
+            case SuezConstants.ADD_BLENDING_KEY:
+                intent = new Intent(this, AddBlendingActivity.class);
+                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
+
             default:
                 intent = new Intent();
         }
         if (prodlotId != 0) {
-            intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
         }
         intent.putExtra(key, id);
         startActivity(intent);
