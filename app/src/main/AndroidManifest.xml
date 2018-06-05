@@ -186,7 +186,22 @@
         <activity android:name="com.suez.addons.wac_info.WacInfoActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="com.suez.addons.pretreatment.PretreatmentActivity"
+        <activity android:name="com.suez.addons.processing.PretreatmentActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.processing.WacMoveActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.processing.RepackingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.processing.DirectBurnActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.blending.AddBlendingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.blending.CreateBlendingActivity"
             android:screenOrientation="portrait"/>
     </application>
 

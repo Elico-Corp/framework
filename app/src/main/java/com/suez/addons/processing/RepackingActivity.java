@@ -1,4 +1,4 @@
-package com.suez.addons.pretreatment;
+package com.suez.addons.processing;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

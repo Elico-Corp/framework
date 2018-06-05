@@ -20,6 +20,13 @@ import java.util.List;
 public class SuezJsonUtils extends JSONUtils {
     private static final String TAG = SuezJsonUtils.class.getSimpleName();
 
+    /**
+     * Format string to json array.
+     * Change the relation fields to jason array with 2 element: id and name.
+     *
+     * @param str the Relation field name read by jsonrpc
+     * @return the json array [id, name]
+     */
     public static JSONArray formatStringToJSON(String str) {
         try {
             if (str == null || str.equals("false")) {
@@ -41,6 +48,14 @@ public class SuezJsonUtils extends JSONUtils {
         }
     }
 
+    /**
+     * Parse float to int for integer fields.
+     * Parse many2one fields, add new field with a name of _name to show many2one field in the view.
+     *
+     * @param model the model of the records
+     * @param rows  the records
+     * @return records with right integer fields and names of man2one fields
+     */
     public static List<ODataRow> parseRecords(OModel model, List<ODataRow> rows) {
         List<ODataRow> res = new ArrayList<>();
         try {

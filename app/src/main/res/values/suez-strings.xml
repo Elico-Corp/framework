@@ -30,6 +30,7 @@
     <string name="label_pretreatment">Pretreatment</string>
     <string name="label_repacking">Repacking</string>
     <string name="label_direct_burn">Direct Burn</string>
+    <string name="label_wac_move">Wac Move</string>
     <string name="label_available_qty">Available Quantity</string>
     <string name="label_scan">Scan</string>
 
@@ -158,8 +159,9 @@
         <item name="en">en</item>
     </string-array>
     <string-array name="operations">
-        <item name='pretreatment'>Pretreatment</item>
-        <item name='repacking'>Repacking</item>
-        <item name='direct_burn'>Direct Burn</item>
+        <item>Pretreatment</item>
+        <item>Repacking</item>
+        <item>Direct Burn</item>
+        <item>Wac Move</item>
     </string-array>
 </resources>

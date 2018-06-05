@@ -32,7 +32,7 @@ public class OperationsWizard extends OModel {
     OColumn qty = new OColumn(getContext(), R.string.column_qty, OFloat.class).setLocalColumn().setDefaultValue(0);
     OColumn repacking_location_id = new OColumn(getContext(), R.string.column_repacking_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().setDefaultValue(false);
     OColumn package_id = new OColumn(getContext(), R.string.column_packaging_id, StockQuantPackage.class, OColumn.RelationType.ManyToOne).setLocalColumn().setDefaultValue(false);
-    OColumn package_mumber = new OColumn(getContext(), R.string.column_packaging_number, OInteger.class).setLocalColumn().setDefaultValue(0);
+    OColumn package_number = new OColumn(getContext(), R.string.column_packaging_number, OInteger.class).setLocalColumn().setDefaultValue(0);
     OColumn remain_qty = new OColumn(getContext(), R.string.column_remain_qty, OFloat.class).setLocalColumn().setDefaultValue(0);
     OColumn synced = new OColumn("Synced?", OBoolean.class).setDefaultValue(false).setLocalColumn();
     OColumn new_mix = new OColumn("New Mix?", OBoolean.class).setLocalColumn();

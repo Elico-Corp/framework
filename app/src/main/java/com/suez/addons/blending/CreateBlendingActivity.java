@@ -30,7 +30,7 @@ import com.suez.addons.adapters.CommonTextAdapter;
 import com.suez.addons.models.OperationsWizard;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
-import com.suez.addons.pretreatment.ProcessingActivity;
+import com.suez.addons.processing.ProcessingActivity;
 import com.suez.addons.scan.ScanZbarActivity;
 import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
@@ -224,7 +224,7 @@ public class CreateBlendingActivity extends SuezActivity implements CommonTextAd
                 OValues values = new OValues();
                 values.put("location_id", blendingLocationId);
                 stockQuant.update(record.getInt("_id"), values);
-            } else { // Part pretreatment
+            } else { // Part processing
                 // Remain
                 OValues remainValues = new OValues();
                 remainValues.put("lot_id", record.getInt("lot_id"));

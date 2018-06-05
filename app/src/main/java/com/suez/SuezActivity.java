@@ -19,6 +19,7 @@ import com.odoo.core.support.OdooCompatActivity;
 import com.odoo.core.support.addons.fragment.IOnSearchViewChangeListener;
 import com.odoo.core.utils.OAppBarUtils;
 import com.odoo.core.utils.OPreferenceManager;
+import com.odoo.core.utils.OResource;
 
 import java.util.Locale;
 
@@ -78,13 +79,7 @@ public class SuezActivity extends OdooCompatActivity {
     }
 
     protected void initToolbar(int id){
-        OAppBarUtils.setAppBar(this, true);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null){
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(id);
-        }
+        initToolbar(OResource.string(this, id));
     }
 
     protected void initToolbar(String title){

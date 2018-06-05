@@ -15,7 +15,6 @@ import java.util.List;
 /**
  * Created by joseph on 18-5-15.
  */
-
 public class CommonTextAdapter extends RecyclerView.Adapter<CommonTextAdapter.CommonTextViewHolder> {
     private List datas;
     private int itemLayout;
@@ -26,6 +25,14 @@ public class CommonTextAdapter extends RecyclerView.Adapter<CommonTextAdapter.Co
     CommonTextViewHolder holder;
 
 
+    /**
+     * Common Text Adapter.
+     *
+     * @param datas      a list of records
+     * @param itemLayout the target layout to bind the adapter
+     * @param fields     the fields to be show in the layout
+     * @param resIds     the resource ids to show the fields
+     */
     public CommonTextAdapter(List datas, int itemLayout, String[] fields, int[] resIds) {
         this.datas = datas;
         this.itemLayout = itemLayout;
@@ -33,6 +40,16 @@ public class CommonTextAdapter extends RecyclerView.Adapter<CommonTextAdapter.Co
         this.resIds = resIds;
     }
 
+
+    /**
+     * Common Text Adapter.
+     *
+     * @param datas      a list of records
+     * @param itemLayout the item layout
+     * @param fields     the fields
+     * @param resIds     the res ids
+     * @param maps       the maps to specify the field and the value
+     */
     public CommonTextAdapter(List datas, int itemLayout, String[] fields, int[] resIds, List<HashMap<String, Object>> maps) {
         this(datas, itemLayout, fields, resIds);
         this.specify = maps;

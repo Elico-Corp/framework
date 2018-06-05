@@ -51,6 +51,7 @@ import com.odoo.core.utils.OResource;
 import com.odoo.core.utils.OdooRecordUtils;
 import com.odoo.core.utils.logger.OLog;
 import com.odoo.datas.OConstants;
+import com.suez.utils.SuezSyncUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,6 +144,7 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.v(TAG, "Sync for (" + model.getModelName() + ") Started at " + ODateUtils.getDate());
         model.onSyncStarted();
         try {
+            String last_sync_date = preferenceManager.getString("last_sync_date", "");
             ODomain domain = new ODomain();
             domain.append(model.defaultDomain());
             if (domain_filter != null) {
@@ -170,7 +172,6 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
                 // Model write date domain filters
                 if (model.checkForWriteDate() && !model.isEmptyTable() && createRelationRecords) {
-                    String last_sync_date = model.getLastSyncDateTime();
                     if (last_sync_date != null) {
                         domain.add("write_date", ">", last_sync_date);
                     }
@@ -228,6 +229,8 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
                 IrModel irModel = new IrModel(mContext, user);
                 irModel.setLastSyncDateTimeToNow(model);
             }
+            SuezSyncUtils syncUtils = new SuezSyncUtils(mContext, OUser.current(mContext), last_sync_date);
+            syncUtils.sync();
             model.onSyncFinished();
         } catch (Exception e) {
             e.printStackTrace();

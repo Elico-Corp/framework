@@ -1,4 +1,4 @@
-package com.suez.addons.pretreatment;
+package com.suez.addons.processing;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,7 +7,6 @@ import android.view.View;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
-import com.suez.SuezActivity;
 import com.suez.SuezConstants;
 import com.suez.utils.RecordUtils;
 

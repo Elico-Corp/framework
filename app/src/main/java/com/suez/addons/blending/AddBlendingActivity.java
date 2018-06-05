@@ -8,15 +8,11 @@ import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.odoo.BaseAbstractListener;
@@ -32,7 +28,7 @@ import com.suez.addons.models.OperationsWizard;
 import com.suez.addons.models.StockLocation;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
-import com.suez.addons.pretreatment.ProcessingActivity;
+import com.suez.addons.processing.ProcessingActivity;
 import com.suez.addons.scan.ScanZbarActivity;
 import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
@@ -169,7 +165,7 @@ public class AddBlendingActivity extends SuezActivity implements CommonTextAdapt
                     OValues values = new OValues();
                     values.put("location_id", blendingLocationId);
                     stockQuant.update(record.getInt("_id"), values);
-                } else { // Part pretreatment
+                } else { // Part processing
                     // Remain
                     OValues remainValues = new OValues();
                     remainValues.put("lot_id", record.getInt("lot_id"));

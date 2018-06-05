@@ -1,12 +1,6 @@
 package com.suez.utils;
 
-import android.app.DownloadManager;
-
-import com.odoo.SettingsActivity;
-import com.odoo.core.orm.OSQLite;
-import com.odoo.core.utils.OResource;
 import com.odoo.datas.OConstants;
-import com.suez.SuezSettings;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -26,8 +19,8 @@ import javax.net.ssl.X509TrustManager;
  * Created by joseph on 18-5-4.
  */
 
-public class DownloadUtil {
-    private static DownloadUtil downloadUtil;
+public class DownloadUtils {
+    private static DownloadUtils downloadUtil;
     final TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
@@ -46,9 +39,9 @@ public class DownloadUtil {
     }};
     private SSLContext sslContext;
 
-    public static DownloadUtil get() {
+    public static DownloadUtils get() {
         if (downloadUtil == null) {
-            downloadUtil = new DownloadUtil();
+            downloadUtil = new DownloadUtils();
         }
         return downloadUtil;
     }

@@ -1,4 +1,4 @@
-package com.suez.offlinelayer;
+package com.suez.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -21,8 +21,6 @@ import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezConstants;
 import com.suez.addons.models.DeliveryRoute;
-import com.suez.utils.DownloadUtil;
-import com.suez.utils.LogUtils;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -54,12 +52,6 @@ public class OfflineDBUtil {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            if (!checkUrl(offline_url)) {
-//                return;
-//            }
-//            if (!checkUrl(incr_url)){
-//                return;
-//            }
             progressDialog.setTitle(R.string.title_progress_downloading);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             progressDialog.setMessage(OResource.string(mContext, R.string.message_progress_downloading));
@@ -89,7 +81,7 @@ public class OfflineDBUtil {
                 return null;
             }
 
-            DownloadUtil.get().downloadDB(incrUrl, incrPath, new DownloadUtil.OnDownloadListener() {
+            DownloadUtils.get().downloadDB(incrUrl, incrPath, new DownloadUtils.OnDownloadListener() {
                 @Override
                 public void onDownloadSuccess(Long size) {
                     Log.v(TAG, "Download incremental DB success");
@@ -116,7 +108,7 @@ public class OfflineDBUtil {
                     }
                 }
             });
-            String offline_version = DownloadUtil.get().downloadDB(offlineUrl, offlineVersion, offlinePath, new DownloadUtil.OnDownloadListener() {
+            String offline_version = DownloadUtils.get().downloadDB(offlineUrl, offlineVersion, offlinePath, new DownloadUtils.OnDownloadListener() {
                 @Override
                 public void onDownloadSuccess(Long size) {
                     Log.v(TAG, "Download Offline Success");

@@ -69,7 +69,7 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
 
     @Override
     // FIXME
-    public Class<DeliveryRoute> database(){
+    public Class<?> database(){
         return DeliveryRoute.class;
     }
 

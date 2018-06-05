@@ -1,4 +1,4 @@
-package com.suez.addons.pretreatment;
+package com.suez.addons.processing;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.odoo.BaseAbstractListener;
@@ -39,6 +40,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import odoo.controls.OField;
 import odoo.controls.OForm;
+
+import static com.suez.utils.RecordUtils.sumField;
 
 /**
  * Created by joseph on 18-5-17.
@@ -77,8 +80,15 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     protected CommonTextAdapter adapter;
     protected List<ODataRow> records;
     protected OValues wizardValues;
+    protected ODataRow lot;
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
+    @BindView(R.id.prodlot_form)
+    OForm prodlotForm;
+    @BindView(R.id.relayoutList)
+    RelativeLayout relayoutList;
+    @BindView(R.id.btn_cancel)
+    Button btnCancel;
 
 
     @Override
@@ -114,7 +124,18 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
             public void OnSuccessful(List<ODataRow> listRow) {
                 if (listRow != null && listRow.size() > 0) {
                     records = initInputQty(SuezJsonUtils.parseRecords(stockQuant, listRow));
-                    initForm();
+                    ODomain lotDomain = new ODomain();
+                    lotDomain.add("id", "=", prodlot_id);
+                    BaseAbstractListener lotListener = new BaseAbstractListener() {
+                        @Override
+                        public void OnSuccessful(List<ODataRow> listRow) {
+                            lot = SuezJsonUtils.parseRecords(stockProductionLot, listRow).get(0);
+                            initForm();
+                        }
+                    };
+                    SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(stockProductionLot, lotDomain)
+                            .setListener(lotListener);
+                    utils.searchRecordsOnServer();
                 } else {
                     alertWarning();
                 }
@@ -131,6 +152,9 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
             alertWarning();
         }
         records = initInputQty(new RecordUtils(stockQuant).parseMany2oneRecords(stockQuantRecords, new String[]{"location_id"}, new String[]{"name"}));
+        lot = new RecordUtils(stockProductionLot).parseMany2oneRecords(stockProductionLot.browse(prodlot_id),
+                new String[]{"product_id", "delivery_route_line", "delivery_route", "customer_id", "pretreatment_id"},
+                new String[]{"name", "sequence", "name", "name", "name"});
         initForm();
     }
 
@@ -143,6 +167,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
         pretreatmentQty.setEditable(false);
         remainQty.setEditable(false);
         refreshQty();
+        prodlotForm.initForm(lot);
     }
 
     public static List<ODataRow> initInputQty(List<ODataRow> rows) {
@@ -150,14 +175,6 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
             row.put("input_qty", row.getFloat("qty"));
         }
         return rows;
-    }
-
-    public static float sumField(List<ODataRow> rows, String field) {
-        float res = 0.00f;
-        for (ODataRow row : rows) {
-            res += row.getFloat(field);
-        }
-        return res;
     }
 
     private void alertWarning() {
@@ -269,15 +286,24 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
         }
     }
 
+    /**
+     * Refresh qty according after the input quantity changed.
+     */
     protected void refreshQty() {
         pretreatmentQty.setValue(sumField(records, "input_qty"));
         remainQty.setValue(sumField(records, "qty") - sumField(records, "input_qty"));
     }
 
+    /**
+     * Processing actions, to be inherited in child class.
+     */
     protected void performProcessing() {
 
     }
 
+    /**
+     * Actions after processing, to be inherited in child class.
+     */
     protected void postProcessing() {
 
     }

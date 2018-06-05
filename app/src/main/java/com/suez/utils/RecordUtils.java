@@ -55,6 +55,22 @@ public class RecordUtils {
         return getArrayString(objs, ',');
     }
 
+    public static float sumField(List<ODataRow> rows, String field) {
+        float res = 0.00f;
+        for (ODataRow row : rows) {
+            res += row.getFloat(field);
+        }
+        return res;
+    }
+
+    /**
+     * Parse many2one records. Add field named with many2one field + `_name` to show many2one fields in the view
+     *
+     * @param rows               the records
+     * @param many2oneFields     the many2one fields to be parsed
+     * @param many2oneFieldsName the name field of the many2one fields
+     * @return the records with many2one field names
+     */
     public List<ODataRow> parseMany2oneRecords(List<ODataRow> rows, String[] many2oneFields, String[] many2oneFieldsName) {
         for (ODataRow row: rows) {
             for (int i=0; i<many2oneFields.length && i< many2oneFieldsName.length; i++) {

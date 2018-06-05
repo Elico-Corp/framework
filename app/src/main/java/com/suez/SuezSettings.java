@@ -3,7 +3,6 @@ package com.suez;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,7 +12,6 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.SwitchPreference;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.odoo.App;
@@ -27,12 +25,9 @@ import com.odoo.core.support.sync.SyncUtils;
 import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
 import com.suez.addons.models.DeliveryRoute;
-import com.suez.offlinelayer.OfflineDBUtil;
-import com.suez.utils.DownloadUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.HashMap;
 
 /**
  * Created by joseph on 18-5-3.
@@ -217,7 +212,7 @@ public class SuezSettings extends BaseSettings {
 //
 //            @Override
 //            protected Void doInBackground(Void... params) {
-//                DownloadUtil.get().downloadDB(incr_url, incrSqlite, new DownloadUtil.OnDownloadListener() {
+//                DownloadUtils.get().downloadDB(incr_url, incrSqlite, new DownloadUtils.OnDownloadListener() {
 //                    @Override
 //                    public void onDownloadSuccess(Long size) {
 //                        Log.v(TAG, "Download incremental DB success");
@@ -242,7 +237,7 @@ public class SuezSettings extends BaseSettings {
 //                        }
 //                    }
 //                });
-//                String offline_version = DownloadUtil.get().downloadDB(offline_url, version.get(SuezConstants.OFFLINE_DB_VERSION_KEY), offlineSqlite, new DownloadUtil.OnDownloadListener() {
+//                String offline_version = DownloadUtils.get().downloadDB(offline_url, version.get(SuezConstants.OFFLINE_DB_VERSION_KEY), offlineSqlite, new DownloadUtils.OnDownloadListener() {
 //                    @Override
 //                    public void onDownloadSuccess(Long size) {
 //                        Log.v(TAG, "Download Offline Success");
