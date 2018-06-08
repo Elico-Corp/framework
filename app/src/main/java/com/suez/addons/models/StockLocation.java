@@ -19,7 +19,9 @@ public class StockLocation extends OModel {
     OColumn name = new OColumn(getContext(), R.string.column_name, OVarchar.class).setSize(64);
     OColumn usage = new OColumn(getContext(), R.string.column_location_usage, OVarchar.class);
     OColumn is_int = new OColumn(getContext(), R.string.column_is_int_location, OBoolean.class);
-    OColumn is_pretreatment = new OColumn(getContext(), R.string.column_is_pretrement, OBoolean.class);
+    OColumn is_pretreatment = new OColumn(getContext(), R.string.column_is_pretreatment, OBoolean.class);
+    OColumn is_repacking = new OColumn(getContext(), R.string.column_is_repacking, OBoolean.class);
+    OColumn is_blending = new OColumn(getContext(), R.string.column_is_blending, OBoolean.class);
 
     public StockLocation(Context context, OUser user) {
         super(context, "stock.location", user);

@@ -23,8 +23,11 @@ import com.odoo.core.utils.OResource;
 import com.suez.SuezActivity;
 import com.suez.SuezConstants;
 import com.suez.addons.blending.AddBlendingActivity;
+import com.suez.addons.blending.CreateBlendingActivity;
 import com.suez.addons.models.ProductWac;
 import com.suez.addons.models.StockProductionLot;
+import com.suez.addons.processing.RepackingActivity;
+import com.suez.addons.processing.WacMoveActivity;
 import com.suez.addons.wac_info.WacInfoDrlLIstActivity;
 import com.suez.addons.wac_info.WacInfoActivity;
 import com.suez.utils.SearchRecordsOnlineUtils;
@@ -94,6 +97,7 @@ public class ScanZbarActivity extends SuezActivity {
                 final EditText input = new EditText(this);
                 input.setSingleLine();
                 input.setLayoutParams(params);
+                input.addTextChangedListener(new TextScanClass(R.id.menu_scan_input_code));
                 layout.addView(input);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.dialog_title_input);
@@ -109,6 +113,7 @@ public class ScanZbarActivity extends SuezActivity {
                 });
                 scanDialog = builder.create();
                 scanDialog.show();
+                scanDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -143,10 +148,9 @@ public class ScanZbarActivity extends SuezActivity {
                     if (listRow != null && !listRow.isEmpty()) {
                         listRow = SuezJsonUtils.parseRecords(stockProductionLot, listRow);
                         prodlotId = listRow.get(0).getInt("id");
-                        key = SuezConstants.WAC_INFO_PRODLOT_KEY;
                         startIntent(listRow.get(0), listRow.get(0).getInt("delivery_route_line"));
                         scanDialog.dismiss();
-                    } else {
+                    } else if (key.equals(SuezConstants.WAC_INFO_KEY)){
                         OdooFields wacFields = new OdooFields(productWac.getColumns());
                         ODomain wacDomain = new ODomain();
                         wacDomain.add("wac_code", "=", code.toUpperCase());
@@ -155,16 +159,18 @@ public class ScanZbarActivity extends SuezActivity {
                             public void OnSuccessful(List<ODataRow> listRow) {
                                 if (listRow != null && !listRow.isEmpty()) {
                                     listRow = SuezJsonUtils.parseRecords(productWac, listRow);
-                                    key = SuezConstants.WAC_INFO_KEY;
+                                    key = SuezConstants.WAC_INFO_WAC_KEY;
                                     startIntent(listRow.get(0), listRow.get(0).getInt("id"));
                                     scanDialog.dismiss();
                                 } else {
-                                    alertWarning();
+                                    alertWarning(String.format(OResource.string(ScanZbarActivity.this, R.string.message_no_wac_code), code));
                                 }
                             }
                         };
                         SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(productWac, wacFields, wacDomain).setListener(wacListener);
                         utils.searchRecordsOnServer();
+                    } else {
+                        alertWarning(String.format(OResource.string(ScanZbarActivity.this, R.string.message_no_wac_code), code));
                     }
                 }
             };
@@ -174,16 +180,17 @@ public class ScanZbarActivity extends SuezActivity {
             List<ODataRow> rows = stockProductionLot.select(null, "name = ?", new String[]{code.toUpperCase()});
             if (!rows.isEmpty()) {
                 prodlotId = rows.get(0).getInt("_id");
-                key = SuezConstants.WAC_INFO_PRODLOT_KEY;
                 startIntent(rows.get(0), rows.get(0).getInt("delivery_route_line"));
-            } else {
+            } else if (key.equals(SuezConstants.WAC_INFO_KEY)){
                 List<ODataRow> wacRows = productWac.select(new String[]{"_id"}, "wac_code = ?", new String[]{code.toUpperCase()});
                 if (!wacRows.isEmpty()) {
-                    key = SuezConstants.WAC_INFO_KEY;
+                    key = SuezConstants.WAC_INFO_WAC_KEY;
                     startIntent(rows.get(0), rows.get(0).getInt("_id"));
                 } else {
-                    alertWarning();
+                    alertWarning(String.format(OResource.string(this, R.string.message_no_wac_code), code));
                 }
+            } else {
+                alertWarning(String.format(OResource.string(this, R.string.message_no_wac_code), code));
             }
         }
     }
@@ -191,43 +198,74 @@ public class ScanZbarActivity extends SuezActivity {
     private void startIntent(ODataRow row, int id) {
         Intent intent;
         switch (key) {
-            case SuezConstants.WAC_INFO_PRODLOT_KEY:
+            case SuezConstants.WAC_INFO_KEY:
                 intent = new Intent(this, WacInfoActivity.class);
                 intent.putExtra(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, id);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                startActivity(intent);
                 break;
-            case SuezConstants.WAC_INFO_KEY:
+            case SuezConstants.WAC_INFO_WAC_KEY:
                 intent = new Intent(this, WacInfoDrlLIstActivity.class);
                 intent.putExtra(SuezConstants.WAC_ID_KEY, id);
+                startActivity(intent);
                 break;
             case SuezConstants.CREATE_BLENDING_KEY:
+                intent = new Intent(this, CreateBlendingActivity.class);
+                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
+                startActivity(intent);
+                break;
             case SuezConstants.ADD_BLENDING_KEY:
+                if (!code.startsWith("B")) {
+                    alertWarning(String.format(OResource.string(this, R.string.message_not_blending_lot), code));
+                    break;
+                }
+                // TODO: 18-6-8 field not added in odoo.
+//                if (row.getBoolean("is_finished")) {
+//                    alertWarning(String.format(OResource.string(this, R.string.message_is_finished), code));
+//                    break;
+//                }
                 intent = new Intent(this, AddBlendingActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
                 intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
-
-            default:
+                startActivity(intent);
+                break;
+            case SuezConstants.WAC_MOVE_KEY:
+                intent = new Intent(this, WacMoveActivity.class);
+                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
+                startActivity(intent);
+                break;
+            case SuezConstants.SCAN_BLENDING_KEY:
                 intent = new Intent();
+                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
+                setResult(RESULT_OK, intent);
+                finish();
+                break;
+            case SuezConstants.REPACKING_KEY:
+                intent = new Intent(this, RepackingActivity.class);
+                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
+                startActivity(intent);
+                break;
         }
-        if (prodlotId != 0) {
-        }
-        intent.putExtra(key, id);
-        startActivity(intent);
     }
 
-    private void alertWarning() {
+    private void alertWarning(String message) {
         if (scanDialog != null) {
             scanDialog.dismiss();
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_title_warning);
-        builder.setMessage(String.format(OResource.string(this, R.string.message_no_wac_code), code));
+        builder.setMessage(message);
         builder.setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 code = null;
                 txtScan.setText(null);
                 txtScan.setFocusable(true);
+                dialog.dismiss();
             }
         });
         AlertDialog warningDialog = builder.create();

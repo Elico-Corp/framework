@@ -45,6 +45,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OM2ORecord;
 import com.odoo.core.orm.OModel;
@@ -52,6 +53,7 @@ import com.odoo.core.orm.OValues;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.orm.fields.types.OSelection;
 import com.odoo.core.utils.OControls;
+import com.odoo.core.utils.OResource;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -411,7 +413,7 @@ public class OSelectionField extends LinearLayout implements IOControlData,
                         row = getRecordData(row_id);
                     } else {
                         row = new ODataRow();
-                        row.put(mModel.getDefaultNameColumn(), "No " + mCol.getLabel() + " selected");
+                        row.put(mModel.getDefaultNameColumn(), String.format(OResource.string(mContext, R.string.label_select_item), mCol.getLabel()));
                     }
                 }
             }

@@ -9,6 +9,7 @@ import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
 import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.utils.ODateUtils;
+import com.odoo.core.utils.OResource;
 import com.suez.SuezConstants;
 import com.suez.utils.CallMethodsOnlineUtils;
 import com.suez.utils.RecordUtils;

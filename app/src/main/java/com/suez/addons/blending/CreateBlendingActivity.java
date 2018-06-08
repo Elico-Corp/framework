@@ -50,60 +50,11 @@ import odoo.controls.OForm;
  * Created by joseph on 18-5-31.
  */
 
-public class CreateBlendingActivity extends SuezActivity implements CommonTextAdapter.OnItemClickListener {
-
-    @BindView(R.id.blending_quant_list)
-    XRecyclerView blendingQuantList;
-    @BindView(R.id.blending_quant_lines)
-    LinearLayout blendingQuantLines;
-    @BindView(R.id.title)
-    TextView title;
-    @BindView(R.id.pretreatment_background)
-    RelativeLayout pretreatmentBackground;
-    @BindView(R.id.exist_blending)
-    OField existBlending;
-    @BindView(R.id.blending_location)
-    OField blendingLocation;
-    @BindView(R.id.destination_location)
-    OField destinationLocation;
-    @BindView(R.id.blending_category)
-    OField blendingCategory;
-    @BindView(R.id.pretreatment_qty)
-    OField pretreatmentQty;
-    @BindView(R.id.remain_qty)
-    OField remainQty;
-    @BindView(R.id.blending_wizard_form)
-    OForm blendingWizardForm;
-    @BindView(R.id.btn_scan)
-    Button btnScan;
-    @BindView(R.id.btn_blending)
-    Button btnBlending;
-    @BindView(R.id.btn_blending_finish)
-    Button btnBlendingFinish;
-
-    private int prodlotId;
-    private StockProductionLot stockProductionLot;
-    private StockQuant stockQuant;
-    private OperationsWizard wizard;
-    private List<ODataRow> records;
-    private List<Integer> lotIds;
-    private CommonTextAdapter adapter;
-    private OValues wizardValues;
-    private int clickPosition;
+public class CreateBlendingActivity extends BlendingActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.suez_blending_activity);
-        ButterKnife.bind(this);
-        initToolbar(R.string.title_suez_mix_blending);
-        prodlotId = getIntent().getIntExtra(SuezConstants.PRODLOT_ID_KEY, 0);
-        stockProductionLot = new StockProductionLot(this, null);
-        stockQuant = new StockQuant(this, null);
-        wizard = new OperationsWizard(this, null);
-        records = new ArrayList<>();
-        lotIds = new ArrayList<>();
-        lotIds.add(prodlotId);
         initView();
         if (isNetwork) {
             initDataOnline();
@@ -141,82 +92,26 @@ public class CreateBlendingActivity extends SuezActivity implements CommonTextAd
         initForm();
     }
 
-    private void initForm() {
-        adapter = new CommonTextAdapter(records, R.layout.suez_blending_quant_layout,
-                new String[]{"lot_id_name", "location_id_name", "qty", "input_qty"},
-                new int[]{R.id.txt_lot, R.id.txt_source_location, R.id.txt_blending_qty_available, R.id.txt_blending_qty});
-        adapter.setmOnItemClickListener(this);
-        blendingQuantList.setAdapter(adapter);
+    @Override
+    protected void initForm() {
         wizardValues = new OValues();
         wizardValues.put("blending_location_id", false);
         wizardValues.put("destination_location_id", false);
         wizardValues.put("blending_waste_category_id", false);
         wizardValues.put("action", SuezConstants.CREATE_BLENDING_KEY);
-        blendingWizardForm.initForm(wizardValues.toDataRow());
-    }
-
-    @OnClick({R.id.btn_scan, R.id.btn_blending, R.id.btn_blending_finish})
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_scan:
-                Intent intent = new Intent(this, ScanZbarActivity.class);
-                intent.putExtra(SuezConstants.COMMON_KEY, SuezConstants.SCAN_BLENDING_KEY);
-                startActivityForResult(intent, 1);
-                break;
-            case R.id.btn_blending:
-                blending();
-                break;
-            case R.id.btn_blending_finish:
-                blendingFinish();
-                break;
-        }
+        super.initForm();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        int resLotId = data.getIntExtra(SuezConstants.PRODLOT_ID_KEY, 0);
-        if (resultCode == RESULT_OK) {
-            if (lotIds.contains(resLotId)) {
-                ToastUtil.toastShow(R.string.toast_existing_lot, this);
-            } else if (resLotId != 0){
-                lotIds.add(resLotId);
-                addQuants(resLotId);
-            }
-        }
-    }
-
-    private void addQuants(int lotId) {
-        if (isNetwork) {
-            ODomain domain = new ODomain();
-            domain.add("lot_id", "=", lotId);
-            domain.add("location_id.usage", "=", "internal");
-            BaseAbstractListener listener = new BaseAbstractListener(){
-                @Override
-                public void OnSuccessful(List<ODataRow> listRow) {
-                    records.addAll(ProcessingActivity.initInputQty(SuezJsonUtils.parseRecords(stockQuant, listRow)));
-                    adapter.notifyDataSetChanged();
-                }
-            };
-            SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(stockQuant, domain).setListener(listener);
-            utils.searchRecordsOnServer();
-        } else {
-            List<ODataRow> newQuantRows = stockQuant.select(null, "lot_id = ? and location_id in (select _id from stock_location where usage = ?",
-                    new String[]{String.valueOf(lotId), "internal"});
-            records.addAll(ProcessingActivity.initInputQty(new RecordUtils(stockQuant).parseMany2oneRecords(newQuantRows, new String[]{"lot_id", "location_id"},
-                    new String[]{"name", "name"})));
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    private int blending() {
+    protected int blending(boolean finish) {
         int blendingLocationId = Integer.parseInt(blendingLocation.getValue().toString());
         int destinationLocationId = Integer.parseInt(destinationLocation.getValue().toString());
         int blendingWasteCategoryId = Integer.parseInt(blendingCategory.getValue().toString());
 
         OValues lotValues = new OValues();
         lotValues.put("name", "B" + ODateUtils.getDate("yyMMdd") + stockProductionLot.count("name like ?", new String[]{"B%"}) % 1000);
-        lotValues.put("product_qty", ProcessingActivity.sumField(records, "input_qty"));
+        lotValues.put("product_qty", RecordUtils.sumField(records, "input_qty"));
+        lotValues.put("is_finished", finish);
         int newLotId = stockProductionLot.insert(lotValues);
 
         for (ODataRow record: records) {
@@ -249,6 +144,7 @@ public class CreateBlendingActivity extends SuezActivity implements CommonTextAd
             wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
             wizardValues.put("blending_location_id", blendingLocationId);
             wizardValues.put("destination_location_id", destinationLocationId);
+            wizardValues.put("blending_waste_category_id", blendingWasteCategoryId);
             wizardValues.put("new_prodlot_id", newLotId);
 
             wizard.insert(wizardValues);
@@ -256,12 +152,6 @@ public class CreateBlendingActivity extends SuezActivity implements CommonTextAd
         return newLotId;
     }
 
-    private void blendingFinish() {
-        int lot_id = blending();
-        OValues values = new OValues();
-        values.put("is_finished", true);
-        stockProductionLot.update(lot_id, values);
-    }
 
 
     @Override

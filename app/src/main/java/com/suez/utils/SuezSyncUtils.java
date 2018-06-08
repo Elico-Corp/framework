@@ -2,17 +2,13 @@ package com.suez.utils;
 
 import android.content.Context;
 
-import com.google.gson.internal.LinkedTreeMap;
 import com.odoo.BaseAbstractListener;
 import com.odoo.core.orm.ODataRow;
-import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.OValues;
 import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
-import com.odoo.core.utils.OPreferenceManager;
 import com.suez.SuezConstants;
-import com.suez.addons.models.OfflineAction;
 import com.suez.addons.models.OperationsWizard;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
@@ -46,8 +42,8 @@ public class SuezSyncUtils {
 
     public void sync() {
         // Get records from the wizard model
-        records = wizard.select(null, "_create_date > ? and synced = ?",
-                new String[] {syncDate, "false"}, "_create_date desc");
+        records = wizard.select(null, "create_date > ? and synced = ?",
+                new String[] {syncDate, "false"}, "create_date desc");
         for (ODataRow record: records) {
             final String[] quantLineIds = record.getString("quant_line_ids").split(",");
             String[] quantLineQty = record.getString("quant_line_qty").split(",");
@@ -55,7 +51,7 @@ public class SuezSyncUtils {
             int lotId = record.getM2ORecord("prodlot_id").browse().getInt("id");
             final int newLotId = record.getM2ORecord("new_prodlot_id").getId();
             Float qty = record.getFloat("qty");
-            String datetime = record.getString("_create_date");
+            String datetime = record.getString("create_date");
             HashMap<String, Object> map = new HashMap<>();
             int pretreatmentLocationId;
             int destinationLocationId;
@@ -188,7 +184,7 @@ public class SuezSyncUtils {
                             quantValues.put("id", (int) result.getMap("result").getArray("quant_id").get(i));
                             stockQuant.update(Integer.parseInt(quantLineIds[i]), quantValues);
                         }
-                        // Lot id
+                        // Lot 
                         OValues lotValues = new OValues();
                         lotValues.put("id", Integer.parseInt(result.getMap("result").getString("lot_id")));
                         stockProductionLot.update(newLotId, lotValues);
@@ -198,4 +194,5 @@ public class SuezSyncUtils {
             syncUtils.callMethodOnServer();
         }
     }
+
 }

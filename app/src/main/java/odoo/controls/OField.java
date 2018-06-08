@@ -49,6 +49,7 @@ import com.odoo.core.orm.fields.types.OSelection;
 import com.odoo.core.orm.fields.types.OText;
 import com.odoo.core.orm.fields.types.OTimestamp;
 import com.odoo.core.orm.fields.types.OVarchar;
+import com.odoo.core.utils.OResource;
 
 public class OField extends LinearLayout implements IOControlData.ValueUpdateListener {
     public static final String TAG = OField.class.getSimpleName();
@@ -259,6 +260,10 @@ public class OField extends LinearLayout implements IOControlData.ValueUpdateLis
             case ManyToOne:
             case Selection:
                 controlView = initSelectionWidget();
+                if (controlView != null) {
+                    controlView.setBackgroundColor(OResource.color(mContext, R.color.suez_edit_back));
+                    controlView.setPadding(15, 10, 10, 10);
+                }
                 break;
             case Date:
             case Time:

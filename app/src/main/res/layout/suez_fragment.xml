@@ -20,15 +20,15 @@
             android:text="@string/label_wac_info"
             android:textColor="@android:color/white"/>
 
-        <!--<Button-->
-            <!--android:id="@+id/btnMoveWac"-->
-            <!--android:layout_width="120dp"-->
-            <!--android:layout_height="70dp"-->
-            <!--android:layout_marginLeft="15dp"-->
-            <!--android:background="@drawable/suez_home_button"-->
-            <!--android:gravity="center"-->
-            <!--android:text="@string/title_suez_movewac"-->
-            <!--android:textColor="@android:color/white"/>-->
+        <Button
+            android:id="@+id/btnMoveWac"
+            android:layout_width="120dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/suez_home_button"
+            android:gravity="center"
+            android:text="@string/label_wac_move"
+            android:textColor="@android:color/white"/>
     </LinearLayout>
 
     <LinearLayout
@@ -38,14 +38,14 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <!--<Button-->
-            <!--android:id="@+id/btnRepackaging"-->
-            <!--android:layout_width="120dp"-->
-            <!--android:layout_height="70dp"-->
-            <!--android:background="@drawable/suez_home_button"-->
-            <!--android:gravity="center"-->
-            <!--android:text="@string/title_suez_repackage"-->
-            <!--android:textColor="@android:color/white"/>-->
+        <Button
+            android:id="@+id/btnRepackaging"
+            android:layout_width="120dp"
+            android:layout_height="70dp"
+            android:background="@drawable/suez_home_button"
+            android:gravity="center"
+            android:text="@string/label_repacking"
+            android:textColor="@android:color/white"/>
 
         <Button
             android:id="@+id/btnTankTruck"

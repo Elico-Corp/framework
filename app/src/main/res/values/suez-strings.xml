@@ -33,6 +33,7 @@
     <string name="label_wac_move">Wac Move</string>
     <string name="label_available_qty">Available Quantity</string>
     <string name="label_scan">Scan</string>
+    <string name="label_select_item">Please Select %s</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">Tank Truck</string>
@@ -53,6 +54,7 @@
     <string name="title_suez_mix_blending">Mix&amp;Blending</string>
     <string name="title_suez_mix_blending_new">Create Blending</string>
     <string name="title_suez_mix_blending_add">Add Blending</string>
+    <string name="title_not_blending_lot">Wrong Blending Lot</string>
 
     <!--Messages-->
     <string name="message_tank_truck_pumping">Tank truck %1$s will be sent to pumping.</string>
@@ -65,6 +67,9 @@
     <string name="message_select_operation">Select an Operation</string>
     <string name="message_no_qty_available">No quantity available for processing</string>
     <string name="message_confirm_remove_record">Are you sure to remove the record ?</string>
+    <string name="message_not_blending_lot">\"%s\" is not a blending lot</string>
+    <string name="message_is_finished">\"%s\" is already finished</string>
+
     <!--Toast-->
     <string name="toast_successful">Successful</string>
     <string name="toast_fail">Fail</string>
@@ -143,7 +148,9 @@
     <string name="column_packaging_number">Nubmer of Packaging</string>
     <string name="column_repacked_qty">Quantity to be Repacked</string>
     <string name="column_remain_qty">Remaining Quantity</string>
-    <string name="column_is_pretrement">Is pretreatment Location?</string>
+    <string name="column_is_pretreatment">Is pretreatment Location?</string>
+    <string name="column_is_repacking">Is repacking Location?</string>
+    <string name="column_is_blending">Is blending Location?</string>
     <string name="column_blending_location_id">Blending Location</string>
     <string name="column_blending_waste_category_id">Blending Waste Category</string>
     <string name="column_exist_blending_id">Exist Blending</string>

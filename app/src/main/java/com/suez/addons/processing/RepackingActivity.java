@@ -42,7 +42,7 @@ public class RepackingActivity extends ProcessingActivity {
         wizardValues.put("destination_location_id", false);
         wizardValues.put("package_id", false);
         wizardValues.put("qty", 0.00f);
-        wizardValues.put("packaging_number", 0);
+        wizardValues.put("package_number", 0);
         wizardValues.put("remain_qty", 0.00f);
         wizardValues.put("action", SuezConstants.REPACKING_KEY);
 

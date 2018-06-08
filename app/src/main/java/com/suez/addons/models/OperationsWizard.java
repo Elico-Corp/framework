@@ -29,14 +29,13 @@ public class OperationsWizard extends OModel {
     OColumn pretreatment_location_id = new OColumn(getContext(), R.string.column_pretreatment_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_pretreatment", "=", true);
     OColumn destination_location_id = new OColumn(getContext(), R.string.column_destination_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("usage", "=", "internal");
     OColumn pretreatment_type_id = new OColumn(getContext(), R.string.column_pretreatment_type_id, PretreatmentWac.class, OColumn.RelationType.ManyToOne);
-    OColumn qty = new OColumn(getContext(), R.string.column_qty, OFloat.class).setLocalColumn().setDefaultValue(0);
-    OColumn repacking_location_id = new OColumn(getContext(), R.string.column_repacking_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().setDefaultValue(false);
-    OColumn package_id = new OColumn(getContext(), R.string.column_packaging_id, StockQuantPackage.class, OColumn.RelationType.ManyToOne).setLocalColumn().setDefaultValue(false);
-    OColumn package_number = new OColumn(getContext(), R.string.column_packaging_number, OInteger.class).setLocalColumn().setDefaultValue(0);
-    OColumn remain_qty = new OColumn(getContext(), R.string.column_remain_qty, OFloat.class).setLocalColumn().setDefaultValue(0);
+    OColumn qty = new OColumn(getContext(), R.string.column_qty, OFloat.class).setLocalColumn();
+    OColumn repacking_location_id = new OColumn(getContext(), R.string.column_repacking_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_repacking", "=", true);
+    OColumn package_id = new OColumn(getContext(), R.string.column_packaging_id, StockQuantPackage.class, OColumn.RelationType.ManyToOne).setLocalColumn();
+    OColumn package_number = new OColumn(getContext(), R.string.column_packaging_number, OInteger.class).setLocalColumn();
+    OColumn remain_qty = new OColumn(getContext(), R.string.column_remain_qty, OFloat.class).setLocalColumn();
     OColumn synced = new OColumn("Synced?", OBoolean.class).setDefaultValue(false).setLocalColumn();
-    OColumn new_mix = new OColumn("New Mix?", OBoolean.class).setLocalColumn();
-    OColumn blending_location_id = new OColumn(getContext(), R.string.column_blending_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn();
+    OColumn blending_location_id = new OColumn(getContext(), R.string.column_blending_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_blending", "=", true);
     OColumn blending_waste_category_id = new OColumn(getContext(), R.string.column_blending_waste_category_id, BlendingWasteCategory.class, OColumn.RelationType.ManyToOne).setLocalColumn();
     OColumn exist_blending_id = new OColumn(getContext(), R.string.column_exist_blending_id, StockProductionLot.class, OColumn.RelationType.ManyToOne).setLocalColumn();
 

@@ -89,7 +89,7 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
     }
 
     //TODO
-    @OnClick({R.id.btnTankTruck, R.id.btnWacInfo, R.id.btnMixBlending})
+    @OnClick({R.id.btnTankTruck, R.id.btnWacInfo, R.id.btnMixBlending, R.id.btnMoveWac, R.id.btnRepackaging})
     public void onClick(View view){
         Intent intent;
         switch (view.getId()){
@@ -100,10 +100,23 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
             case R.id.btnWacInfo:
                 intent = new Intent(getActivity(), ScanZbarActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra(SuezConstants.COMMON_KEY, SuezConstants.WAC_INFO_KEY);
                 startActivity(intent);
                 break;
             case R.id.btnMixBlending:
                 intent = new Intent(getActivity(), MixBlendingMenusActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.btnMoveWac:
+                intent = new Intent(getActivity(), ScanZbarActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra(SuezConstants.COMMON_KEY, SuezConstants.WAC_MOVE_KEY);
+                startActivity(intent);
+                break;
+            case R.id.btnRepackaging:
+                intent = new Intent(getActivity(), ScanZbarActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra(SuezConstants.COMMON_KEY, SuezConstants.REPACKING_KEY);
                 startActivity(intent);
                 break;
         }

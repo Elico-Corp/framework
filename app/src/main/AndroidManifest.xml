@@ -203,6 +203,9 @@
 
         <activity android:name="com.suez.addons.blending.CreateBlendingActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.blending.MixBlendingMenusActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

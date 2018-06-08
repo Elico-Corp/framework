@@ -37,15 +37,11 @@ public class DeliveryRoute extends OModel {
     OColumn plate_number = new OColumn(getContext(), R.string.column_plate_number,
             OVarchar.class).setSize(64);
     OColumn state = new OColumn(getContext(), R.string.column_state, OVarchar.class);
-    OColumn truck_weight = new OColumn(getContext(), R.string.column_truck_weight, OFloat.class)
-            .setDefaultValue(0.0f);
-    OColumn gross_weight = new OColumn(getContext(), R.string.column_gross_weight, OFloat.class)
-            .setDefaultValue(0.0f);
-    private Context mContext;
+    OColumn truck_weight = new OColumn(getContext(), R.string.column_truck_weight, OFloat.class);
+    OColumn gross_weight = new OColumn(getContext(), R.string.column_gross_weight, OFloat.class);
 
     public DeliveryRoute(Context context, OUser user){
         super(context, "delivery.route", user);
-        this.mContext = context;
     }
 
     @Override
