@@ -38,6 +38,7 @@ public class OperationsWizard extends OModel {
     OColumn blending_location_id = new OColumn(getContext(), R.string.column_blending_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_blending", "=", true);
     OColumn blending_waste_category_id = new OColumn(getContext(), R.string.column_blending_waste_category_id, BlendingWasteCategory.class, OColumn.RelationType.ManyToOne).setLocalColumn();
     OColumn exist_blending_id = new OColumn(getContext(), R.string.column_exist_blending_id, StockProductionLot.class, OColumn.RelationType.ManyToOne).setLocalColumn();
+    OColumn delivery_route_id = new OColumn(getContext(), R.string.column_delivery_route, DeliveryRoute.class, OColumn.RelationType.ManyToOne).setLocalColumn();
 
     public OperationsWizard(Context context, OUser user) {
         super(context, "operations.wizard", user);

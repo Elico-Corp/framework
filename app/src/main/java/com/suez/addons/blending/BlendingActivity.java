@@ -173,8 +173,7 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
             adapter.notifyDataSetChanged();
         }
     }
-    protected int blending(boolean finish) {
-        return 0;
+    protected void blending(boolean finish) {
     }
 
     @Override

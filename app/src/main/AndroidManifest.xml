@@ -174,7 +174,7 @@
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name="com.suez.addons.tank_truck.activity.TankTruckActivity"
+            android:name="com.suez.addons.tank_truck.TankTruckActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name="com.suez.addons.scan.ScanZbarActivity"

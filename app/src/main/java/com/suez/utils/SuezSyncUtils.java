@@ -9,6 +9,7 @@ import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
 import com.suez.SuezConstants;
+import com.suez.addons.models.DeliveryRoute;
 import com.suez.addons.models.OperationsWizard;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
@@ -40,7 +41,7 @@ public class SuezSyncUtils {
         stockQuant = new StockQuant(mContext, mUser);
     }
 
-    public void sync() {
+    public void syncProcessing() {
         // Get records from the wizard model
         records = wizard.select(null, "create_date > ? and synced = ?",
                 new String[] {syncDate, "false"}, "create_date desc");
@@ -65,7 +66,6 @@ public class SuezSyncUtils {
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
                     kwargs.put("product_qty", qty);
-                    kwargs.put("date_planned_start", datetime);
                     quantLines = new ArrayList<>();
                     for (int i=0; i<quantLineLocationIds.length && i<quantLineQty.length; i++) {
                         HashMap<String, Object> quantLine = new HashMap<>();
@@ -87,7 +87,6 @@ public class SuezSyncUtils {
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
                     kwargs.put("product_qty", qty);
-                    kwargs.put("date_planned_start", datetime);
                     kwargs.put("repacking_location", repackingLocationId);
                     kwargs.put("dest_location", destinationLocationId);
                     kwargs.put("package_id", packageId);
@@ -107,8 +106,7 @@ public class SuezSyncUtils {
                     pretreatmentLocationId = record.getM2ORecord("pretreatment_location_id").browse().getInt("id");
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
-                    kwargs.put("product_qty", qty);
-                    kwargs.put("date_planned_start", datetime);
+                    kwargs.put("quantity", qty);
                     kwargs.put("pretreatment_location", pretreatmentLocationId);
                     quantLines = new ArrayList<>();
                     for (int i=0; i<quantLineLocationIds.length && i<quantLineQty.length; i++) {
@@ -124,7 +122,8 @@ public class SuezSyncUtils {
                 case SuezConstants.ADD_BLENDING_KEY:
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
-                    kwargs.put("product_qty", qty);
+                    kwargs.put("quantity", qty);
+                    kwargs.put("is_finish", record.getBoolean("is_finished"));
                     quantLines = new ArrayList<>();
                     for (int i=0; i<quantLineLocationIds.length && i<quantLineQty.length; i++) {
                         HashMap<String, Object> quantLine = new HashMap<>();
@@ -151,6 +150,8 @@ public class SuezSyncUtils {
                     kwargs.put("blending_location", blendingLocationId);
                     kwargs.put("dest_location", destinationLocationId);
                     kwargs.put("category_id", blendingWasteCategoryId);
+                    kwargs.put("quantity", qty);
+                    kwargs.put("is_finish", record.getBoolean("is_finished"));
                     kwargs.put("quant_lines", quantLines);
                     map.put("action", SuezConstants.CREATE_BLENDING_KEY);
                     map.put("data", kwargs);
@@ -193,6 +194,24 @@ public class SuezSyncUtils {
             });
             syncUtils.callMethodOnServer();
         }
+    }
+
+    public void syncTankTrunk() {
+        DeliveryRoute deliveryRoute = new DeliveryRoute(mContext, mUser);
+        records = wizard.select(new String[]{"delivery_route_id"}, "create_date > ? and synced = ?",
+                new String[]{syncDate, "false"});
+        List<Integer> ids = new ArrayList<>();
+        for (ODataRow record: records) {
+            ids.add(record.getM2ORecord("delivery_route_id").browse().getInt("id"));
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        HashMap<String, Object> kwargs = new HashMap<>();
+        kwargs.put("ids", ids);
+        map.put("action", SuezConstants.TANK_TRUCK_KEY);
+        map.put("data", kwargs);
+        CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(deliveryRoute, "get_flush_data",
+                new OArguments(), null, map);
+        utils.callMethodOnServer();
     }
 
 }

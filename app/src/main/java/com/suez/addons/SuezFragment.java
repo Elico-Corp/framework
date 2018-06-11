@@ -18,7 +18,7 @@ import com.odoo.core.utils.OResource;
 import com.suez.SuezConstants;
 import com.suez.addons.blending.MixBlendingMenusActivity;
 import com.suez.addons.scan.ScanZbarActivity;
-import com.suez.addons.tank_truck.activity.TankTruckActivity;
+import com.suez.addons.tank_truck.TankTruckActivity;
 import com.suez.addons.models.DeliveryRoute;
 import com.suez.utils.ToastUtil;
 

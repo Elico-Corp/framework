@@ -7,8 +7,17 @@ import android.view.View;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.rpc.helper.OArguments;
+import com.odoo.core.utils.ODateUtils;
 import com.suez.SuezConstants;
+import com.suez.utils.CallMethodsOnlineUtils;
 import com.suez.utils.RecordUtils;
+
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by joseph on 18-5-25.
@@ -46,7 +55,23 @@ public class DirectBurnActivity extends ProcessingActivity {
         float qty = Float.parseFloat(pretreatmentQty.getValue().toString());
         float remainQuantity = Float.parseFloat(remainQty.getValue().toString());
         if (isNetwork) {
-
+            HashMap<String, Object> kwargs = new HashMap<>();
+            kwargs.put("lot_id", prodlot_id);
+            kwargs.put("quantity", qty);
+            List<HashMap> quantLines  = new ArrayList<>();
+            for (ODataRow record: records) {
+                HashMap<String, Object> quantLine= new HashMap<>();
+                quantLine.put("location_id", record.getInt("location_id"));
+                quantLine.put("quantity", record.getFloat("input_qty"));
+                quantLines.add(quantLine);
+            }
+            kwargs.put("quant_lines", quantLines);
+            kwargs.put("pretreatment_location", stockLocation.browse(pretreatmentLocationId).getInt("id"));
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("data", kwargs);
+            map.put("action", SuezConstants.PRETREATMENT_KEY);
+            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
+            utils.callMethodOnServer();
         } else {
             for (ODataRow record : records) {
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {

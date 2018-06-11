@@ -63,7 +63,6 @@ public class WacMoveActivity extends ProcessingActivity {
             HashMap<String, Object> kwargs = new HashMap<>();
             kwargs.put("lot_id", prodlot_id);
             kwargs.put("product_qty", quantity);
-            kwargs.put("date_planned_start", ODateUtils.getUTCDate(ODateUtils.DEFAULT_FORMAT));
             List<HashMap> quantLines  = new ArrayList<>();
             for (ODataRow record: records) {
                 HashMap<String, Object> quantLine= new HashMap<>();
@@ -75,7 +74,7 @@ public class WacMoveActivity extends ProcessingActivity {
             kwargs.put("dest_location", stockLocation.browse(destinationLocationId).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
-            map.put("action", SuezConstants.PRETREATMENT_KEY);
+            map.put("action", SuezConstants.WAC_MOVE_KEY);
             CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
             utils.callMethodOnServer();
         } else {

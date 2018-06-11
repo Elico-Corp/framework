@@ -31,6 +31,7 @@ public class SuezConstants {
     public static final int DB_SIZE_GET_ZERO = 3;
     public static final int SEARCH_RECORD_DEFAULT_LIMIT = 100;
     public static final String COMMON_KEY = "key";
+    public static final String TANK_TRUCK_KEY = "tank_trunk";
     public static final String WAC_INFO_WAC_KEY = "wac_info_wac";
     public static final String WAC_INFO_KEY = "wac_info";
     public static final String CREATE_BLENDING_KEY = "new_blending";

@@ -7,10 +7,18 @@ import android.view.View;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.rpc.helper.OArguments;
+import com.odoo.core.utils.ODateUtils;
 import com.suez.SuezConstants;
+import com.suez.utils.CallMethodsOnlineUtils;
 import com.suez.utils.RecordUtils;
 
+import org.json.JSONArray;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by joseph on 18-5-20.
@@ -58,7 +66,27 @@ public class RepackingActivity extends ProcessingActivity {
         Float repackingQty = Float.parseFloat(pretreatmentQty.getValue().toString());
         Float remainQuantity = Float.parseFloat(remainQty.getValue().toString());
 
-        if (isNetwork) {} else {
+        if (isNetwork) {
+            HashMap<String, Object> kwargs = new HashMap<>();
+            kwargs.put("lot_id", prodlot_id);
+            kwargs.put("product_qty", RecordUtils.sumField(records, "input_qty"));
+            kwargs.put("date_planned_start", ODateUtils.getUTCDate(ODateUtils.DEFAULT_FORMAT));
+            List<HashMap> quantLines  = new ArrayList<>();
+            for (ODataRow record: records) {
+                HashMap<String, Object> quantLine= new HashMap<>();
+                quantLine.put("location_id", record.getInt("location_id"));
+                quantLine.put("quantity", record.getFloat("input_qty"));
+                quantLines.add(quantLine);
+            }
+            kwargs.put("quant_lines", quantLines);
+            kwargs.put("repacking_location_id", stockLocation.browse(repackingLocationId).getInt("id"));
+            kwargs.put("dest_location", stockLocation.browse(destinationLocationId).getInt("id"));
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("data", kwargs);
+            map.put("action", SuezConstants.PRETREATMENT_KEY);
+            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
+            utils.callMethodOnServer();
+        } else {
             ODataRow prodlot = stockProductionLot.browse(prodlot_id);
             OValues prodlotValues = prodlot.toValues();
             String[] newLotIds = new String[packageNumber];
