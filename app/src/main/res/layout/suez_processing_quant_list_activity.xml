@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/theme_primary"
+              android:orientation="vertical">
+
+    <include layout="@layout/base_appbar"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/main_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_8dp"
+                android:orientation="vertical">
+
+                <odoo.controls.OForm
+                    android:id="@+id/stock_production_lot_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    app:modelName="stock.production.lot">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldName="name"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldName="product_qty"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldName="delivery_route_name"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldName="delivery_route_line_name"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldName="truck_in_date"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldName="customer_id_name"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldName="wac_processing"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldName="pretreatment_id_name"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                </odoo.controls.OForm>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_quant_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/label_quant_list"
+                    android:textSize="17sp"
+                    android:textStyle="bold"/>
+
+                <include layout="@layout/suez_base_line"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <com.jcodecraeer.xrecyclerview.XRecyclerView
+                        android:id="@+id/xr_qc_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/no_item"
+        layout="@layout/suez_base_no_items_layout"
+        android:visibility="gone"/>
+</LinearLayout>
