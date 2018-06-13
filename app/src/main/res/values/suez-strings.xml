@@ -34,6 +34,8 @@
     <string name="label_available_qty">Available Quantity</string>
     <string name="label_scan">Scan</string>
     <string name="label_select_item">Please Select %s</string>
+    <string name="label_quant_list">Stock Quants</string>
+    <string name="label_no_data">No Data</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">Tank Truck</string>
@@ -81,7 +83,8 @@
     <string name="toast_no_data">No Data</string>
     <string name="toast_no_delivery_route_line">No delivery route line found</string>
     <string name="toast_existing_lot">Lot already existed</string>
-
+    <string name="toast_repacking_one_record">Repacking can be done for only one record</string>
+    <string name="toast_invalid_field">Invalid Input in %s</string>
     <!-- Colums -->
     <string name="column_name">Name</string>
     <string name="column_plate_number">Plate Number</string>

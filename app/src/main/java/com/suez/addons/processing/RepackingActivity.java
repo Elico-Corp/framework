@@ -12,6 +12,7 @@ import com.odoo.core.utils.ODateUtils;
 import com.suez.SuezConstants;
 import com.suez.utils.CallMethodsOnlineUtils;
 import com.suez.utils.RecordUtils;
+import com.suez.utils.ToastUtil;
 
 import org.json.JSONArray;
 
@@ -38,7 +39,6 @@ public class RepackingActivity extends ProcessingActivity {
         repackingLocation.setVisibility(View.VISIBLE);
         destinationLocation.setVisibility(View.VISIBLE);
         packagingId.setVisibility(View.VISIBLE);
-        pretreatmentQty.setVisibility(View.VISIBLE);
         packagingNumber.setVisibility(View.VISIBLE);
         remainQty.setVisibility(View.VISIBLE);
     }
@@ -59,31 +59,39 @@ public class RepackingActivity extends ProcessingActivity {
 
     @Override
     protected void performProcessing() {
+        if (records.size() > 1) {
+            ToastUtil.toastShow(R.string.toast_repacking_one_record, this);
+            return;
+        }
         int repackingLocationId = Integer.parseInt(repackingLocation.getValue().toString());
         int destinationLocationId = Integer.parseInt(destinationLocation.getValue().toString());
         int packageId = Integer.parseInt(packagingId.getValue().toString());
         Integer packageNumber = Integer.parseInt(packagingNumber.getValue().toString());
-        Float repackingQty = Float.parseFloat(pretreatmentQty.getValue().toString());
+        Float repackingQty = records.get(0).getFloat("input_qty");
         Float remainQuantity = Float.parseFloat(remainQty.getValue().toString());
 
         if (isNetwork) {
             HashMap<String, Object> kwargs = new HashMap<>();
             kwargs.put("lot_id", prodlot_id);
-            kwargs.put("product_qty", RecordUtils.sumField(records, "input_qty"));
-            kwargs.put("date_planned_start", ODateUtils.getUTCDate(ODateUtils.DEFAULT_FORMAT));
-            List<HashMap> quantLines  = new ArrayList<>();
-            for (ODataRow record: records) {
-                HashMap<String, Object> quantLine= new HashMap<>();
-                quantLine.put("location_id", record.getInt("location_id"));
-                quantLine.put("quantity", record.getFloat("input_qty"));
-                quantLines.add(quantLine);
-            }
-            kwargs.put("quant_lines", quantLines);
+            kwargs.put("quant_id", quant_id);
+            kwargs.put("available_quantity", records.get(0).getFloat("qty"));
+            kwargs.put("source_location_id", records.get(0).getInt("location_id"));
+            kwargs.put("package_number", packageNumber);
+            kwargs.put("quantity", repackingQty);
+//            kwargs.put("date_planned_start", ODateUtils.getUTCDate(ODateUtils.DEFAULT_FORMAT));
+//            List<HashMap> quantLines  = new ArrayList<>();
+//            for (ODataRow record: records) {
+//                HashMap<String, Object> quantLine= new HashMap<>();
+//                quantLine.put("location_id", record.getInt("location_id"));
+//                quantLine.put("quantity", record.getFloat("input_qty"));
+//                quantLines.add(quantLine);
+//            }
+//            kwargs.put("quant_lines", quantLines);
             kwargs.put("repacking_location_id", stockLocation.browse(repackingLocationId).getInt("id"));
-            kwargs.put("dest_location", stockLocation.browse(destinationLocationId).getInt("id"));
+            kwargs.put("location_dest_id", stockLocation.browse(destinationLocationId).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
-            map.put("action", SuezConstants.PRETREATMENT_KEY);
+            map.put("action", SuezConstants.REPACKING_KEY);
             CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
             utils.callMethodOnServer();
         } else {
@@ -109,8 +117,9 @@ public class RepackingActivity extends ProcessingActivity {
             int lastLotId = stockProductionLot.insert(prodlotValues);
             newLotIds[packageNumber-1] = String.valueOf(lastLotId);
             // Stock Quants
-            for (ODataRow record: records) {
+//            for (ODataRow record: records) {
                 // No remaining
+            ODataRow record = records.get(0);
                 if (record.getFloat("input_qty").equals(record.getFloat("qty"))) {
                     OValues values = new OValues();
                     values.put("location_id", repackingLocationId);
@@ -127,11 +136,11 @@ public class RepackingActivity extends ProcessingActivity {
                     newValues.put("qty", record.getFloat("input_qty"));
                     stockQuant.insert(newValues);
                 }
-            }
+//            }
 
-            wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
+//            wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-            wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
+//            wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
             wizardValues.put("repacking_location_id", repackingLocationId);
             wizardValues.put("destination_location_id", destinationLocationId);
             wizardValues.put("qty", repackingQty);

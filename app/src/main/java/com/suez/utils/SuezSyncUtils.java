@@ -11,6 +11,7 @@ import com.odoo.core.support.OUser;
 import com.suez.SuezConstants;
 import com.suez.addons.models.DeliveryRoute;
 import com.suez.addons.models.OperationsWizard;
+import com.suez.addons.models.StockLocation;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
 
@@ -30,6 +31,7 @@ public class SuezSyncUtils {
     private OperationsWizard wizard;
     private StockProductionLot stockProductionLot;
     private StockQuant stockQuant;
+    private StockLocation stockLocation;
     private List<ODataRow> records;
 
     public SuezSyncUtils(Context context, OUser user, String date) {
@@ -39,6 +41,7 @@ public class SuezSyncUtils {
         wizard = new OperationsWizard(context, user);
         stockProductionLot = new StockProductionLot(mContext, mUser);
         stockQuant = new StockQuant(mContext, mUser);
+        stockLocation = new StockLocation(mContext, mUser);
     }
 
     public void syncProcessing() {
@@ -48,11 +51,10 @@ public class SuezSyncUtils {
         for (ODataRow record: records) {
             final String[] quantLineIds = record.getString("quant_line_ids").split(",");
             String[] quantLineQty = record.getString("quant_line_qty").split(",");
-            String[] quantLineLocationIds = record.getString("quant_line_location_ids").split(",");
+            float remainQty = record.getFloat("remain_qty");
             int lotId = record.getM2ORecord("prodlot_id").browse().getInt("id");
             final int newLotId = record.getM2ORecord("new_prodlot_id").getId();
             Float qty = record.getFloat("qty");
-            String datetime = record.getString("create_date");
             HashMap<String, Object> map = new HashMap<>();
             int pretreatmentLocationId;
             int destinationLocationId;
@@ -66,14 +68,7 @@ public class SuezSyncUtils {
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
                     kwargs.put("product_qty", qty);
-                    quantLines = new ArrayList<>();
-                    for (int i=0; i<quantLineLocationIds.length && i<quantLineQty.length; i++) {
-                        HashMap<String, Object> quantLine = new HashMap<>();
-                        quantLine.put("location_id", Integer.parseInt(quantLineLocationIds[i]));
-                        quantLine.put("quantity", Float.parseFloat(quantLineQty[i]));
-                        quantLines.add(quantLine);
-                    }
-                    kwargs.put("quant_lines", quantLines);
+                    kwargs.put("available_qty", qty + remainQty);
                     kwargs.put("pretreatment_location", pretreatmentLocationId);
                     kwargs.put("dest_location", destinationLocationId);
                     map.put("action", SuezConstants.PRETREATMENT_KEY);
@@ -86,19 +81,14 @@ public class SuezSyncUtils {
                     destinationLocationId = record.getM2ORecord("destination_location_id").browse().getInt("id");
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
-                    kwargs.put("product_qty", qty);
-                    kwargs.put("repacking_location", repackingLocationId);
-                    kwargs.put("dest_location", destinationLocationId);
+                    kwargs.put("quant_id", Integer.parseInt(quantLineIds[0]));
+                    kwargs.put("available_quantity", qty + remainQty);
+                    kwargs.put("source_location_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getM2ORecord("location_id").browse().getInt("id"));
+                    kwargs.put("quantity", qty);
+                    kwargs.put("repacking_location_id", repackingLocationId);
+                    kwargs.put("location_dest_id", destinationLocationId);
                     kwargs.put("package_id", packageId);
                     kwargs.put("package_number", packageNumber);
-                    quantLines = new ArrayList<>();
-                    for (int i=0; i<quantLineLocationIds.length && i<quantLineQty.length; i++) {
-                        HashMap<String, Object> quantLine = new HashMap<>();
-                        quantLine.put("location_id", Integer.parseInt(quantLineLocationIds[i]));
-                        quantLine.put("quantity", Float.parseFloat(quantLineQty[i]));
-                        quantLines.add(quantLine);
-                    }
-                    kwargs.put("quant_lines", quantLines);
                     map.put("action", SuezConstants.REPACKING_KEY);
                     map.put("data", kwargs);
                     break;
@@ -106,16 +96,11 @@ public class SuezSyncUtils {
                     pretreatmentLocationId = record.getM2ORecord("pretreatment_location_id").browse().getInt("id");
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
+                    kwargs.put("quant_id", Integer.parseInt(quantLineIds[0]));
+                    kwargs.put("source_location_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getM2ORecord("location_id").browse().getInt("id"));
                     kwargs.put("quantity", qty);
+                    kwargs.put("available_quantity", qty + remainQty);
                     kwargs.put("pretreatment_location", pretreatmentLocationId);
-                    quantLines = new ArrayList<>();
-                    for (int i=0; i<quantLineLocationIds.length && i<quantLineQty.length; i++) {
-                        HashMap<String, Object> quantLine = new HashMap<>();
-                        quantLine.put("location_id", Integer.parseInt(quantLineLocationIds[i]));
-                        quantLine.put("quantity", Float.parseFloat(quantLineQty[i]));
-                        quantLines.add(quantLine);
-                    }
-                    kwargs.put("quant_lines", quantLines);
                     map.put("action", SuezConstants.DIRECT_BURN_KEY);
                     map.put("data", kwargs);
                     break;
@@ -125,9 +110,9 @@ public class SuezSyncUtils {
                     kwargs.put("quantity", qty);
                     kwargs.put("is_finish", record.getBoolean("is_finished"));
                     quantLines = new ArrayList<>();
-                    for (int i=0; i<quantLineLocationIds.length && i<quantLineQty.length; i++) {
+                    for (int i=0; i<quantLineIds.length && i<quantLineQty.length; i++) {
                         HashMap<String, Object> quantLine = new HashMap<>();
-                        quantLine.put("location_id", Integer.parseInt(quantLineLocationIds[i]));
+                        quantLine.put("quant_id", Integer.parseInt(quantLineIds[i]));
                         quantLine.put("quantity", Float.parseFloat(quantLineQty[i]));
                         quantLines.add(quantLine);
                     }
@@ -140,15 +125,16 @@ public class SuezSyncUtils {
                     destinationLocationId = record.getM2ORecord("destination_location_id").browse().getInt("id");
                     int blendingWasteCategoryId = record.getM2ORecord("blending_waste_category_id").browse().getInt("id");
                     quantLines = new ArrayList<>();
-                    for (int i=0; i<quantLineLocationIds.length && i<quantLineQty.length; i++) {
+                    for (int i=0; i<quantLineIds.length && i<quantLineQty.length; i++) {
                         HashMap<String, Object> quantLine = new HashMap<>();
-                        quantLine.put("location_id", Integer.parseInt(quantLineLocationIds[i]));
+                        quantLine.put("quant_id", Integer.parseInt(quantLineIds[i]));
                         quantLine.put("quantity", Float.parseFloat(quantLineQty[i]));
                         quantLines.add(quantLine);
                     }
                     kwargs = new HashMap<>();
-                    kwargs.put("blending_location", blendingLocationId);
-                    kwargs.put("dest_location", destinationLocationId);
+                    kwargs.put("lot_id", lotId);
+                    kwargs.put("blending_location_id", blendingLocationId);
+                    kwargs.put("location_dest_id", destinationLocationId);
                     kwargs.put("category_id", blendingWasteCategoryId);
                     kwargs.put("quantity", qty);
                     kwargs.put("is_finish", record.getBoolean("is_finished"));
@@ -158,16 +144,11 @@ public class SuezSyncUtils {
                     break;
                 case SuezConstants.WAC_MOVE_KEY:
                     destinationLocationId = record.getM2ORecord("destination_location_id").browse().getInt("id");
-                    quantLines = new ArrayList<>();
-                    for (int i=0; i<quantLineLocationIds.length && i<quantLineQty.length; i++) {
-                        HashMap<String, Object> quantLine = new HashMap<>();
-                        quantLine.put("location_id", Integer.parseInt(quantLineLocationIds[i]));
-                        quantLine.put("quantity", Float.parseFloat(quantLineQty[i]));
-                        quantLines.add(quantLine);
-                    }
                     kwargs = new HashMap<>();
-                    kwargs.put("dest_location", destinationLocationId);
-                    kwargs.put("quant_lines", quantLines);
+                    kwargs.put("lot_id", lotId);
+                    kwargs.put("quant_id", quantLineIds[0]);
+                    kwargs.put("location_dest_id", destinationLocationId);
+                    kwargs.put("quantity", qty);
                     map.put("action", SuezConstants.WAC_MOVE_KEY);
                     map.put("data", kwargs);
                     break;

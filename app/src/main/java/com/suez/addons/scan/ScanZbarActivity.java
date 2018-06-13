@@ -26,6 +26,7 @@ import com.suez.addons.blending.AddBlendingActivity;
 import com.suez.addons.blending.CreateBlendingActivity;
 import com.suez.addons.models.ProductWac;
 import com.suez.addons.models.StockProductionLot;
+import com.suez.addons.processing.ProcessingQuantListActivity;
 import com.suez.addons.processing.RepackingActivity;
 import com.suez.addons.processing.WacMoveActivity;
 import com.suez.addons.wac_info.WacInfoDrlLIstActivity;
@@ -230,12 +231,6 @@ public class ScanZbarActivity extends SuezActivity {
                 intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
                 startActivity(intent);
                 break;
-            case SuezConstants.WAC_MOVE_KEY:
-                intent = new Intent(this, WacMoveActivity.class);
-                intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
-                intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
-                startActivity(intent);
-                break;
             case SuezConstants.SCAN_BLENDING_KEY:
                 intent = new Intent();
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
@@ -243,8 +238,10 @@ public class ScanZbarActivity extends SuezActivity {
                 setResult(RESULT_OK, intent);
                 finish();
                 break;
+            case SuezConstants.WAC_MOVE_KEY:
             case SuezConstants.REPACKING_KEY:
-                intent = new Intent(this, RepackingActivity.class);
+                intent = new Intent(this, ProcessingQuantListActivity.class);
+                intent.putExtra(SuezConstants.COMMON_KEY, key);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
                 intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
                 startActivity(intent);

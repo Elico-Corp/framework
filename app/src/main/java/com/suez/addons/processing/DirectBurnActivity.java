@@ -35,7 +35,6 @@ public class DirectBurnActivity extends ProcessingActivity {
     protected void initView() {
         super.initView();
         pretreatmentLocation.setVisibility(View.VISIBLE);
-        pretreatmentQty.setVisibility(View.VISIBLE);
         remainQty.setVisibility(View.VISIBLE);
     }
 
@@ -52,28 +51,32 @@ public class DirectBurnActivity extends ProcessingActivity {
     @Override
     protected void performProcessing() {
         int pretreatmentLocationId = Integer.parseInt(pretreatmentLocation.getValue().toString());
-        float qty = Float.parseFloat(pretreatmentQty.getValue().toString());
+        float qty = records.get(0).getFloat("input_qty");
         float remainQuantity = Float.parseFloat(remainQty.getValue().toString());
         if (isNetwork) {
             HashMap<String, Object> kwargs = new HashMap<>();
             kwargs.put("lot_id", prodlot_id);
+            kwargs.put("quant_id", quant_id);
+            kwargs.put("source_location_id", records.get(0).getInt("location_id"));
             kwargs.put("quantity", qty);
-            List<HashMap> quantLines  = new ArrayList<>();
-            for (ODataRow record: records) {
-                HashMap<String, Object> quantLine= new HashMap<>();
-                quantLine.put("location_id", record.getInt("location_id"));
-                quantLine.put("quantity", record.getFloat("input_qty"));
-                quantLines.add(quantLine);
-            }
-            kwargs.put("quant_lines", quantLines);
+            kwargs.put("available_quantity", records.get(0).getFloat("qty"));
+//            List<HashMap> quantLines  = new ArrayList<>();
+//            for (ODataRow record: records) {
+//                HashMap<String, Object> quantLine= new HashMap<>();
+//                quantLine.put("location_id", record.getInt("location_id"));
+//                quantLine.put("quantity", record.getFloat("input_qty"));
+//                quantLines.add(quantLine);
+//            }
+//            kwargs.put("quant_lines", quantLines);
             kwargs.put("pretreatment_location", stockLocation.browse(pretreatmentLocationId).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
-            map.put("action", SuezConstants.PRETREATMENT_KEY);
+            map.put("action", SuezConstants.DIRECT_BURN_KEY);
             CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
             utils.callMethodOnServer();
         } else {
-            for (ODataRow record : records) {
+//            for (ODataRow record : records) {
+            ODataRow record = records.get(0);
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();
                     values.put("location_id", pretreatmentLocationId);
@@ -89,13 +92,13 @@ public class DirectBurnActivity extends ProcessingActivity {
                     newValues.put("location_id", pretreatmentLocationId);
                     newValues.put("qty", record.getFloat("input_qty"));
                     stockQuant.insert(newValues);
-                }
+//                }
             }
         }
 
-        wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
+//        wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
         wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-        wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
+//        wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
         wizardValues.put("pretreatment_location_id", pretreatmentLocationId);
         wizardValues.put("qty", qty);
         wizardValues.put("remain_qty", remainQuantity);

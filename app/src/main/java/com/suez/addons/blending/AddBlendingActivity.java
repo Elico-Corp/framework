@@ -84,8 +84,9 @@ public class AddBlendingActivity extends BlendingActivity {
             kwargs.put("quantity", RecordUtils.sumField(records, "input_qty"));
             List<HashMap> quantLines  = new ArrayList<>();
             for (ODataRow record: records) {
+                // FIXME: 18-6-12
                 HashMap<String, Object> quantLine= new HashMap<>();
-                quantLine.put("location_id", record.getInt("location_id"));
+                quantLine.put("quant_id", record.getInt("id"));
                 quantLine.put("quantity", record.getFloat("input_qty"));
                 quantLines.add(quantLine);
             }

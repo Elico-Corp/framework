@@ -8,72 +8,6 @@
 
     <include layout="@layout/base_appbar"/>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <odoo.controls.OForm
-                android:id="@+id/prodlot_form"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:modelName="stock.production.lot"
-                >
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldName="name"
-                    app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldName="product_qty"
-                    app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldName="delivery_route_name"
-                    app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldName="delivery_route_line_name"
-                    app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldName="truck_in_date"
-                    app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldName="customer_id_name"
-                    app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldName="wac_processing"
-                    app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
-                <odoo.controls.OField
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:fieldName="pretreatment_id_name"
-                    app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
-            </odoo.controls.OForm>
-        </LinearLayout>
-    </ScrollView>
-
     <LinearLayout
         android:id="@+id/stock_quant_lines"
         android:layout_width="match_parent"
@@ -221,6 +155,7 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         app:fieldName="qty"
+                        app:fieldType="Text"
                         app:fieldTextAppearance="?android:textAppearanceMedium" />
 
                     <odoo.controls.OField
@@ -229,6 +164,7 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         app:fieldName="package_number"
+                        app:fieldType="Text"
                         app:fieldTextAppearance="?android:textAppearanceMedium" />
 
                     <odoo.controls.OField
@@ -236,6 +172,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
+                        app:fieldType="Text"
                         app:fieldName="remain_qty"
                         app:fieldTextAppearance="?android:textAppearanceMedium" />
 

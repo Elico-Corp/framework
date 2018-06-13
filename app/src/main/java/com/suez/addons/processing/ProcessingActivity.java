@@ -32,6 +32,7 @@ import com.suez.addons.models.StockQuant;
 import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
 import com.suez.utils.SuezJsonUtils;
+import com.suez.utils.ToastUtil;
 
 import java.util.List;
 
@@ -72,6 +73,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     OField remainQty;
 
     protected int prodlot_id;
+    protected int quant_id;
     protected int clickPosition;
     protected StockQuant stockQuant;
     protected OperationsWizard wizard;
@@ -81,10 +83,9 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     protected List<ODataRow> records;
     protected OValues wizardValues;
     protected ODataRow lot;
+
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
-    @BindView(R.id.prodlot_form)
-    OForm prodlotForm;
     @BindView(R.id.relayoutList)
     RelativeLayout relayoutList;
     @BindView(R.id.btn_cancel)
@@ -97,6 +98,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
         setContentView(R.layout.suez_pretreatment_activity);
         ButterKnife.bind(this);
         prodlot_id = getIntent().getIntExtra(SuezConstants.PRODLOT_ID_KEY, 0);
+        quant_id = getIntent().getIntExtra(SuezConstants.STOCK_QUANT_ID_KEY, 0);
         stockQuant = new StockQuant(this, null);
         stockProductionLot = new StockProductionLot(this, null);
         wizard = new OperationsWizard(this, null);
@@ -117,8 +119,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
 
     protected void initDataOnline() {
         ODomain stockQuantDomain = new ODomain();
-        stockQuantDomain.add("lot_id", "=", prodlot_id);
-        stockQuantDomain.add("location_id.usage", "=", "internal");
+        stockQuantDomain.add("id", "=", quant_id);
         BaseAbstractListener listener = new BaseAbstractListener() {
             @Override
             public void OnSuccessful(List<ODataRow> listRow) {
@@ -146,8 +147,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     }
 
     protected void initDataOffline() {
-        List<ODataRow> stockQuantRecords = stockQuant.query("select * from stock_quant where lot_id=? and location_id in (select _id from stock_location where usage=?)",
-                new String[]{String.valueOf(prodlot_id), "internal"});
+        List<ODataRow> stockQuantRecords = stockQuant.select(null, "id = ?", new String[]{String.valueOf(quant_id)});
         if (stockQuantRecords == null || stockQuantRecords.size() == 0) {
             alertWarning();
         }
@@ -161,13 +161,12 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     protected void initForm() {
         adapter = new CommonTextAdapter(records, R.layout.suez_stock_quant_layout,
                 new String[]{"location_id_name", "qty", "input_qty"}, new int[]{R.id.txt_location, R.id.txt_qty_available, R.id.txt_qty});
-        stockQuantList.setAdapter(adapter);
         adapter.setmOnItemClickListener(this);
+        stockQuantList.setAdapter(adapter);
         pretreatmentWizardForm.initForm(wizardValues.toDataRow());
-        pretreatmentQty.setEditable(false);
+//        pretreatmentQty.setEditable(false);
         remainQty.setEditable(false);
         refreshQty();
-        prodlotForm.initForm(lot);
     }
 
     public static List<ODataRow> initInputQty(List<ODataRow> rows) {
@@ -281,7 +280,9 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
                 finish();
                 break;
             case R.id.btn_confirm:
-                performProcessing();
+                if (preProcessing()) {
+                    performProcessing();
+                }
                 break;
         }
     }
@@ -290,8 +291,20 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
      * Refresh qty according after the input quantity changed.
      */
     protected void refreshQty() {
-        pretreatmentQty.setValue(sumField(records, "input_qty"));
-        remainQty.setValue(sumField(records, "qty") - sumField(records, "input_qty"));
+//        pretreatmentQty.setValue(sumField(records, "input_qty"));
+        remainQty.setValue(records.get(0).getFloat("qty") - records.get(0).getFloat("input_qty"));
+    }
+
+    protected boolean preProcessing() {
+        // Validate Datas
+        OValues values = pretreatmentWizardForm.getValues();
+        for (String key: values.keys()) {
+            if (values.get(key) == null || values.get(key).equals(false)) {
+                ToastUtil.toastShow(String.format(OResource.string(this, R.string.toast_invalid_field), key), this);
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

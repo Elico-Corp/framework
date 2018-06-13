@@ -114,15 +114,17 @@ public class CreateBlendingActivity extends BlendingActivity {
         int blendingWasteCategoryId = Integer.parseInt(blendingCategory.getValue().toString());
         if (isNetwork) {
             HashMap<String, Object> kwargs = new HashMap<>();
-            kwargs.put("blending_location", blendingLocationId);
+            kwargs.put("lot_id", lotIds.get(0));
+            kwargs.put("blending_location_id", blendingLocationId);
             kwargs.put("quantity", RecordUtils.sumField(records, "input_qty"));
-            kwargs.put("dest_location", destinationLocationId);
+            kwargs.put("location_dest_id", destinationLocationId);
             kwargs.put("category_id", blendingWasteCategoryId);
             kwargs.put("is_finish", finish);
             List<HashMap> quantLines  = new ArrayList<>();
             for (ODataRow record: records) {
                 HashMap<String, Object> quantLine= new HashMap<>();
-                quantLine.put("location_id", record.getInt("location_id"));
+                // FIXME: 18-6-12
+                quantLine.put("quant_id", record.getInt("id"));
                 quantLine.put("quantity", record.getFloat("input_qty"));
                 quantLines.add(quantLine);
             }
@@ -165,6 +167,7 @@ public class CreateBlendingActivity extends BlendingActivity {
                 stockQuant.insert(newQuantValues);
 
                 wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
+                wizardValues.put("lot_id", lotIds.get(0));
                 wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
                 wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
                 wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
@@ -176,88 +179,5 @@ public class CreateBlendingActivity extends BlendingActivity {
                 wizard.insert(wizardValues);
             }
         }
-    }
-
-
-
-    @Override
-    public void onItemClick(int position) {
-        clickPosition = position;
-        LinearLayout layout = new LinearLayout(this);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layout.setLayoutParams(params);
-        params.setMargins(100, 0, 54, 0);
-        final EditText input = new EditText(this);
-        input.setSingleLine();
-        input.setLayoutParams(params);
-        input.setTextColor(OResource.color(this, R.color.body_text_1));
-        input.setText(records.get(clickPosition - 1).getString("qty"));
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        layout.addView(input);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.dialog_change_quantity);
-        builder.setView(layout);
-        builder.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                records.get(clickPosition - 1).put("input_qty", input.getText().toString());
-                adapter.notifyItemChanged(clickPosition);
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        final Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        positiveButton.setEnabled(false);
-        input.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().isEmpty() && Float.compare(Float.parseFloat(s.toString()), records.get(clickPosition - 1).getFloat("qty")) != 1) {
-                    positiveButton.setEnabled(true);
-                    positiveButton.setTextColor(OResource.color(CreateBlendingActivity.this, R.color.colorAccent));
-                } else {
-                    positiveButton.setEnabled(false);
-                    positiveButton.setTextColor(OResource.color(CreateBlendingActivity.this, R.color.drawer_separator_text_color));
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onItemLongClick(int position) {
-        clickPosition = position;
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.dialog_title_warning)
-                .setMessage(R.string.message_confirm_remove_record)
-                .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        records.remove(clickPosition - 1);
-                        adapter.notifyItemRemoved(clickPosition);
-                    }
-                }).create();
-        dialog.show();
     }
 }

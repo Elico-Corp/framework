@@ -35,7 +35,6 @@ public class PretreatmentActivity extends ProcessingActivity {
         super.initView();
         pretreatmentLocation.setVisibility(View.VISIBLE);
         destinationLocation.setVisibility(View.VISIBLE);
-        pretreatmentQty.setVisibility(View.VISIBLE);
         remainQty.setVisibility(View.VISIBLE);
     }
 
@@ -56,7 +55,7 @@ public class PretreatmentActivity extends ProcessingActivity {
     protected void performProcessing() {
         Integer pretreatmentLocationId = Integer.parseInt(pretreatmentLocation.getValue().toString());
         Integer destinationLocationId = Integer.parseInt(destinationLocation.getValue().toString());
-        Float quantity = Float.parseFloat(pretreatmentQty.getValue().toString());
+        Float quantity = records.get(0).getFloat("input_qty");
         Float remainQuantity = Float.parseFloat(remainQty.getValue().toString());
         if (isNetwork) {
             OArguments args = new OArguments();
@@ -64,15 +63,16 @@ public class PretreatmentActivity extends ProcessingActivity {
             HashMap<String, Object> kwargs = new HashMap<>();
             kwargs.put("lot_id", prodlot_id);
             kwargs.put("product_qty", quantity);
-            kwargs.put("date_planned_start", ODateUtils.getUTCDate(ODateUtils.DEFAULT_FORMAT));
-            List<HashMap> quantLines  = new ArrayList<>();
-            for (ODataRow record: records) {
-                HashMap<String, Object> quantLine= new HashMap<>();
-                quantLine.put("location_id", record.getInt("location_id"));
-                quantLine.put("quantity", record.getFloat("input_qty"));
-                quantLines.add(quantLine);
-            }
-            kwargs.put("quant_lines", quantLines);
+            kwargs.put("available_quantity", records.get(0).getFloat("qty"));
+//            kwargs.put("date_planned_start", ODateUtils.getUTCDate(ODateUtils.DEFAULT_FORMAT));
+//            List<HashMap> quantLines  = new ArrayList<>();
+//            for (ODataRow record: records) {
+//                HashMap<String, Object> quantLine= new HashMap<>();
+//                quantLine.put("location_id", record.getInt("location_id"));
+//                quantLine.put("quantity", record.getFloat("input_qty"));
+//                quantLines.add(quantLine);
+//            }
+//            kwargs.put("quant_lines", quantLines);
             kwargs.put("pretreatment_location", stockLocation.browse(pretreatmentLocationId).getInt("id"));
             kwargs.put("dest_location", stockLocation.browse(destinationLocationId).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
@@ -86,8 +86,9 @@ public class PretreatmentActivity extends ProcessingActivity {
             lotValues.put("product_qty", quantity);
             lotValues.put("name", ODateUtils.getDate("yyMMdd") + stockProductionLot.count("name like ?", new String[]{"1%"}) % 10000);
             int newLotId = stockProductionLot.insert(lotValues);
-            for (ODataRow record: records) {
+//            for (ODataRow record: records) {
                 // All processing
+            ODataRow record = records.get(0);
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();
                     values.put("location_id", pretreatmentLocationId);
@@ -113,9 +114,9 @@ public class PretreatmentActivity extends ProcessingActivity {
                 stockQuant.insert(newQuantValues);
 
                 // Create the wizard record
-                wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
+//                wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
                 wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-                wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
+//                wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
                 wizardValues.put("pretreatment_location_id", pretreatmentLocationId);
                 wizardValues.put("destination_location_id", destinationLocationId);
                 wizardValues.put("qty", quantity);
@@ -123,7 +124,7 @@ public class PretreatmentActivity extends ProcessingActivity {
                 wizardValues.put("new_prodlot_id", newLotId);
 
                 wizard.insert(wizardValues);
-            }
+//            }
         }
     }
 }
