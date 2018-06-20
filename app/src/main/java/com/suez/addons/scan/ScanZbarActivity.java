@@ -217,15 +217,14 @@ public class ScanZbarActivity extends SuezActivity {
                 startActivity(intent);
                 break;
             case SuezConstants.ADD_BLENDING_KEY:
-                if (!code.startsWith("B")) {
+                if (!code.toUpperCase().startsWith("B")) {
                     alertWarning(String.format(OResource.string(this, R.string.message_not_blending_lot), code));
                     break;
                 }
-                // TODO: 18-6-8 field not added in odoo.
-//                if (row.getBoolean("is_finished")) {
-//                    alertWarning(String.format(OResource.string(this, R.string.message_is_finished), code));
-//                    break;
-//                }
+                if (row.getBoolean("is_finished")) {
+                    alertWarning(String.format(OResource.string(this, R.string.message_is_finished), code));
+                    break;
+                }
                 intent = new Intent(this, AddBlendingActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
                 intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);

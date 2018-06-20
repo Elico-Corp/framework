@@ -3,6 +3,8 @@ package com.suez.addons.processing;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+
+import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
@@ -23,6 +25,7 @@ import java.util.List;
  */
 
 public class PretreatmentActivity extends ProcessingActivity {
+    private static final String TAG = PretreatmentActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,8 +56,7 @@ public class PretreatmentActivity extends ProcessingActivity {
 
     @Override
     protected void performProcessing() {
-        Integer pretreatmentLocationId = Integer.parseInt(pretreatmentLocation.getValue().toString());
-        Integer destinationLocationId = Integer.parseInt(destinationLocation.getValue().toString());
+        OValues inputValues = pretreatmentWizardForm.getValues();
         Float quantity = records.get(0).getFloat("input_qty");
         Float remainQuantity = Float.parseFloat(remainQty.getValue().toString());
         if (isNetwork) {
@@ -73,12 +75,19 @@ public class PretreatmentActivity extends ProcessingActivity {
 //                quantLines.add(quantLine);
 //            }
 //            kwargs.put("quant_lines", quantLines);
-            kwargs.put("pretreatment_location", stockLocation.browse(pretreatmentLocationId).getInt("id"));
-            kwargs.put("dest_location", stockLocation.browse(destinationLocationId).getInt("id"));
+            kwargs.put("pretreatment_location", stockLocation.browse(inputValues.getInt("pretreatment_location_id")).getInt("id"));
+            kwargs.put("dest_location", stockLocation.browse(inputValues.getInt("destination_location_id")).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.PRETREATMENT_KEY);
-            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
+            BaseAbstractListener listener = new BaseAbstractListener() {
+                @Override
+                public void OnSuccessful(Object obj) {
+                    postProcessing(obj);
+                }
+            };
+            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map)
+                    .setListener(listener);
             utils.callMethodOnServer();
         } else {
             ODataRow prodlot = stockProductionLot.browse(prodlot_id);
@@ -91,7 +100,7 @@ public class PretreatmentActivity extends ProcessingActivity {
             ODataRow record = records.get(0);
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();
-                    values.put("location_id", pretreatmentLocationId);
+                    values.put("location_id", inputValues.getInt("pretreatment_location_id"));
                     stockQuant.update(record.getInt("_id"), values);
                 } else { // Part processing
                     // Remain
@@ -102,14 +111,14 @@ public class PretreatmentActivity extends ProcessingActivity {
                     stockQuant.update(record.getInt("_id"), remainValues);
                     OValues newValues = new OValues();
                     newValues.put("lot_id", record.getInt("lot_id"));
-                    newValues.put("location_id", pretreatmentLocationId);
+                    newValues.put("location_id", inputValues.getInt("pretreatment_location_id"));
                     newValues.put("qty", record.getFloat("input_qty"));
                     stockQuant.insert(newValues);
                 }
                 // New Quants with new lot
                 OValues newQuantValues = new OValues();
                 newQuantValues.put("lot_id", newLotId);
-                newQuantValues.put("location_id", destinationLocationId);
+                newQuantValues.put("location_id", inputValues.getInt("destination_location_id"));
                 newQuantValues.put("qty", record.getFloat("input_qty"));
                 stockQuant.insert(newQuantValues);
 
@@ -117,8 +126,8 @@ public class PretreatmentActivity extends ProcessingActivity {
 //                wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
                 wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
 //                wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
-                wizardValues.put("pretreatment_location_id", pretreatmentLocationId);
-                wizardValues.put("destination_location_id", destinationLocationId);
+                wizardValues.put("pretreatment_location_id", inputValues.getInt("pretreatment_location_id"));
+                wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
                 wizardValues.put("qty", quantity);
                 wizardValues.put("remain_qty", remainQuantity);
                 wizardValues.put("new_prodlot_id", newLotId);

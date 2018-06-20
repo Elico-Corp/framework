@@ -22,8 +22,6 @@ public class SuezConstants {
     public static final String ACCOUNT_SYNC_SETTING_KEY = "account_sync_settings";
     public static final String SYNC_DATA_INTERVAL_KEY = "sync_interval_settings";
     public static final String SYNC_DATA_LIMIT_KEY = "sync_data_limit_settings";
-    public static final int OFFLINE_DB_INT_KEY = 1;
-    public static final int INCREMENTAL_DB_INT_KEY = 2;
     private static final long DEVELOPMENT_KEY = 4007770876L;
     public static final int OFFLINE_URL_ERROR_KEY = 0;
     public static final int INCR_URL_ERROR_KEY = 1;
@@ -34,7 +32,7 @@ public class SuezConstants {
     public static final String TANK_TRUCK_KEY = "tank_trunk";
     public static final String WAC_INFO_WAC_KEY = "wac_info_wac";
     public static final String WAC_INFO_KEY = "wac_info";
-    public static final String CREATE_BLENDING_KEY = "new_blending";
+    public static final String CREATE_BLENDING_KEY = "create_blending";
     public static final String ADD_BLENDING_KEY = "add_blending";
     public static final String PRODLOT_ID_KEY = "prodlot_id";
     public static final String WAC_ID_KEY = "wac_id";

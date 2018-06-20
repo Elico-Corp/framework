@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
@@ -26,6 +27,7 @@ import java.util.List;
  */
 
 public class RepackingActivity extends ProcessingActivity {
+    private static final String TAG = RepackingActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,12 +61,7 @@ public class RepackingActivity extends ProcessingActivity {
 
     @Override
     protected void performProcessing() {
-        if (records.size() > 1) {
-            ToastUtil.toastShow(R.string.toast_repacking_one_record, this);
-            return;
-        }
-        int repackingLocationId = Integer.parseInt(repackingLocation.getValue().toString());
-        int destinationLocationId = Integer.parseInt(destinationLocation.getValue().toString());
+        OValues inputValues = pretreatmentWizardForm.getValues();
         int packageId = Integer.parseInt(packagingId.getValue().toString());
         Integer packageNumber = Integer.parseInt(packagingNumber.getValue().toString());
         Float repackingQty = records.get(0).getFloat("input_qty");
@@ -87,12 +84,19 @@ public class RepackingActivity extends ProcessingActivity {
 //                quantLines.add(quantLine);
 //            }
 //            kwargs.put("quant_lines", quantLines);
-            kwargs.put("repacking_location_id", stockLocation.browse(repackingLocationId).getInt("id"));
-            kwargs.put("location_dest_id", stockLocation.browse(destinationLocationId).getInt("id"));
+            kwargs.put("repacking_location_id", stockLocation.browse(inputValues.getInt("repacking_location_id")).getInt("id"));
+            kwargs.put("location_dest_id", stockLocation.browse(inputValues.getInt("destination_location_id")).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.REPACKING_KEY);
-            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
+            BaseAbstractListener listener = new BaseAbstractListener() {
+                @Override
+                public void OnSuccessful(Object obj) {
+                    postProcessing(obj);
+                }
+            };
+            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map)
+                    .setListener(listener);
             utils.callMethodOnServer();
         } else {
             ODataRow prodlot = stockProductionLot.browse(prodlot_id);
@@ -109,7 +113,7 @@ public class RepackingActivity extends ProcessingActivity {
                 newLotIds[i-1] = String.valueOf(newLotId);
                 OValues newQuantValues = new OValues();
                 newQuantValues.put("lot_id", newLotId);
-                newQuantValues.put("location_id", destinationLocationId);
+                newQuantValues.put("location_id", inputValues.getInt("destination_location_id"));
                 newQuantValues.put("qty", packagingQty);
                 stockQuant.insert(newQuantValues);
             }
@@ -122,7 +126,7 @@ public class RepackingActivity extends ProcessingActivity {
             ODataRow record = records.get(0);
                 if (record.getFloat("input_qty").equals(record.getFloat("qty"))) {
                     OValues values = new OValues();
-                    values.put("location_id", repackingLocationId);
+                    values.put("location_id", inputValues.getInt("repacking_location_id"));
                     stockQuant.update(record.getInt("_id"), values);
                 } else {
                     OValues remainValues = new OValues();
@@ -132,7 +136,7 @@ public class RepackingActivity extends ProcessingActivity {
                     stockQuant.update(record.getInt("_id"), remainValues);
                     OValues newValues = new OValues();
                     newValues.put("lot_id", record.getInt("lot_id"));
-                    newValues.put("location_id", repackingLocationId);
+                    newValues.put("location_id", inputValues.getInt("repacking_location_id"));
                     newValues.put("qty", record.getFloat("input_qty"));
                     stockQuant.insert(newValues);
                 }
@@ -141,8 +145,8 @@ public class RepackingActivity extends ProcessingActivity {
 //            wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
 //            wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
-            wizardValues.put("repacking_location_id", repackingLocationId);
-            wizardValues.put("destination_location_id", destinationLocationId);
+            wizardValues.put("repacking_location_id", inputValues.getInt("repacking_location_id"));
+            wizardValues.put("destination_location_id", "destination_location_id");
             wizardValues.put("qty", repackingQty);
             wizardValues.put("remain_qty", remainQuantity);
             wizardValues.put("new_prodlot_ids", RecordUtils.getArrayString(newLotIds));

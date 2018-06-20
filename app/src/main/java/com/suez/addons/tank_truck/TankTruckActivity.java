@@ -158,7 +158,7 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
         adapter.setmOnItemClickListener(new CommonTextAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                dialogPumping(records.get(position).getString("name"), records.get(position).getInt("id"), position);
+                dialogPumping(records.get(position - 1).getString("name"), records.get(position - 1).getInt("id"), position);
             }
 
             @Override
@@ -234,7 +234,7 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
         map.put("action", SuezConstants.TANK_TRUCK_KEY);
         map.put("data", kwargs);
         CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(deliveryRoute, "get_flush_data", new OArguments(),
-                null, kwargs).setListener(listener);
+                null, map).setListener(listener);
         utils.callMethodOnServer();
     }
 

@@ -71,6 +71,8 @@
     <string name="message_confirm_remove_record">Are you sure to remove the record ?</string>
     <string name="message_not_blending_lot">\"%s\" is not a blending lot</string>
     <string name="message_is_finished">\"%s\" is already finished</string>
+    <string name="message_response_null">Response is null!</string>
+    <string name="message_processing_success">Process Success</string>
 
     <!--Toast-->
     <string name="toast_successful">Successful</string>
@@ -85,6 +87,8 @@
     <string name="toast_existing_lot">Lot already existed</string>
     <string name="toast_repacking_one_record">Repacking can be done for only one record</string>
     <string name="toast_invalid_field">Invalid Input in %s</string>
+    <string name="toast_processing_failed">Processing Failed</string>
+
     <!-- Colums -->
     <string name="column_name">Name</string>
     <string name="column_plate_number">Plate Number</string>
@@ -103,7 +107,7 @@
     <string name="column_product">Product</string>
     <string name="column_reference">Reference</string>
     <string name="column_product_qty">Quantity to Purchase</string>
-    <string name="column_partner_name_cn">Customer Name Chinese</string>
+    <string name="column_partner_name_local">Customer Name Chinese</string>
     <string name="column_partner_id">Customer</string>
     <string name="column_route_id">Delivery Truck</string>
     <string name="column_dts_id">Delivery Time</string>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
@@ -24,6 +25,8 @@ import java.util.List;
  */
 
 public class DirectBurnActivity extends ProcessingActivity {
+
+    private static final String TAG = DirectBurnActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,7 +53,7 @@ public class DirectBurnActivity extends ProcessingActivity {
 
     @Override
     protected void performProcessing() {
-        int pretreatmentLocationId = Integer.parseInt(pretreatmentLocation.getValue().toString());
+        OValues inputValues = pretreatmentWizardForm.getValues();
         float qty = records.get(0).getFloat("input_qty");
         float remainQuantity = Float.parseFloat(remainQty.getValue().toString());
         if (isNetwork) {
@@ -68,18 +71,25 @@ public class DirectBurnActivity extends ProcessingActivity {
 //                quantLines.add(quantLine);
 //            }
 //            kwargs.put("quant_lines", quantLines);
-            kwargs.put("pretreatment_location", stockLocation.browse(pretreatmentLocationId).getInt("id"));
+            kwargs.put("pretreatment_location", stockLocation.browse(inputValues.getInt("pretreatment_location_id")).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.DIRECT_BURN_KEY);
-            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
+            BaseAbstractListener listener = new BaseAbstractListener() {
+                @Override
+                public void OnSuccessful(Object obj) {
+                    postProcessing(obj);
+                }
+            };
+            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map)
+                    .setListener(listener);
             utils.callMethodOnServer();
         } else {
 //            for (ODataRow record : records) {
             ODataRow record = records.get(0);
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();
-                    values.put("location_id", pretreatmentLocationId);
+                    values.put("location_id", inputValues.getInt("pretreatment_location_id"));
                     stockQuant.update(record.getInt("_id"), values);
                 } else {
                     OValues remainValues = new OValues();
@@ -89,7 +99,7 @@ public class DirectBurnActivity extends ProcessingActivity {
                     stockQuant.update(record.getInt("_id"), remainValues);
                     OValues newValues = new OValues();
                     newValues.put("lot_id", record.getInt("lot_id"));
-                    newValues.put("location_id", pretreatmentLocationId);
+                    newValues.put("location_id", inputValues.getInt("pretreatment_location_id"));
                     newValues.put("qty", record.getFloat("input_qty"));
                     stockQuant.insert(newValues);
 //                }
@@ -99,7 +109,7 @@ public class DirectBurnActivity extends ProcessingActivity {
 //        wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
         wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
 //        wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
-        wizardValues.put("pretreatment_location_id", pretreatmentLocationId);
+        wizardValues.put("pretreatment_location_id", inputValues.getInt("pretreatment_location_id"));
         wizardValues.put("qty", qty);
         wizardValues.put("remain_qty", remainQuantity);
     }

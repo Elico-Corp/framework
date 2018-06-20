@@ -201,7 +201,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         }
         drlRow = new RecordUtils(deliveryRouteLine).parseMany2oneRecords(drlRow, new String[]{"address_id", "route_id", "pretreatment_id", "hw_code", "deviation_reasons_id"},
                 new String[]{"name", "name", "name", "name", "name"});
-        drlRow.put("address_name_zh", drlRow.getM2ORecord("wac_id").browse().getString("partner_name_cn"));
+        drlRow.put("address_name_zh", drlRow.getM2ORecord("wac_id").browse().getString("partner_name_local"));
         deliveryRouteLineForm.initForm(drlRow);
         deliveryRouteLineFormHide.initForm(drlRow);
         List<ODataRow> wmdsRows = component.query("select wm.name as component, wpm.min as min, wpm.max as max, wpm.average " +

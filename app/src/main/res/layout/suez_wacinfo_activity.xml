@@ -49,7 +49,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:controlLabel="@string/column_partner_name_cn"
+                    app:controlLabel="@string/column_partner_name_local"
                     app:fieldLabelColor="@color/theme_secondary"
                     app:fieldName="address_name_zh"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>

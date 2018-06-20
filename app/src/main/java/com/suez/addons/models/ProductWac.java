@@ -24,7 +24,7 @@ public class ProductWac extends OModel {
     OColumn name = new OColumn(getContext(), R.string.column_name_en, OVarchar.class);
     OColumn name_local = new OColumn(getContext(), R.string.column_name_local, OVarchar.class);
     OColumn wac_version = new OColumn(getContext(), R.string.column_wac_version, OVarchar.class);
-    OColumn partner_name_cn = new OColumn(getContext(), R.string.column_partner_name_cn, OVarchar.class);
+    OColumn partner_name_local = new OColumn(getContext(), R.string.column_partner_name_local, OVarchar.class);
     OColumn partner_id = new OColumn(getContext(), R.string.column_customer_name, ResPartner.class, OColumn.RelationType.ManyToOne);
     OColumn product_category_id = new OColumn(getContext(), R.string.column_waste_category, ProductCategory.class, OColumn.RelationType.ManyToOne);
 

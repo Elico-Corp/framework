@@ -15,12 +15,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
 import com.odoo.core.rpc.helper.ODomain;
+import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezActivity;
 import com.suez.SuezConstants;
@@ -29,11 +31,13 @@ import com.suez.addons.models.OperationsWizard;
 import com.suez.addons.models.StockLocation;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
+import com.suez.utils.LogUtils;
 import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
 import com.suez.utils.SuezJsonUtils;
 import com.suez.utils.ToastUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -72,6 +76,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     @BindView(R.id.remain_qty)
     OField remainQty;
 
+    private static final String TAG = ProcessingActivity.class.getSimpleName();
     protected int prodlot_id;
     protected int quant_id;
     protected int clickPosition;
@@ -280,7 +285,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
                 finish();
                 break;
             case R.id.btn_confirm:
-                if (preProcessing()) {
+                if (validateInput(pretreatmentWizardForm)) {
                     performProcessing();
                 }
                 break;
@@ -295,18 +300,6 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
         remainQty.setValue(records.get(0).getFloat("qty") - records.get(0).getFloat("input_qty"));
     }
 
-    protected boolean preProcessing() {
-        // Validate Datas
-        OValues values = pretreatmentWizardForm.getValues();
-        for (String key: values.keys()) {
-            if (values.get(key) == null || values.get(key).equals(false)) {
-                ToastUtil.toastShow(String.format(OResource.string(this, R.string.toast_invalid_field), key), this);
-                return false;
-            }
-        }
-        return true;
-    }
-
     /**
      * Processing actions, to be inherited in child class.
      */
@@ -317,7 +310,26 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     /**
      * Actions after processing, to be inherited in child class.
      */
-    protected void postProcessing() {
-
+    protected void postProcessing(Object response) {
+        if (response == null) {
+            alertWarning(R.string.message_response_null);
+        } else if (response instanceof String) {
+            ToastUtil.toastShow(R.string.toast_processing_failed, this);
+            LogUtils.e(TAG, String.valueOf(response));
+        } else if (response instanceof ArrayList || response instanceof LinkedTreeMap) {
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.toast_successful)
+                    .setMessage(R.string.message_processing_success)
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                    }).create();
+            dialog.show();
+        }
     }
 }

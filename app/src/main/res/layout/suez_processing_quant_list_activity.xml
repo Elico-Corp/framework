@@ -51,11 +51,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:fieldName="delivery_route_name"
+                        app:controlLabel="@string/column_delivery_route"
                         app:fieldLabelColor="@color/theme_secondary"
                         app:fieldTextAppearance="?android:textAppearanceMedium"/>
                     <odoo.controls.OField
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_delivery_route_line"
                         app:fieldName="delivery_route_line_name"
                         app:fieldLabelColor="@color/theme_secondary"
                         app:fieldTextAppearance="?android:textAppearanceMedium"/>
@@ -69,6 +71,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:fieldName="customer_id_name"
+                        app:controlLabel="@string/column_customer_name"
                         app:fieldLabelColor="@color/theme_secondary"
                         app:fieldTextAppearance="?android:textAppearanceMedium"/>
                     <odoo.controls.OField
@@ -80,6 +83,7 @@
                     <odoo.controls.OField
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_pretreatment_id"
                         app:fieldName="pretreatment_id_name"
                         app:fieldLabelColor="@color/theme_secondary"
                         app:fieldTextAppearance="?android:textAppearanceMedium"/>

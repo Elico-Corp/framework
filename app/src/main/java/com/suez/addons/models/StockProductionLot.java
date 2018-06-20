@@ -29,7 +29,7 @@ public class StockProductionLot extends OModel {
     OColumn customer_id = new OColumn(getContext(), R.string.column_customer_name, ResPartner.class, OColumn.RelationType.ManyToOne);
     OColumn pretreatment_id = new OColumn(getContext(), R.string.column_pretreatment_id, PretreatmentWac.class, OColumn.RelationType.ManyToOne);
     OColumn quant_ids = new OColumn(getContext(), R.string.column_quant_ids, StockQuant.class, OColumn.RelationType.OneToMany);
-    OColumn is_finished = new OColumn("Is Finished", OBoolean.class).setDefaultValue(false).setLocalColumn();
+    OColumn is_finished = new OColumn("Is Finished", OBoolean.class).setDefaultValue(false);
 
     public StockProductionLot(Context context, OUser user) {
         super(context, "stock.production.lot", user);

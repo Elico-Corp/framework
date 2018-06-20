@@ -109,15 +109,15 @@ public class CreateBlendingActivity extends BlendingActivity {
 
     @Override
     protected void blending(boolean finish) {
-        int blendingLocationId = Integer.parseInt(blendingLocation.getValue().toString());
-        int destinationLocationId = Integer.parseInt(destinationLocation.getValue().toString());
+        super.blending(finish);
+        OValues inputValues = blendingWizardForm.getValues();
         int blendingWasteCategoryId = Integer.parseInt(blendingCategory.getValue().toString());
         if (isNetwork) {
             HashMap<String, Object> kwargs = new HashMap<>();
             kwargs.put("lot_id", lotIds.get(0));
-            kwargs.put("blending_location_id", blendingLocationId);
+            kwargs.put("blending_location_id", stockLocation.browse(inputValues.getInt("blending_location_id")).getInt("id"));
             kwargs.put("quantity", RecordUtils.sumField(records, "input_qty"));
-            kwargs.put("location_dest_id", destinationLocationId);
+            kwargs.put("location_dest_id", stockLocation.browse(inputValues.getInt("destination_location_id")).getInt("id"));
             kwargs.put("category_id", blendingWasteCategoryId);
             kwargs.put("is_finish", finish);
             List<HashMap> quantLines  = new ArrayList<>();
@@ -132,7 +132,14 @@ public class CreateBlendingActivity extends BlendingActivity {
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.CREATE_BLENDING_KEY);
-            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
+            BaseAbstractListener listener = new BaseAbstractListener() {
+                @Override
+                public void OnSuccessful(Object obj) {
+                    postBlending(obj);
+                }
+            };
+            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data",
+                    new OArguments(), null, map).setListener(listener);
             utils.callMethodOnServer();
         } else {
             OValues lotValues = new OValues();
@@ -144,7 +151,7 @@ public class CreateBlendingActivity extends BlendingActivity {
             for (ODataRow record : records) {
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();
-                    values.put("location_id", blendingLocationId);
+                    values.put("location_id", inputValues.getInt("blending_location_id"));
                     stockQuant.update(record.getInt("_id"), values);
                 } else { // Part processing
                     // Remain
@@ -155,14 +162,14 @@ public class CreateBlendingActivity extends BlendingActivity {
                     stockQuant.update(record.getInt("_id"), remainValues);
                     OValues newValues = new OValues();
                     newValues.put("lot_id", record.getInt("lot_id"));
-                    newValues.put("location_id", blendingLocationId);
+                    newValues.put("location_id", inputValues.getInt("blending_location_id"));
                     newValues.put("qty", record.getFloat("input_qty"));
                     stockQuant.insert(newValues);
                 }
                 // New Quants
                 OValues newQuantValues = new OValues();
                 newQuantValues.put("lot_id", newLotId);
-                newQuantValues.put("location_id", destinationLocationId);
+                newQuantValues.put("location_id", inputValues.getInt("destination_location_id"));
                 newQuantValues.put("qty", record.getFloat("input_qty"));
                 stockQuant.insert(newQuantValues);
 
@@ -171,8 +178,8 @@ public class CreateBlendingActivity extends BlendingActivity {
                 wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
                 wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
                 wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
-                wizardValues.put("blending_location_id", blendingLocationId);
-                wizardValues.put("destination_location_id", destinationLocationId);
+                wizardValues.put("blending_location_id", inputValues.getInt("blending_location_id"));
+                wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
                 wizardValues.put("blending_waste_category_id", blendingWasteCategoryId);
                 wizardValues.put("new_prodlot_id", newLotId);
 

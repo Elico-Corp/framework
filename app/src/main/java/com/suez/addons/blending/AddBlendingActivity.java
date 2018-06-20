@@ -77,6 +77,7 @@ public class AddBlendingActivity extends BlendingActivity {
 
     @Override
     protected void blending(boolean finish) {
+        super.blending(finish);
         if (isNetwork) {
             HashMap<String, Object> kwargs = new HashMap<>();
             kwargs.put("lot_id", prodlotId);
@@ -94,7 +95,14 @@ public class AddBlendingActivity extends BlendingActivity {
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.ADD_BLENDING_KEY);
-            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
+            BaseAbstractListener listener = new BaseAbstractListener() {
+                @Override
+                public void OnSuccessful(Object obj) {
+                    postBlending(obj);
+                }
+            };
+            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data",
+                    new OArguments(), null, map).setListener(listener);
             utils.callMethodOnServer();
         } else {
             for (ODataRow record: records) {

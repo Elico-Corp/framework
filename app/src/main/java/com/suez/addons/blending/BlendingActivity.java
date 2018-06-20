@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.odoo.BaseAbstractListener;
 import com.odoo.R;
@@ -32,6 +33,7 @@ import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
 import com.suez.addons.processing.ProcessingActivity;
 import com.suez.addons.scan.ScanZbarActivity;
+import com.suez.utils.LogUtils;
 import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
 import com.suez.utils.SuezJsonUtils;
@@ -78,9 +80,11 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
     @BindView(R.id.btn_blending_finish)
     Button btnBlendingFinish;
 
+    private static final String TAG = BlendingActivity.class.getSimpleName();
     protected int prodlotId;
     protected String prodlotName;
     protected StockProductionLot stockProductionLot;
+    protected StockLocation stockLocation;
     protected OperationsWizard wizard;
     protected StockQuant stockQuant;
     protected OValues wizardValues;
@@ -98,6 +102,7 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
         prodlotId = getIntent().getIntExtra(SuezConstants.PRODLOT_ID_KEY, 0);
         prodlotName = getIntent().getStringExtra(SuezConstants.PRODLOT_NAME_KEY);
         stockProductionLot = new StockProductionLot(this, null);
+        stockLocation = new StockLocation(this, null);
         stockQuant = new StockQuant(this, null);
         wizard = new OperationsWizard(this, null);
         records = new ArrayList<>();
@@ -126,10 +131,14 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
                 startActivityForResult(intent, 1);
                 break;
             case R.id.btn_blending:
-                blending(false);
+                if (validateInput(blendingWizardForm)) {
+                    blending(false);
+                }
                 break;
             case R.id.btn_blending_finish:
-                blending(true);
+                if (validateInput(blendingWizardForm)) {
+                    blending(true);
+                }
                 break;
         }
     }
@@ -173,7 +182,34 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
             adapter.notifyDataSetChanged();
         }
     }
+
     protected void blending(boolean finish) {
+        if (records.size() == 0) {
+            ToastUtil.toastShow(R.string.toast_no_data, this);
+            return;
+        }
+    }
+
+    protected void postBlending(Object response) {
+        if (response == null) {
+            alertWarning(R.string.message_response_null);
+        } else if (response instanceof String) {
+            ToastUtil.toastShow(R.string.toast_processing_failed, this);
+            LogUtils.e(TAG, String.valueOf(response));
+        } else if (response instanceof ArrayList || response instanceof LinkedTreeMap) {
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.toast_successful)
+                    .setMessage(R.string.message_processing_success)
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    }).create();
+            dialog.show();
+        }
     }
 
     @Override

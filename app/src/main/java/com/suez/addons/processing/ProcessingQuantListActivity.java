@@ -138,26 +138,38 @@ public class ProcessingQuantListActivity extends SuezActivity implements CommonT
                 intent = new Intent(this, WacMoveActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
                 intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, rows.get(position - 1).getInt("id"));
-                startActivity(intent);
+                startActivityForResult(intent, 1);
                 break;
             case SuezConstants.REPACKING_KEY:
                 intent = new Intent(this, RepackingActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
                 intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, rows.get(position - 1).getInt("id"));
-                startActivity(intent);
+                startActivityForResult(intent, 1);
                 break;
             case SuezConstants.PRETREATMENT_KEY:
                 intent = new Intent(this, PretreatmentActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
                 intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, rows.get(position - 1).getInt("id"));
-                startActivity(intent);
+                startActivityForResult(intent, 1);
                 break;
             case SuezConstants.DIRECT_BURN_KEY:
                 intent = new Intent(this, DirectBurnActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
                 intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, rows.get(position - 1).getInt("id"));
-                startActivity(intent);
+                startActivityForResult(intent, 1);
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (isNetwork) {
+                initDataOnline();
+            } else {
+                initDataOffline();
+            }
         }
     }
 

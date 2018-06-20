@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dialogs -->
+    <string name="dialog_confirm">确认</string>
+    <string name="dialog_title_warning">警告</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_title_input">输入编号</string>
+    <string name="dialog_change_quantity">更改数量</string>
+    <string name="dialog_blending">混合</string>
+    <string name="dialog_blending_finish">混合并结束</string>
+    <!-- Labels -->
+    <string name="label_input_tank_truck">输入车辆编号</string>
+    <string name="language_note">切换语言</string>
+    <string name="language_name">简体中文</string>
+    <string name="label_database_size">数据库大小 %1$.2f MB</string>
+    <string name="label_online">在线</string>
+    <string name="label_offline">离线</string>
+    <string name="label_offline_db">离线数据库</string>
+    <string name="label_incremental_db">增量数据库</string>
+    <string name="label_wac_info_package">包装</string>
+    <string name="label_btn_input_code">输入编号</string>
+    <string name="label_hide">隐藏</string>
+    <string name="label_drl_list">DRL 列表</string>
+    <string name="label_list_rpt">RPT</string>
+    <string name="label_list_sn">S/N</string>
+    <string name="label_list_prodlot">批次号码</string>
+    <string name="label_wac_info">Wac 详细信息</string>
+    <string name="label_menu_operation">操作</string>
+    <string name="label_pretreatment">预处理</string>
+    <string name="label_repacking">重新包装</string>
+    <string name="label_direct_burn">焚烧</string>
+    <string name="label_wac_move">移动 WAC</string>
+    <string name="label_available_qty">可用数量</string>
+    <string name="label_scan">扫描</string>
+    <string name="label_select_item">请选择 %s</string>
+    <string name="label_quant_list">份</string>
+    <string name="label_no_data">没有数据</string>
+
+    <!-- Titles -->
+    <string name="title_suez_tanktruck">卡车</string>
+    <string name="title_searching">搜索&#8230;</string>
+    <string name="title_language">语言</string>
+    <string name="title_download_db">下载数据库</string>
+    <string name="title_offline_db_url">离线数据库下载路径</string>
+    <string name="title_increment_db_url">增量数据库下载路径</string>
+    <string name="title_work_mode">工作模式</string>
+    <string name="title_work_online">开启在线模式</string>
+    <string name="title_network_not_match">网络与工作模式不匹配</string>
+    <string name="title_progress_downloading">下载数据库中</string>
+    <string name="title_merge_db">合并数据库</string>
+    <string name="title_suez_wacinfo">WAC 信息</string>
+    <string name="title_scan_sn">扫描序列号</string>
+    <string name="title_suez_scan_wac_list">WAC 列表</string>
+    <string name="title_operations">操作</string>
+    <string name="title_suez_mix_blending">混合</string>
+    <string name="title_suez_mix_blending_new">创建混合</string>
+    <string name="title_suez_mix_blending_add">添加混合</string>
+    <string name="title_not_blending_lot">混合序列号错误</string>
+
+    <!--Messages-->
+    <string name="message_tank_truck_pumping">卸载编号为 %1$s 的卡车.</string>
+    <string name="message_no_tank_truck_number">没有该卡车编号: %1$s</string>
+    <string name="exit_app">再次点击以退出应用.</string>
+    <string name="message_work_mode">您现在处于 %s</string>
+    <string name="message_progress_downloading">下载数据库中，请稍候</string>
+    <string name="message_merge_db">合并数据库中，请稍候</string>
+    <string name="message_no_wac_code">\"%1$s\" \n 不是有效的编号</string>
+    <string name="message_select_operation">选择操作</string>
+    <string name="message_no_qty_available">无可操作数量！</string>
+    <string name="message_confirm_remove_record">确定移除该条记录？</string>
+    <string name="message_not_blending_lot">\"%s\" 不是混合的序列号</string>
+    <string name="message_is_finished">\"%s\" 该混合已经完成</string>
+    <string name="message_response_null">返回为空!</string>
+    <string name="message_processing_success">操作成功</string>
+
+    <!--Toast-->
+    <string name="toast_successful">成功</string>
+    <string name="toast_fail">失败</string>
+    <string name="toast_input_right_url">%s： 请输入正确的路径</string>
+    <string name="toast_offline_success">离线数据库下载成功!</string>
+    <string name="toast_incr_success">增量数据库下载成功!</string>
+    <string name="toast_db_not_found">数据库未找到，请检查下载路径和网络连接</string>
+    <string name="toast_db_zero">数据库大小为 0</string>
+    <string name="toast_no_data">没有数据</string>
+    <string name="toast_no_delivery_route_line">没有数据</string>
+    <string name="toast_existing_lot">该序列号已存在！</string>
+    <string name="toast_repacking_one_record">一次只能操作一条记录</string>
+    <string name="toast_invalid_field">%s 输入错误</string>
+    <string name="toast_processing_failed">操作失败</string>
+
+    <!-- Colums -->
+    <string name="column_name">名称</string>
+    <string name="column_plate_number">车牌号码</string>
+    <string name="column_state">状态</string>
+    <string name="column_truck_weight">车皮重</string>
+    <string name="column_gross_weight">毛重（车重及废料重）</string>
+    <string name="column_copy_no">五联单号</string>
+    <string name="column_action_type">操作类型</string>
+    <string name="column_sync_finished">同步完成</string>
+    <string name="column_serial_number">批次序列号</string>
+    <string name="column_delivery_route">运输车辆</string>
+    <string name="column_qty">数量</string>
+    <string name="column_desc_en">Description (English)</string>
+    <string name="column_desc_local">描述</string>
+    <string name="column_product">产品</string>
+    <string name="column_reference">车辆编号</string>
+    <string name="column_product_qty">待生产数量</string>
+    <string name="column_partner_name_local">客户中文名</string>
+    <string name="column_partner_id">客户</string>
+    <string name="column_route_id">运输车辆</string>
+    <string name="column_dts_id">发货时间</string>
+    <string name="column_pretreatment_id">预处理</string>
+    <string name="column_prodlot_id">批次编号</string>
+    <string name="column_wac_id">WAC 号码</string>
+    <string name="column_hw_code">危废名录编号</string>
+    <string name="column_deviation_reasons">重量偏差原因</string>
+    <string name="column_component">成分</string>
+    <string name="column_min">Min (%)</string>
+    <string name="column_max">Max (%)</string>
+    <string name="column_average">Average (%)</string>
+    <string name="column_wac_code">WAC 编号</string>
+    <string name="column_name_en">Name of the Waste (English)</string>
+    <string name="column_name_local">废料名称</string>
+    <string name="column_wac_version">Wac 版本号</string>
+    <string name="column_customer_name">客户名称</string>
+    <string name="column_sequence">车辆批次</string>
+    <string name="column_customer_weight">客户估重 (t)</string>
+    <string name="column_weighing_weight">磅秤重量读数 (t)</string>
+    <string name="column_total_packaging_quantity">包装总重 (t)</string>
+    <string name="column_internal_weight">内部称重 (t)</string>
+    <string name="column_deduction_weight">已扣除包装重量 (t)</string>
+    <string name="column_invoice_weight">开票重量 (t)</string>
+    <string name="column_wac_number">废料名称</string>
+    <string name="column_packaging">入厂包装信息</string>
+    <string name="column_wac_processing">Wac 处理</string>
+    <string name="column_delivery_date">运输日期</string>
+    <string name="column_origin">原始标示</string>
+    <string name="column_order_line_weight">客户称重 (t)</string>
+    <string name="column_actual_packaging">实际包装</string>
+    <string name="column_remark">备注</string>
+    <string name="column_delivery_route_line">Delivery Route Line</string>
+    <string name="column_waste_category">废料类型</string>
+    <string name="column_is_int_location">焚烧库位?</string>
+    <string name="column_location_usage">库位类型</string>
+    <string name="column_location_id">仓库</string>
+    <string name="column_quant_ids">产品</string>
+    <string name="column_quant_line_ids">原始库位</string>
+    <string name="column_pretreatment_location_id">预处理库位</string>
+    <string name="column_destination_location_id">目标库位</string>
+    <string name="column_pretreatment_type_id">操作类型</string>
+    <string name="column_repacking_location_id">重包装库位</string>
+    <string name="column_packaging_id">包装</string>
+    <string name="column_packaging_number">包装数量</string>
+    <string name="column_repacked_qty">实际处理数量</string>
+    <string name="column_remain_qty">剩余数量</string>
+    <string name="column_is_pretreatment">预处理库位?</string>
+    <string name="column_is_repacking">重包装库位?</string>
+    <string name="column_is_blending">混合库位?</string>
+    <string name="column_blending_location_id">混合库位</string>
+    <string name="column_blending_waste_category_id">混合废料类别</string>
+    <string name="column_exist_blending_id">已有混合</string>
+    <!--Summaries-->
+    <string name="summary_work_online">切换在线模式</string>
+    <!--String Arrays-->
+    <string-array name="languages">
+        <item name="zh">简体中文</item>
+        <item name="en">English</item>
+    </string-array>
+    <string-array name="languagesValues">
+        <item name="zh">zh</item>
+        <item name="en">en</item>
+    </string-array>
+    <string-array name="operations">
+        <item>预处理</item>
+        <item>重新包装</item>
+        <item>焚烧</item>
+        <item>移动 WAC</item>
+    </string-array>
+</resources>

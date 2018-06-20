@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
@@ -25,6 +26,8 @@ import java.util.List;
  */
 
 public class WacMoveActivity extends ProcessingActivity {
+
+    private static final String TAG = WacMoveActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class WacMoveActivity extends ProcessingActivity {
 
     @Override
     protected void performProcessing() {
-        int destinationLocationId = Integer.parseInt(destinationLocation.getValue().toString());
+        OValues inputValues = pretreatmentWizardForm.getValues();
         Float quantity = records.get(0).getFloat("input_qty");
         Float remainQuantity = Float.parseFloat(remainQty.getValue().toString());
 
@@ -71,15 +74,23 @@ public class WacMoveActivity extends ProcessingActivity {
 //                quantLines.add(quantLine);
 //            }
 //            kwargs.put("quant_lines", quantLines);
-            kwargs.put("location_dest_id", stockLocation.browse(destinationLocationId).getInt("id"));
+            kwargs.put("location_dest_id", stockLocation.browse(inputValues.getInt("destination_location_id")).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.WAC_MOVE_KEY);
-            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
+            BaseAbstractListener listener = new BaseAbstractListener() {
+                @Override
+                public void OnSuccessful(Object obj) {
+                    postProcessing(obj);
+                }
+            };
+            CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map)
+                    .setListener(listener);
             utils.callMethodOnServer();
         } else {
 //            for (ODataRow record: records) {
                 // All processing
+            int destinationLocationId = inputValues.getInt("destination_location_id");
             ODataRow record = records.get(0);
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();

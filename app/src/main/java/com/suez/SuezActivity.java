@@ -1,5 +1,7 @@
 package com.suez;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -15,20 +17,24 @@ import android.widget.Spinner;
 
 import com.odoo.App;
 import com.odoo.R;
+import com.odoo.core.orm.OValues;
 import com.odoo.core.support.OdooCompatActivity;
 import com.odoo.core.support.addons.fragment.IOnSearchViewChangeListener;
 import com.odoo.core.utils.OAppBarUtils;
 import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
+import com.suez.utils.ToastUtil;
 
 import java.util.Locale;
+
+import odoo.controls.OForm;
 
 /**
  * Created by joseph on 18-5-2.
  */
 
 public class SuezActivity extends OdooCompatActivity {
-    public static final String TAG = SuezActivity.class.getSimpleName();
+    private static final String TAG = SuezActivity.class.getSimpleName();
     protected App app;
     protected boolean isNetwork;
     private IOnSearchViewChangeListener mOnSearchViewChangeListener;
@@ -144,5 +150,31 @@ public class SuezActivity extends OdooCompatActivity {
     public void startActivity(Intent intent){
         super.startActivity(intent);
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
+
+    protected void alertWarning(int resId) {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_title_warning)
+                .setMessage(resId)
+                .setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        dialog.show();
+    }
+
+    protected boolean validateInput(OForm form) {
+        // Validate Datas
+        OValues values = form.getValues();
+        for (String key: values.keys()) {
+            if (values.get(key) == null || values.get(key).equals(false) || values.get(key).equals("0")) {
+                ToastUtil.toastShow(String.format(OResource.string(this, R.string.toast_invalid_field), key), this);
+                return false;
+            }
+        }
+        return true;
     }
 }

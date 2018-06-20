@@ -155,6 +155,7 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         app:fieldName="qty"
+                        app:withStroke="true"
                         app:fieldType="Text"
                         app:fieldTextAppearance="?android:textAppearanceMedium" />
 
@@ -164,6 +165,7 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone"
                         app:fieldName="package_number"
+                        app:withStroke="true"
                         app:fieldType="Text"
                         app:fieldTextAppearance="?android:textAppearanceMedium" />
 
