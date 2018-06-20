@@ -229,9 +229,11 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
                 IrModel irModel = new IrModel(mContext, user);
                 irModel.setLastSyncDateTimeToNow(model);
             }
-            SuezSyncUtils syncUtils = new SuezSyncUtils(mContext, OUser.current(mContext), last_sync_date);
-            syncUtils.syncProcessing();
-            syncUtils.syncTankTrunk();
+            if (mService != null) {
+                SuezSyncUtils syncUtils = new SuezSyncUtils(mContext, OUser.current(mContext), last_sync_date);
+                syncUtils.syncProcessing();
+                syncUtils.syncTankTrunk();
+            }
             model.onSyncFinished();
         } catch (Exception e) {
             e.printStackTrace();
