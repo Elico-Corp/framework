@@ -18,6 +18,7 @@
         <attr name="iconTint" format="reference|color" />
         <attr name="parsePattern" format="string" />
         <attr name="withOutSidePadding" format="boolean" />
+        <attr name="withStroke" format="boolean"/>
         <attr name="fieldType">
             <enum name="Text" value="0" />
             <enum name="Boolean" value="1" />
