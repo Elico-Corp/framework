@@ -3,6 +3,8 @@ package com.suez;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.IdRes;
+import android.support.annotation.StringRes;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.content.res.Configuration;
@@ -18,6 +20,7 @@ import android.widget.Spinner;
 import com.odoo.App;
 import com.odoo.R;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.support.OUser;
 import com.odoo.core.support.OdooCompatActivity;
 import com.odoo.core.support.addons.fragment.IOnSearchViewChangeListener;
 import com.odoo.core.utils.OAppBarUtils;
@@ -25,6 +28,7 @@ import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
 import com.suez.utils.ToastUtil;
 
+import java.io.File;
 import java.util.Locale;
 
 import odoo.controls.OForm;
@@ -61,6 +65,7 @@ public class SuezActivity extends OdooCompatActivity {
         }
     };
     private Boolean mHasActionBarSpinner = false;
+    private static float dbSize = 0.0f;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
@@ -152,7 +157,7 @@ public class SuezActivity extends OdooCompatActivity {
         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
-    protected void alertWarning(int resId) {
+    protected void alertWarning(@StringRes int resId) {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_title_warning)
                 .setMessage(resId)
@@ -176,5 +181,14 @@ public class SuezActivity extends OdooCompatActivity {
             }
         }
         return true;
+    }
+
+    protected void createAction() {
+        float newDBSize = SuezSettings.getFileSize(new File(getDatabasePath("db").getParent(), OUser.current(this).getDBName()));
+        if (newDBSize < dbSize) {
+            alertWarning(R.string.message_db_size_error);
+        } else {
+            dbSize = newDBSize;
+        }
     }
 }

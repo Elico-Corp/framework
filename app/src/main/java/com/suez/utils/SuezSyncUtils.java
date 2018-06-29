@@ -2,12 +2,17 @@ package com.suez.utils;
 
 import android.content.Context;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.odoo.BaseAbstractListener;
+import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
 import com.odoo.core.rpc.helper.OArguments;
+import com.odoo.core.rpc.helper.utils.gson.OdooRecord;
+import com.odoo.core.rpc.helper.utils.gson.OdooResponse;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
+import com.odoo.core.utils.OResource;
 import com.suez.SuezConstants;
 import com.suez.addons.models.DeliveryRoute;
 import com.suez.addons.models.OperationsWizard;
@@ -16,6 +21,7 @@ import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,16 +50,23 @@ public class SuezSyncUtils {
         stockLocation = new StockLocation(mContext, mUser);
     }
 
-    public void syncProcessing() {
-        // Get records from the wizard model
-        records = wizard.select(null, "create_date > ? and synced = ?",
+    public void getRecords() {
+        records = wizard.select(null, "_write_date > ? and synced = ?",
                 new String[] {syncDate, "false"}, "create_date desc");
-        for (ODataRow record: records) {
+    }
+
+    public void setRecords(List<ODataRow> rows) {
+        records = rows;
+    }
+
+    public void syncProcessing() throws Exception {
+        // Get records from the wizard model
+        for (final ODataRow record: records) {
             final String[] quantLineIds = record.getString("quant_line_ids").split(",");
             String[] quantLineQty = record.getString("quant_line_qty").split(",");
             float remainQty = record.getFloat("remain_qty");
             int lotId = record.getM2ORecord("prodlot_id").browse().getInt("id");
-            final int newLotId = record.getM2ORecord("new_prodlot_id").getId();
+            final String[] newLotId = record.getString("new_prodlot_ids").split(",");
             Float qty = record.getFloat("qty");
             HashMap<String, Object> map = new HashMap<>();
             int pretreatmentLocationId;
@@ -81,7 +94,7 @@ public class SuezSyncUtils {
                     destinationLocationId = record.getM2ORecord("destination_location_id").browse().getInt("id");
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
-                    kwargs.put("quant_id", Integer.parseInt(quantLineIds[0]));
+                    kwargs.put("quant_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getInt("id"));
                     kwargs.put("available_quantity", qty + remainQty);
                     kwargs.put("source_location_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getM2ORecord("location_id").browse().getInt("id"));
                     kwargs.put("quantity", qty);
@@ -96,7 +109,7 @@ public class SuezSyncUtils {
                     pretreatmentLocationId = record.getM2ORecord("pretreatment_location_id").browse().getInt("id");
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
-                    kwargs.put("quant_id", Integer.parseInt(quantLineIds[0]));
+                    kwargs.put("quant_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getInt("id"));
                     kwargs.put("source_location_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getM2ORecord("location_id").browse().getInt("id"));
                     kwargs.put("quantity", qty);
                     kwargs.put("available_quantity", qty + remainQty);
@@ -112,7 +125,7 @@ public class SuezSyncUtils {
                     quantLines = new ArrayList<>();
                     for (int i=0; i<quantLineIds.length && i<quantLineQty.length; i++) {
                         HashMap<String, Object> quantLine = new HashMap<>();
-                        quantLine.put("quant_id", Integer.parseInt(quantLineIds[i]));
+                        quantLine.put("quant_id", stockQuant.browse(Integer.parseInt(quantLineIds[i])).getInt("id"));
                         quantLine.put("quantity", Float.parseFloat(quantLineQty[i]));
                         quantLines.add(quantLine);
                     }
@@ -127,7 +140,7 @@ public class SuezSyncUtils {
                     quantLines = new ArrayList<>();
                     for (int i=0; i<quantLineIds.length && i<quantLineQty.length; i++) {
                         HashMap<String, Object> quantLine = new HashMap<>();
-                        quantLine.put("quant_id", Integer.parseInt(quantLineIds[i]));
+                        quantLine.put("quant_id", stockQuant.browse(Integer.parseInt(quantLineIds[i])).getInt("id"));
                         quantLine.put("quantity", Float.parseFloat(quantLineQty[i]));
                         quantLines.add(quantLine);
                     }
@@ -146,34 +159,65 @@ public class SuezSyncUtils {
                     destinationLocationId = record.getM2ORecord("destination_location_id").browse().getInt("id");
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
-                    kwargs.put("quant_id", quantLineIds[0]);
+                    kwargs.put("quant_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getInt("id"));
                     kwargs.put("location_dest_id", destinationLocationId);
                     kwargs.put("quantity", qty);
+                    kwargs.put("available_quantity", qty + remainQty);
                     map.put("action", SuezConstants.WAC_MOVE_KEY);
                     map.put("data", kwargs);
                     break;
             }
-            CallMethodsOnlineUtils syncUtils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data",
-                    new OArguments(), null, map).setListener(new BaseAbstractListener(){
-                @Override
-                public void OnSuccessful(Object obj) {
+//            CallMethodsOnlineUtils syncUtils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data",
+//                    new OArguments(), null, map).setListener(new BaseAbstractListener(){
+//                @Override
+//                public void OnSuccessful(Object obj) {
                     // Write back the ids
-                    OdooResult result = (OdooResult) obj;
-                    if (result != null && result.has("result") && !result.getString("result").contains("error")) {
-                        // Quant ids
-                        for (int i=0; i<quantLineIds.length && i<result.getMap("result").getArray("quant_id").size(); i++) {
-                            OValues quantValues = new OValues();
-                            quantValues.put("id", (int) result.getMap("result").getArray("quant_id").get(i));
-                            stockQuant.update(Integer.parseInt(quantLineIds[i]), quantValues);
+                    Object obj = stockProductionLot.getServerDataHelper().callMethod("get_flush_data", new OArguments(), null, map);
+                    if (obj == null) {
+                        LogUtils.e(TAG, "Response null");
+                        throw new Exception("Resopn Null From Server");
+                    } else if (obj instanceof String) {
+                        LogUtils.e(TAG, String.valueOf(obj));
+                    } else if (obj instanceof ArrayList) {
+                        List<LinkedTreeMap> results = new ArrayList<>();
+                        results.addAll((Collection<? extends LinkedTreeMap>) obj);
+                        if (results.size() == 0) {
+                            //                        OValues values = new OValues();
+//                        values.put("synced", true);
+//                        wizard.update(record.getInt("_id"), values);
+                            continue;
                         }
-                        // Lot 
-                        OValues lotValues = new OValues();
-                        lotValues.put("id", Integer.parseInt(result.getMap("result").getString("lot_id")));
-                        stockProductionLot.update(newLotId, lotValues);
+                        // Wac move and Blending Result
+                        if (results.get(0).get("quant_id") instanceof ArrayList) {
+                            for (int i = 0; i < quantLineIds.length && i < results.get(0).getArray("quant_id").size(); i++) {
+                                OValues quantValues = new OValues();
+                                quantValues.put("id", results.get(0).getArray("quant_id").get(i));
+                                stockQuant.update(Integer.parseInt(quantLineIds[i]), quantValues);
+                            }
+                            if (newLotId.length > 0) {
+                                OValues lotValues = new OValues();
+                                lotValues.put("id", results.get(0).getInt("lot_id"));
+                                stockProductionLot.update(Integer.parseInt(newLotId[0]), lotValues);
+                            }
+                        } else {
+                            // Repacking Result
+                        for (int i = 0; i < quantLineIds.length && i < results.size(); i++) {
+                            OValues quantValues = new OValues();
+                            quantValues.put("id", results.get(i).getInt("quant_id"));
+                            stockQuant.update(Integer.parseInt(quantLineIds[i]), quantValues);
+                            if (newLotId.length > 0) {
+                                OValues lotValues = new OValues();
+                                lotValues.put("id", results.get(i).getInt("lot_id"));
+                                stockProductionLot.update(Integer.parseInt(newLotId[i]), lotValues);
+                            }
+                        }
                     }
+                        //                        OValues values = new OValues();
+//                        values.put("synced", true);
+//                        wizard.update(record.getInt("_id"), values);
                 }
-            });
-            syncUtils.callMethodOnServer();
+//            });
+//            syncUtils.callMethodOnServer(false);
         }
     }
 
@@ -192,7 +236,22 @@ public class SuezSyncUtils {
         map.put("data", kwargs);
         CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(deliveryRoute, "get_flush_data",
                 new OArguments(), null, map);
-        utils.callMethodOnServer();
+        utils.callMethodOnServer(false);
+    }
+
+    public void verifyConflicts(OdooResult response) {
+        List<OdooRecord> responseRecords = response.getRecords();
+        List<Integer> responseIds = new ArrayList<>();
+        for (OdooRecord responseRecord: responseRecords) {
+            responseIds.add(responseRecord.getInt("id"));
+        }
+        List<ODataRow> conflictRecords = new ArrayList<>();
+        for (ODataRow record: records) {
+            if (responseIds.contains(record.getInt("id"))) {
+                conflictRecords.add(record);
+            }
+        }
+        records.removeAll(conflictRecords);
     }
 
 }

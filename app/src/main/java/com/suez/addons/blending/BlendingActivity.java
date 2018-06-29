@@ -92,6 +92,7 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
     protected CommonTextAdapter adapter;
     protected int clickPosition;
     protected List<Integer> lotIds;
+    protected List<Object> locations;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,6 +109,7 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
         records = new ArrayList<>();
         lotIds = new ArrayList<>();
         lotIds.add(prodlotId);
+        locations = RecordUtils.getFieldList(stockLocation.select(new String[]{"_id"}, "usage = ?", new String[]{"internal"}), "_id");
     }
 
     protected void initForm() {
@@ -119,6 +121,7 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
         blendingQuantList.setLoadingMoreEnabled(false);
         blendingQuantList.setAdapter(adapter);
         adapter.setmOnItemClickListener(this);
+        wizardValues.put("remain_qty", 0.0f);
         blendingWizardForm.initForm(wizardValues.toDataRow());
     }
 
@@ -175,8 +178,8 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
             SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(stockQuant, domain).setListener(listener);
             utils.searchRecordsOnServer();
         } else {
-            List<ODataRow> newQuantRows = stockQuant.select(null, "lot_id = ? and location_id in (select _id from stock_location where usage = ?",
-                    new String[]{String.valueOf(lotId), "internal"});
+            List<ODataRow> newQuantRows = stockQuant.select(null, "lot_id=? and location_id in " + locations.toString().replace("[", "(").replace("]", ")"),
+                    new String[]{String.valueOf(lotId)});
             records.addAll(ProcessingActivity.initInputQty(new RecordUtils(stockQuant).parseMany2oneRecords(newQuantRows, new String[]{"lot_id", "location_id"},
                     new String[]{"name", "name"})));
             adapter.notifyDataSetChanged();

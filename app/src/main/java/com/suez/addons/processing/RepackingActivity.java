@@ -48,12 +48,13 @@ public class RepackingActivity extends ProcessingActivity {
     @Override
     protected void initForm() {
         wizardValues = new OValues();
-        wizardValues.put("repacking_location_id", false);
-        wizardValues.put("destination_location_id", false);
-        wizardValues.put("package_id", false);
+        wizardValues.put("repacking_location_id", 0);
+        wizardValues.put("destination_location_id", 0);
+        wizardValues.put("package_id", 0);
         wizardValues.put("qty", 0.00f);
         wizardValues.put("package_number", 0);
         wizardValues.put("remain_qty", 0.00f);
+        wizardValues.put("prodlot_id", prodlot_id);
         wizardValues.put("action", SuezConstants.REPACKING_KEY);
 
         super.initForm();
@@ -101,6 +102,8 @@ public class RepackingActivity extends ProcessingActivity {
         } else {
             ODataRow prodlot = stockProductionLot.browse(prodlot_id);
             OValues prodlotValues = prodlot.toValues();
+            prodlotValues.removeKey("_id");
+            prodlotValues.removeKey("quant_ids");
             String[] newLotIds = new String[packageNumber];
             Float sum = 0.000f;
             // New lot ids and quant ids
@@ -146,12 +149,14 @@ public class RepackingActivity extends ProcessingActivity {
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
 //            wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
             wizardValues.put("repacking_location_id", inputValues.getInt("repacking_location_id"));
-            wizardValues.put("destination_location_id", "destination_location_id");
+            wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
             wizardValues.put("qty", repackingQty);
             wizardValues.put("remain_qty", remainQuantity);
+            wizardValues.put("package_id", packageId);
+            wizardValues.put("package_number", packageNumber);
             wizardValues.put("new_prodlot_ids", RecordUtils.getArrayString(newLotIds));
 
-            wizard.insert(wizardValues);
+            super.performProcessing();
         }
     }
 }

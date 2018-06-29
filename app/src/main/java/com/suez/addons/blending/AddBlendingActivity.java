@@ -66,8 +66,8 @@ public class AddBlendingActivity extends BlendingActivity {
     protected void initForm() {
         wizardValues = new OValues();
         wizardValues.put("prodlot_id", prodlotId);
-        wizardValues.put("blending_location_id", false);
-        wizardValues.put("destination_location_id", false);
+        wizardValues.put("blending_location_id", 0);
+        wizardValues.put("destination_location_id", 0);
         wizardValues.put("action", SuezConstants.ADD_BLENDING_KEY);
         wizardValues.put("exist_location", prodlotName);
         existBlending.setVisibility(View.VISIBLE);
@@ -136,12 +136,20 @@ public class AddBlendingActivity extends BlendingActivity {
                 stockProductionLot.update(prodlotId, lotValues);
 
                 wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
-                wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
+                wizardValues.put("quant_line_qty", RecordUtils.getFieldString(records, "input_qty"));
                 wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
                 wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
+                wizardValues.put("is_finished", finish);
 
-                wizard.insert(wizardValues);
+                createAction();
             }
         }
+    }
+
+    @Override
+    protected void createAction() {
+        wizard.insert(wizardValues);
+        super.createAction();
+        finish();
     }
 }

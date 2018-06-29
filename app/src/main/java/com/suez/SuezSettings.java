@@ -25,6 +25,8 @@ import com.odoo.core.support.sync.SyncUtils;
 import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
 import com.suez.addons.models.DeliveryRoute;
+import com.suez.addons.models.StockProductionLot;
+import com.suez.utils.OfflineDBUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,9 +45,11 @@ public class SuezSettings extends BaseSettings {
     private EditTextPreference offlineDBUrlPreference;
     private EditTextPreference incrementalDBUrlPreference;
     private SwitchPreference workModePreference;
-    public ProgressDialog progressDialog;
     private OSQLite offlineSqlite;
     private OSQLite incrSqlite;
+    private OfflineDBUtil util;
+    private int offlineRetry;
+    private int incrRetry;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,7 +71,6 @@ public class SuezSettings extends BaseSettings {
             app.setSQLite(mUser.getName(), offlineSqlite);
         }
         incrSqlite = new OSQLite(mContext, mUser, mUser.getIncrDBName());
-        progressDialog = new ProgressDialog(mContext);
 
         keyLanguagePreference = (ListPreference) findPreference(SuezConstants.LANGUAGE_KEY);
         keyLanguagePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -94,7 +97,7 @@ public class SuezSettings extends BaseSettings {
         });
 
         incrementalDBUrlPreference = (EditTextPreference) findPreference(SuezConstants.INCREMENTAL_DB_URL_KEY);
-        incrementalDBUrlPreference.setSummary(String.format(OResource.string(mContext, R.string.label_database_size), getFileSize(new File(mContext.getDatabasePath("db"), mUser.getIncrDBName()))));
+        incrementalDBUrlPreference.setSummary(String.format(OResource.string(mContext, R.string.label_database_size), getFileSize(new File(mContext.getDatabasePath("db").getParent(), mUser.getIncrDBName()))));
         incrementalDBUrlPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -120,51 +123,14 @@ public class SuezSettings extends BaseSettings {
                     startActivity(intent);
                 } else {
 //                     Close auto sync
-                    new SyncUtils(mContext, mUser).setAutoSync(DeliveryRoute.AUTHORITY, false);
+                    new SyncUtils(mContext, mUser).setAutoSync(StockProductionLot.AUTHORITY, false);
+                    offlineRetry = 0;
+                    incrRetry = 0;
                     String offline_url = offlineDBUrlPreference.getText();
                     String incr_url = incrementalDBUrlPreference.getText();
-                    BaseAbstractListener listener = new BaseAbstractListener(){
-                        @Override
-                        public void OnSuccessful(String str){
-                            toast(R.string.toast_successful);
-//                            OfflineDBUtil.MergeTask mergeDB = layer.new MergeTask();
-//                            BaseAbstractListener listener = new BaseAbstractListener() {
-//                                @Override
-//                                public void OnSuccessful(String str) {
-//                                    toast(R.string.toast_successful);
-//                                }
-//                            };
-//                            mergeDB.setListener(listener);
-//                            mergeDB.execute(incrSqlite);
-                        }
-                        @Override
-                        public void OnFail(int i) {
-                            switch (i) {
-                                case SuezConstants.OFFLINE_URL_ERROR_KEY:
-                                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_offline)));
-                                    workModePreference.setChecked(true);
-                                    break;
-                                case SuezConstants.INCR_URL_ERROR_KEY:
-                                    toast(String.format(OResource.string(mContext, R.string.toast_input_right_url), OResource.string(mContext, R.string.label_incremental_db)));
-                                    workModePreference.setChecked(true);
-                                    break;
-                                case SuezConstants.HTTP_RETURN_404:
-                                    toast(R.string.toast_db_not_found);
-                                    break;
-                                case SuezConstants.DB_SIZE_GET_ZERO:
-                                    toast(R.string.toast_db_zero);
-                                    break;
-                                default:
-                                    toast(R.string.toast_fail);
-                            }
-                        }
-
-                        @Override
-                        public void OnFail(String str) {
-                            toast(str);
-                        }
-                    };
-//                    OfflineDBUtil.DownloadDBTask downloadTask = layer.new DownloadDBTask();
+                    util = new OfflineDBUtil(mContext, offline_url, incr_url);
+                    downloadDB();
+//                    OfflineDBUtil.DownloadDBTask downloadTask = new OfflineDBUtil();
 //                    downloadTask.setListener(listener);
 //                    downloadTask.execute(offline_url, incr_url, offlineSqlite.databaseLocalPath(), incrSqlite.databaseLocalPath(), preferenceManager.getString(SuezConstants.OFFLINE_DB_VERSION_KEY, "0"));
                     app.networkState = false;
@@ -174,7 +140,7 @@ public class SuezSettings extends BaseSettings {
         });
     }
 
-    private float getFileSize(File file) {
+    public static float getFileSize(File file) {
         if (file.exists()) {
             try {
                 FileInputStream fis = new FileInputStream(file);
@@ -185,6 +151,65 @@ public class SuezSettings extends BaseSettings {
             }
         }
         return 0f;
+    }
+
+    private void downloadDB () {
+        BaseAbstractListener downloadListener = new BaseAbstractListener(){
+//            @Override
+//            public void OnSuccessful(String str){
+//                BaseAbstractListener md5Listener = new BaseAbstractListener() {
+//
+//                    @Override
+//                    public void OnFail(int i) {
+//                        switch (i) {
+//                            case SuezConstants.OFFLINE_MD5_CHECK_FAIL_KEY:
+//                                if (offlineRetry < SuezConstants.OFFLINE_DOWNLOAD_MAX_RETRY) {
+//                                    preferenceManager.putString(SuezConstants.OFFLINE_DB_VERSION_KEY, "0");
+//                                    downloadDB();
+//                                    offlineRetry += 1;
+//                                } else {
+//                                    toast(R.string.toast_fail);
+//                                    workModePreference.setChecked(true);
+//                                }
+//                                break;
+//                            case SuezConstants.INCR_MD5_CHECK_FAIL_KEY:
+//                                if (incrRetry < SuezConstants.INCR_DOWNLOAD_MAX_RETRY) {
+//                                    downloadDB();
+//                                    incrRetry += 1;
+//                                } else {
+//                                    toast(R.string.toast_fail);
+//                                    workModePreference.setChecked(true);
+//                                }
+//                                break;
+//                        }
+//                    }
+                    @Override
+                    public void OnSuccessful(String obj) {
+                        BaseAbstractListener mergeListener = new BaseAbstractListener() {
+                            @Override
+                            public void OnSuccessful(String str) {
+                                if (str != null) {
+                                    preferenceManager.putString("last_sync_date", str);
+                                }
+                                toast(R.string.toast_successful);
+                            }
+
+                            @Override
+                            public void OnFail(String str) {
+                                workModePreference.setChecked(true);
+                            }
+                        };
+                        util.setListener(mergeListener).mergeDB();
+                    }
+//                };
+//                util.setListener(md5Listener).checkMD5();
+//            }
+            @Override
+            public void OnFail(String str) {
+                workModePreference.setChecked(true);
+            }
+        };
+        util.setListener(downloadListener).download();
     }
 
 //    private void downloadDB(final HashMap<String, String> version, final String offline_url, final String incr_url, final BaseAbstractListener listener) {

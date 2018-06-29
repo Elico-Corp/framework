@@ -45,7 +45,7 @@ public class WacMoveActivity extends ProcessingActivity {
     @Override
     protected void initForm() {
         wizardValues = new OValues();
-        wizardValues.put("destination_location_id", false);
+        wizardValues.put("destination_location_id", 0);
         wizardValues.put("qty", 0.0f);
         wizardValues.put("remain_qty", 0.0f);
         wizardValues.put("action", SuezConstants.WAC_MOVE_KEY);
@@ -101,7 +101,7 @@ public class WacMoveActivity extends ProcessingActivity {
                     OValues remainValues = new OValues();
                     remainValues.put("lot_id", record.getInt("lot_id"));
                     remainValues.put("location_id", record.getInt("location_id"));
-                    remainValues.put("qty", record.getFloat("qty") - record.getFloat("input_qty"));
+                    remainValues.put("qty", RecordUtils.minusFloat(record.getString("qty"), record.getString("input_qty")));
                     stockQuant.update(record.getInt("_id"), remainValues);
                     OValues newValues = new OValues();
                     newValues.put("lot_id", record.getInt("lot_id"));
@@ -117,7 +117,7 @@ public class WacMoveActivity extends ProcessingActivity {
                 wizardValues.put("qty", quantity);
                 wizardValues.put("remain_qty", remainQuantity);
 
-                wizard.insert(wizardValues);
+                super.performProcessing();
 //            }
         }
     }

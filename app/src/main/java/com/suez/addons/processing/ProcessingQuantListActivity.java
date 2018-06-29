@@ -114,7 +114,7 @@ public class ProcessingQuantListActivity extends SuezActivity implements CommonT
                 new String[]{"product_id", "delivery_route_line", "delivery_route", "customer_id", "pretreatment_id"},
                 new String[]{"name", "sequence", "name", "name", "name"}));
         List<ODataRow> records = stockQuant.select(null, "lot_id = ? and location_id in (select _id from stock_location where usage = ?)", new String[]{String.valueOf(prodlotId), "internal"});
-        if (rows.isEmpty()) {
+        if (records.isEmpty()) {
             mainView.setVisibility(View.GONE);
             noItem.setVisibility(View.VISIBLE);
         } else {
@@ -132,30 +132,36 @@ public class ProcessingQuantListActivity extends SuezActivity implements CommonT
 
     @Override
     public void onItemClick(int position) {
+        int quant_id;
+        if (isNetwork) {
+            quant_id = rows.get(position - 1).getInt("id");
+        } else {
+            quant_id = rows.get(position - 1).getInt("_id");
+        }
         Intent intent;
         switch (key) {
             case SuezConstants.WAC_MOVE_KEY:
                 intent = new Intent(this, WacMoveActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
-                intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, rows.get(position - 1).getInt("id"));
+                intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, quant_id);
                 startActivityForResult(intent, 1);
                 break;
             case SuezConstants.REPACKING_KEY:
                 intent = new Intent(this, RepackingActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
-                intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, rows.get(position - 1).getInt("id"));
+                intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, quant_id);
                 startActivityForResult(intent, 1);
                 break;
             case SuezConstants.PRETREATMENT_KEY:
                 intent = new Intent(this, PretreatmentActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
-                intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, rows.get(position - 1).getInt("id"));
+                intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, quant_id);
                 startActivityForResult(intent, 1);
                 break;
             case SuezConstants.DIRECT_BURN_KEY:
                 intent = new Intent(this, DirectBurnActivity.class);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
-                intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, rows.get(position - 1).getInt("id"));
+                intent.putExtra(SuezConstants.STOCK_QUANT_ID_KEY, quant_id);
                 startActivityForResult(intent, 1);
                 break;
         }

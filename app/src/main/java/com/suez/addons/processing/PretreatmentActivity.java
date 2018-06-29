@@ -44,9 +44,9 @@ public class PretreatmentActivity extends ProcessingActivity {
     @Override
     protected void initForm() {
         wizardValues = new OValues();
-        wizardValues.put("pretreatment_location_id", false);
-        wizardValues.put("destination_location_id", false);
-        wizardValues.put("pretreatment_type_id", false);
+        wizardValues.put("pretreatment_location_id", 0);
+        wizardValues.put("destination_location_id", 0);
+        wizardValues.put("pretreatment_type_id", 0);
         wizardValues.put("qty", 0.0f);
         wizardValues.put("remain_qty", 0.0f);
         wizardValues.put("action", SuezConstants.PRETREATMENT_KEY);
@@ -130,10 +130,9 @@ public class PretreatmentActivity extends ProcessingActivity {
                 wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
                 wizardValues.put("qty", quantity);
                 wizardValues.put("remain_qty", remainQuantity);
-                wizardValues.put("new_prodlot_id", newLotId);
+                wizardValues.put("new_prodlot_ids", String.valueOf(newLotId));
 
-                wizard.insert(wizardValues);
-//            }
+               super.performProcessing();
         }
     }
 }

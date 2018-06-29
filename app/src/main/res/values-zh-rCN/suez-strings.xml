@@ -35,6 +35,7 @@
     <string name="label_select_item">请选择 %s</string>
     <string name="label_quant_list">份</string>
     <string name="label_no_data">没有数据</string>
+    <string name="label_sync">同步</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">卡车</string>
@@ -56,6 +57,7 @@
     <string name="title_suez_mix_blending_new">创建混合</string>
     <string name="title_suez_mix_blending_add">添加混合</string>
     <string name="title_not_blending_lot">混合序列号错误</string>
+    <string name="title_check_md5">校验文件</string>
 
     <!--Messages-->
     <string name="message_tank_truck_pumping">卸载编号为 %1$s 的卡车.</string>
@@ -72,6 +74,8 @@
     <string name="message_is_finished">\"%s\" 该混合已经完成</string>
     <string name="message_response_null">返回为空!</string>
     <string name="message_processing_success">操作成功</string>
+    <string name="message_db_size_error">警告： 数据库变小</string>
+    <string name="message_check_md5">正在校验文件完整性</string>
 
     <!--Toast-->
     <string name="toast_successful">成功</string>

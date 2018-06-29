@@ -36,6 +36,7 @@
     <string name="label_select_item">Please Select %s</string>
     <string name="label_quant_list">Stock Quants</string>
     <string name="label_no_data">No Data</string>
+    <string name="label_sync">Sync</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">Tank Truck</string>
@@ -57,6 +58,7 @@
     <string name="title_suez_mix_blending_new">Create Blending</string>
     <string name="title_suez_mix_blending_add">Add Blending</string>
     <string name="title_not_blending_lot">Wrong Blending Lot</string>
+    <string name="title_check_md5">Checking MD5</string>
 
     <!--Messages-->
     <string name="message_tank_truck_pumping">Tank truck %1$s will be sent to pumping.</string>
@@ -73,6 +75,8 @@
     <string name="message_is_finished">\"%s\" is already finished</string>
     <string name="message_response_null">Response is null!</string>
     <string name="message_processing_success">Process Success</string>
+    <string name="message_db_size_error">Warning, DB Size Decreased</string>
+    <string name="message_check_md5">Checking Integrity</string>
 
     <!--Toast-->
     <string name="toast_successful">Successful</string>

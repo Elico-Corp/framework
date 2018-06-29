@@ -16,7 +16,7 @@ public class PretreatmentWac extends OModel {
     public static final String TAG = PretreatmentWac.class.getSimpleName();
 
     public PretreatmentWac(Context context, OUser user) {
-        super(context, "processing.wac", user);
+        super(context, "pretreatment.wac", user);
     }
 
     OColumn name = new OColumn(getContext(), R.string.column_name, OVarchar.class).setSize(64);

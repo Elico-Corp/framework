@@ -23,10 +23,10 @@ public class SuezConstants {
     public static final String SYNC_DATA_INTERVAL_KEY = "sync_interval_settings";
     public static final String SYNC_DATA_LIMIT_KEY = "sync_data_limit_settings";
     private static final long DEVELOPMENT_KEY = 4007770876L;
-    public static final int OFFLINE_URL_ERROR_KEY = 0;
-    public static final int INCR_URL_ERROR_KEY = 1;
-    public static final int HTTP_RETURN_404 = 2;
-    public static final int DB_SIZE_GET_ZERO = 3;
+    public static final int OFFLINE_MD5_CHECK_FAIL_KEY = 0;
+    public static final int INCR_MD5_CHECK_FAIL_KEY = 1;
+    public static final int OFFLINE_DOWNLOAD_MAX_RETRY = 1;
+    public static final int INCR_DOWNLOAD_MAX_RETRY = 3;
     public static final int SEARCH_RECORD_DEFAULT_LIMIT = 100;
     public static final String COMMON_KEY = "key";
     public static final String TANK_TRUCK_KEY = "tank_trunk";
@@ -45,4 +45,5 @@ public class SuezConstants {
     public static final String DIRECT_BURN_KEY = "direct_burn";
     public static final String SCAN_BLENDING_KEY = "scan_blending";
     public static final String WAC_MOVE_KEY = "wac_move";
+    public static final String MD5_FILE_NAME = "md5_checksum.txt";
 }

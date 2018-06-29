@@ -37,6 +37,7 @@ import com.suez.utils.SearchRecordsOnlineUtils;
 import com.suez.utils.SuezJsonUtils;
 import com.suez.utils.ToastUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,7 +153,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     }
 
     protected void initDataOffline() {
-        List<ODataRow> stockQuantRecords = stockQuant.select(null, "id = ?", new String[]{String.valueOf(quant_id)});
+        List<ODataRow> stockQuantRecords = stockQuant.select(null, "_id = ?", new String[]{String.valueOf(quant_id)});
         if (stockQuantRecords == null || stockQuantRecords.size() == 0) {
             alertWarning();
         }
@@ -297,14 +298,18 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
      */
     protected void refreshQty() {
 //        pretreatmentQty.setValue(sumField(records, "input_qty"));
-        remainQty.setValue(records.get(0).getFloat("qty") - records.get(0).getFloat("input_qty"));
+        BigDecimal qty = new BigDecimal(records.get(0).getString("qty"));
+        BigDecimal input_qty = new BigDecimal(records.get(0).getString("input_qty"));
+        remainQty.setValue(qty.subtract(input_qty).floatValue());
     }
 
     /**
      * Processing actions, to be inherited in child class.
      */
     protected void performProcessing() {
-
+        createAction();
+        setResult(RESULT_OK);
+        finish();
     }
 
     /**
@@ -331,5 +336,11 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
                     }).create();
             dialog.show();
         }
+    }
+
+    @Override
+    protected void createAction() {
+        wizard.insert(wizardValues);
+        super.createAction();
     }
 }

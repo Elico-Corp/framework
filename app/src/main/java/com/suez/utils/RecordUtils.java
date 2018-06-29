@@ -4,6 +4,7 @@ import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.fields.OColumn;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,10 +73,14 @@ public class RecordUtils {
      * @return the records with many2one field names
      */
     public List<ODataRow> parseMany2oneRecords(List<ODataRow> rows, String[] many2oneFields, String[] many2oneFieldsName) {
-        for (ODataRow row: rows) {
-            for (int i=0; i<many2oneFields.length && i< many2oneFieldsName.length; i++) {
+        for (ODataRow row : rows) {
+            for (int i = 0; i < many2oneFields.length && i < many2oneFieldsName.length; i++) {
                 if (model.getColumn(many2oneFields[i]).getRelationType().equals(OColumn.RelationType.ManyToOne)) {
-                    row.put(many2oneFields[i] + "_name", row.getM2ORecord(many2oneFields[i]).browse().getString(many2oneFieldsName[i]));
+                    if (row.getM2ORecord(many2oneFields[i]).browse() != null) {
+                        row.put(many2oneFields[i] + "_name", row.getM2ORecord(many2oneFields[i]).browse().getString(many2oneFieldsName[i]));
+                    } else {
+                        row.put(many2oneFields[i] + "_name", "");
+                    }
                 }
             }
         }
@@ -85,9 +90,23 @@ public class RecordUtils {
     public ODataRow parseMany2oneRecords(ODataRow row, String[] many2oneFields, String[] many2oneFieldsName) {
         for (int i = 0; i < many2oneFields.length && i < many2oneFieldsName.length; i++) {
             if (model.getColumn(many2oneFields[i]).getRelationType().equals(OColumn.RelationType.ManyToOne)) {
-                row.put(many2oneFields[i] + "_name", row.getM2ORecord(many2oneFields[i]).browse().getString(many2oneFieldsName[i]));
+                if (row.getM2ORecord(many2oneFields[i]).browse() != null) {
+                    row.put(many2oneFields[i] + "_name", row.getM2ORecord(many2oneFields[i]).browse().getString(many2oneFieldsName[i]));
+                } else {
+                    row.put(many2oneFields[i] + "_name", "");
+                }
             }
         }
         return row;
+    }
+
+    public static float minusFloat(String f1, String f2) {
+        BigDecimal bd1 = new BigDecimal(f1);
+        BigDecimal bd2 = new BigDecimal(f2);
+        return bd1.subtract(bd2).floatValue();
+    }
+
+    public static float minusFloat(float f1, float f2) {
+        return minusFloat(String.valueOf(f1), String.valueOf(f2));
     }
 }

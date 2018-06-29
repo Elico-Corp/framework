@@ -41,6 +41,7 @@ import com.suez.utils.ToastUtil;
 
 import org.json.JSONArray;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,8 +91,8 @@ public class CreateBlendingActivity extends BlendingActivity {
     }
 
     private void initDataOffline() {
-        List<ODataRow> stockQuantRecords = stockQuant.query("select * from stock_quant where lot_id=? and location_id in (select _id from stock_location where usage=?)",
-                new String[]{String.valueOf(prodlotId), "internal"});
+        List<ODataRow> stockQuantRecords = stockQuant.select(null, "lot_id=? and location_id in " + locations.toString().replace("[", "(").replace("]", ")"),
+                new String[]{String.valueOf(prodlotId)});
         records.addAll(ProcessingActivity.initInputQty(new RecordUtils(stockQuant).parseMany2oneRecords(stockQuantRecords,
                 new String[]{"lot_id", "location_id"}, new String[]{"name", "name"})));
         initForm();
@@ -100,9 +101,9 @@ public class CreateBlendingActivity extends BlendingActivity {
     @Override
     protected void initForm() {
         wizardValues = new OValues();
-        wizardValues.put("blending_location_id", false);
-        wizardValues.put("destination_location_id", false);
-        wizardValues.put("blending_waste_category_id", false);
+        wizardValues.put("blending_location_id", 0);
+        wizardValues.put("destination_location_id", 0);
+        wizardValues.put("blending_waste_category_id", 0);
         wizardValues.put("action", SuezConstants.CREATE_BLENDING_KEY);
         super.initForm();
     }
@@ -143,7 +144,8 @@ public class CreateBlendingActivity extends BlendingActivity {
             utils.callMethodOnServer();
         } else {
             OValues lotValues = new OValues();
-            lotValues.put("name", "B" + ODateUtils.getDate("yyMMdd") + stockProductionLot.count("name like ?", new String[]{"B%"}) % 1000);
+            String prefix = "B" + ODateUtils.getDate("yyMMdd");
+            lotValues.put("name", prefix + new DecimalFormat("000").format((stockProductionLot.count("name like ?", new String[]{prefix + "%"}) + 1) % 1000));
             lotValues.put("product_qty", RecordUtils.sumField(records, "input_qty"));
             lotValues.put("is_finished", finish);
             int newLotId = stockProductionLot.insert(lotValues);
@@ -172,19 +174,25 @@ public class CreateBlendingActivity extends BlendingActivity {
                 newQuantValues.put("location_id", inputValues.getInt("destination_location_id"));
                 newQuantValues.put("qty", record.getFloat("input_qty"));
                 stockQuant.insert(newQuantValues);
-
-                wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
-                wizardValues.put("lot_id", lotIds.get(0));
-                wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
-                wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-                wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
-                wizardValues.put("blending_location_id", inputValues.getInt("blending_location_id"));
-                wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
-                wizardValues.put("blending_waste_category_id", blendingWasteCategoryId);
-                wizardValues.put("new_prodlot_id", newLotId);
-
-                wizard.insert(wizardValues);
             }
+            wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
+            wizardValues.put("prodlot_id", lotIds.get(0));
+            wizardValues.put("quant_line_qty", RecordUtils.getFieldString(records, "input_qty"));
+            wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
+            wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
+            wizardValues.put("blending_location_id", inputValues.getInt("blending_location_id"));
+            wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
+            wizardValues.put("blending_waste_category_id", blendingWasteCategoryId);
+            wizardValues.put("new_prodlot_ids", String.valueOf(newLotId));
+            wizardValues.put("is_finished", finish);
+            createAction();
         }
+    }
+
+    @Override
+    protected void createAction() {
+        wizard.insert(wizardValues);
+        super.createAction();
+        finish();
     }
 }

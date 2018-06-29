@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,16 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.odoo.R;
+import com.odoo.core.account.About;
+import com.odoo.core.support.OUser;
 import com.odoo.core.support.addons.fragment.BaseFragment;
 import com.odoo.core.support.drawer.ODrawerItem;
+import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezConstants;
 import com.suez.addons.blending.MixBlendingMenusActivity;
+import com.suez.addons.processing.ProcessingActivity;
+import com.suez.addons.processing.ProcessingTestActivity;
 import com.suez.addons.scan.ScanZbarActivity;
 import com.suez.addons.tank_truck.TankTruckActivity;
 import com.suez.addons.models.DeliveryRoute;
@@ -27,11 +33,13 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 public class SuezFragment extends BaseFragment implements View.OnKeyListener{
-    private static final String TAG = BaseFragment.class.getSimpleName();
+    private static final String TAG = SuezFragment.class.getSimpleName();
     private static final int SCANNING_REQUEST_CODE = 1;
     private Long mExitTime;
+    private OPreferenceManager pref;
 
     @Nullable
     @Override
@@ -39,6 +47,7 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
         super.onCreateView(inflater, container, savedInstance);
         this.setHasOptionsMenu(true);
         this.mExitTime = 0L;
+        pref = new OPreferenceManager(getContext());
         View view = inflater.inflate(R.layout.suez_fragment, container,false);
         ButterKnife.bind(this, view);
         return view;
@@ -120,6 +129,16 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
                 startActivity(intent);
                 break;
         }
+    }
+
+    @OnLongClick(R.id.btnMixBlending)
+    public boolean onLongClick() {
+         if (OUser.current(getContext()).getUsername().equals("admin") && pref.getBoolean(About.DEVELOPER_MODE, false)) {
+             Log.d(TAG, "Start Flush Testing");
+             Intent intent = new Intent(getContext(), ProcessingTestActivity.class);
+             startActivity(intent);
+         }
+        return true;
     }
 
     @Override

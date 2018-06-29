@@ -1,5 +1,7 @@
 package com.suez.utils;
 
+import android.util.Log;
+
 import com.odoo.datas.OConstants;
 
 import java.io.File;
@@ -20,6 +22,7 @@ import javax.net.ssl.X509TrustManager;
  */
 
 public class DownloadUtils {
+    private static final String TAG = DownloadUtils.class.getSimpleName();
     private static DownloadUtils downloadUtil;
     final TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
         @Override
@@ -98,6 +101,7 @@ public class DownloadUtils {
             createDownload(connection, path, listener);
         } catch (Exception e){
             e.printStackTrace();
+            LogUtils.e(TAG, e.getMessage());
         }
         return res;
     }
@@ -105,6 +109,7 @@ public class DownloadUtils {
     public void createDownload(HttpURLConnection connection, String dbPath, OnDownloadListener listener) throws Exception{
             File file = new File(dbPath);
             if (!file.exists()) {
+                LogUtils.w(TAG, dbPath);
                 file.createNewFile();
             }
             byte[] bytes = new byte[4096];
@@ -128,6 +133,7 @@ public class DownloadUtils {
             listener.onDownloadSuccess(total);
         } catch (Exception e) {
             e.printStackTrace();
+            LogUtils.e(TAG, e.getMessage());
             listener.onDownloadFailed(e.toString());
         } finally {
             if (in != null) {

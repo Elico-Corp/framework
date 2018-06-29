@@ -48,13 +48,19 @@ public class CallMethodsOnlineUtils {
         return this;
     }
 
-    public void callMethodOnServer() {
+    public void callMethodOnServer(boolean showDialog) {
         CallMethodTask task = new CallMethodTask();
+        task.setDialogVisible(showDialog);
         task.execute();
+    }
+
+    public void callMethodOnServer() {
+        callMethodOnServer(true);
     }
 
     public class CallMethodTask extends AsyncTask<Void, Void, Object> {
         private ProgressDialog dialog;
+        private boolean dialogVisible = true;
 
         @Override
         protected Object doInBackground(Void... voids) {
@@ -70,6 +76,9 @@ public class CallMethodsOnlineUtils {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if (!dialogVisible) {
+                return;
+            }
             dialog = new ProgressDialog(mContext);
             dialog.setTitle(R.string.title_please_wait);
             dialog.setMessage(OResource.string(mContext, R.string.title_searching));
@@ -83,7 +92,13 @@ public class CallMethodsOnlineUtils {
             if (listener != null) {
                 listener.OnSuccessful(o);
             }
-            dialog.dismiss();
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+        }
+
+        private void setDialogVisible(boolean visible) {
+            dialogVisible = visible;
         }
     }
 }

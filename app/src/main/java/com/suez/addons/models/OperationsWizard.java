@@ -26,19 +26,20 @@ public class OperationsWizard extends OModel {
     OColumn quant_line_ids = new OColumn(getContext(), R.string.column_quant_ids,OVarchar.class).setLocalColumn();
     OColumn quant_line_location_ids = new OColumn("Locations", OVarchar.class).setLocalColumn();
     OColumn quant_line_qty = new OColumn("Qty for lines", OFloat.class);
-    OColumn pretreatment_location_id = new OColumn(getContext(), R.string.column_pretreatment_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_pretreatment", "=", true);
+    OColumn pretreatment_location_id = new OColumn(getContext(), R.string.column_pretreatment_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_pretreatment", "=", "True");
     OColumn destination_location_id = new OColumn(getContext(), R.string.column_destination_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("usage", "=", "internal");
     OColumn pretreatment_type_id = new OColumn(getContext(), R.string.column_pretreatment_type_id, PretreatmentWac.class, OColumn.RelationType.ManyToOne);
     OColumn qty = new OColumn(getContext(), R.string.column_qty, OFloat.class).setLocalColumn();
-    OColumn repacking_location_id = new OColumn(getContext(), R.string.column_repacking_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_repacking", "=", true);
+    OColumn repacking_location_id = new OColumn(getContext(), R.string.column_repacking_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_repacking", "=", "True");
     OColumn package_id = new OColumn(getContext(), R.string.column_packaging_id, StockQuantPackage.class, OColumn.RelationType.ManyToOne).setLocalColumn();
     OColumn package_number = new OColumn(getContext(), R.string.column_packaging_number, OInteger.class).setLocalColumn();
     OColumn remain_qty = new OColumn(getContext(), R.string.column_remain_qty, OFloat.class).setLocalColumn();
     OColumn synced = new OColumn("Synced?", OBoolean.class).setDefaultValue(false).setLocalColumn();
-    OColumn blending_location_id = new OColumn(getContext(), R.string.column_blending_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_blending", "=", true);
+    OColumn blending_location_id = new OColumn(getContext(), R.string.column_blending_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_blending", "=", "True");
     OColumn blending_waste_category_id = new OColumn(getContext(), R.string.column_blending_waste_category_id, BlendingWasteCategory.class, OColumn.RelationType.ManyToOne).setLocalColumn();
     OColumn exist_blending_id = new OColumn(getContext(), R.string.column_exist_blending_id, StockProductionLot.class, OColumn.RelationType.ManyToOne).setLocalColumn();
     OColumn delivery_route_id = new OColumn(getContext(), R.string.column_delivery_route, DeliveryRoute.class, OColumn.RelationType.ManyToOne).setLocalColumn();
+    OColumn is_finished = new OColumn("Is Finished?", OBoolean.class).setLocalColumn().setDefaultValue(false);
 
     public OperationsWizard(Context context, OUser user) {
         super(context, "operations.wizard", user);

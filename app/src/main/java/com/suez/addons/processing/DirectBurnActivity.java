@@ -44,7 +44,7 @@ public class DirectBurnActivity extends ProcessingActivity {
     @Override
     protected void initForm() {
         wizardValues = new OValues();
-        wizardValues.put("pretreatment_location_id", false);
+        wizardValues.put("pretreatment_location_id", 0);
         wizardValues.put("qty", 0.00f);
         wizardValues.put("remain_qty", 0.00f);
         wizardValues.put("action", SuezConstants.DIRECT_BURN_KEY);
@@ -104,13 +104,13 @@ public class DirectBurnActivity extends ProcessingActivity {
                     stockQuant.insert(newValues);
 //                }
             }
-        }
-
-//        wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
-        wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
+            //        wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
+            wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
 //        wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
-        wizardValues.put("pretreatment_location_id", inputValues.getInt("pretreatment_location_id"));
-        wizardValues.put("qty", qty);
-        wizardValues.put("remain_qty", remainQuantity);
+            wizardValues.put("pretreatment_location_id", inputValues.getInt("pretreatment_location_id"));
+            wizardValues.put("qty", qty);
+            wizardValues.put("remain_qty", remainQuantity);
+            super.performProcessing();
+        }
     }
 }
