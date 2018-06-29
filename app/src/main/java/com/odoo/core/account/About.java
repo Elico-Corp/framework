@@ -100,24 +100,22 @@ public class About extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // app icon in action bar clicked; go home
-                finish();
-                return true;
-            case R.id.menu_about_our_apps:
-                IntentUtils.openURLInBrowser(this, OConstants.URL_ODOO_APPS_ON_PLAY_STORE);
-                return true;
-            case R.id.menu_about_github:
-                IntentUtils.openURLInBrowser(this, OConstants.URL_ODOO_MOBILE_GIT_HUB);
-                return true;
-            case R.id.menu_export_db:
-                IrModel model = new IrModel(this, null);
-                model.exportDB();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            // app icon in action bar clicked; go home
+            finish();
+            return true;
+        } else if(item.getItemId() == R.id.menu_about_our_apps) {
+            IntentUtils.openURLInBrowser(this, OConstants.URL_ODOO_APPS_ON_PLAY_STORE);
+            return true;
+        } else if (item.getItemId() == R.id.menu_about_github) {
+            IntentUtils.openURLInBrowser(this, OConstants.URL_ODOO_MOBILE_GIT_HUB);
+            return true;
+        } else if (item.getItemId() == R.id.menu_export_db) {
+            IrModel model = new IrModel(this, null);
+            model.exportDB();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

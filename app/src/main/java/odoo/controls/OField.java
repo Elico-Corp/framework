@@ -82,6 +82,7 @@ public class OField extends LinearLayout implements IOControlData.ValueUpdateLis
     private int labelAppearance = -1;
     private float textSize = -1;
     private float labelSize = -1;
+    private Boolean withStroke = false;
     private IOnFieldValueChangeListener mValueUpdateListener = null;
 
     public enum WidgetType {
@@ -168,7 +169,7 @@ public class OField extends LinearLayout implements IOControlData.ValueUpdateLis
                     R.styleable.OField);
             mField_name = types.getString(R.styleable.OField_fieldName);
             resId = types.getResourceId(R.styleable.OField_iconResource, 0);
-            showIcon = types.getBoolean(R.styleable.OField_showIcon, true);
+            showIcon = types.getBoolean(R.styleable.OField_showIcon, false);
             tint_color = types.getColor(R.styleable.OField_iconTint, 0);
             show_label = types.getBoolean(R.styleable.OField_showLabel, true);
             int type_value = types.getInt(R.styleable.OField_fieldType, 0);
@@ -195,6 +196,7 @@ public class OField extends LinearLayout implements IOControlData.ValueUpdateLis
             textSize = types.getDimension(R.styleable.OField_fieldTextSize, -1);
             labelSize = types.getDimension(R.styleable.OField_fieldLabelSize, -1);
             defaultImage = types.getResourceId(R.styleable.OField_defaultImage, -1);
+            withStroke = types.getBoolean(R.styleable.OField_withStroke, false);
             types.recycle();
         }
         if (mContext.getClass().getSimpleName().contains("BridgeContext"))
@@ -249,6 +251,10 @@ public class OField extends LinearLayout implements IOControlData.ValueUpdateLis
         switch (mType) {
             case Text:
                 controlView = initTextControl();
+                if (controlView != null && withStroke) {
+                    controlView.setBackgroundResource(R.drawable.suez_bg_edit_stroke);
+                    controlView.setPadding(15, 0, 0, 0);
+                }
                 break;
             case Boolean:
                 controlView = initBooleanControl();

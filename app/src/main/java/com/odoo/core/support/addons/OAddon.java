@@ -34,6 +34,17 @@ public class OAddon implements Comparable<OAddon> {
         addon = addon_class;
     }
 
+    public OAddon(String clsName) {
+        try {
+            Class<?> cls = Class.forName(clsName);
+            if (BaseFragment.class.isAssignableFrom(cls)) {
+                addon = cls;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public OAddon setDefault() {
         isDefault = true;
         return this;
