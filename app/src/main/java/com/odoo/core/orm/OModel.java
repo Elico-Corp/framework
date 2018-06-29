@@ -90,7 +90,7 @@ public class OModel implements ISyncServiceListener {
     private boolean hasMailChatter = false;
 
     // Base Columns
-    OColumn id = new OColumn("ID", OInteger.class).setDefaultValue(0);
+    OColumn id = new OColumn("ID", OInteger.class);
     @Odoo.api.v8
     @Odoo.api.v9
     @Odoo.api.v10

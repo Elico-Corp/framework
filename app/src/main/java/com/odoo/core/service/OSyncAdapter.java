@@ -54,6 +54,7 @@ import com.odoo.datas.OConstants;
 import com.suez.utils.SuezSyncUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -144,7 +145,7 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.v(TAG, "Sync for (" + model.getModelName() + ") Started at " + ODateUtils.getDate());
         model.onSyncStarted();
         try {
-            String last_sync_date = preferenceManager.getString("last_sync_date", "");
+            String last_sync_date = preferenceManager.getString("last_sync_date", ODateUtils.getDate(new Date(0), ODateUtils.DEFAULT_FORMAT));
             ODomain domain = new ODomain();
             domain.append(model.defaultDomain());
             if (domain_filter != null) {
@@ -198,41 +199,45 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
                 return;
             }
 
-            Log.v(TAG, "Processing " + response.getRecords().size() + " records");
-            dataUtils.handleResult(model, user, result, response, createRelationRecords);
-            // Updating records on server if local are latest updated.
-            // if model allowed update record to server
-            if (model.allowUpdateRecordOnServer()) {
-                dataUtils.updateRecordsOnServer(this);
-            }
+            if (mService != null) {
+                SuezSyncUtils syncUtils = new SuezSyncUtils(mContext, OUser.current(mContext), last_sync_date);
+                syncUtils.getRecords();
+                syncUtils.verifyConflicts(response);
+                syncUtils.syncProcessing();
+                syncUtils.syncTankTrunk();
+            } else {
 
-            // Creating or updating relation records
-            handleRelationRecords(user, dataUtils.getRelationRecordsHashMap(), result);
+                Log.v(TAG, "Processing " + response.getRecords().size() + " records");
+                dataUtils.handleResult(model, user, result, response, createRelationRecords);
+                // Updating records on server if local are latest updated.
+                // if model allowed update record to server
+                if (model.allowUpdateRecordOnServer()) {
+                    dataUtils.updateRecordsOnServer(this);
+                }
 
-            // If model allowed to create record on server
-            if (model.allowCreateRecordOnServer()) {
-                createRecordsOnServer(model);
-            }
+                // Creating or updating relation records
+                handleRelationRecords(user, dataUtils.getRelationRecordsHashMap(), result);
 
-            // If model allowed to delete record on server
-            if (model.allowDeleteRecordOnServer()) {
-                removeRecordOnServer(model);
-            }
+                // If model allowed to create record on server
+                if (model.allowCreateRecordOnServer()) {
+                    createRecordsOnServer(model);
+                }
 
-            // If model allowed to delete server removed record from local database
-            if (model.allowDeleteRecordInLocal()) {
-                removeNonExistRecordFromLocal(model);
+                // If model allowed to delete record on server
+                if (model.allowDeleteRecordOnServer()) {
+                    removeRecordOnServer(model);
+                }
+
+                // If model allowed to delete server removed record from local database
+                if (model.allowDeleteRecordInLocal()) {
+                    removeNonExistRecordFromLocal(model);
+                }
             }
 
             Log.v(TAG, "Sync for (" + model.getModelName() + ") finished at " + ODateUtils.getDate());
             if (createRelationRecords) {
                 IrModel irModel = new IrModel(mContext, user);
                 irModel.setLastSyncDateTimeToNow(model);
-            }
-            if (mService != null) {
-                SuezSyncUtils syncUtils = new SuezSyncUtils(mContext, OUser.current(mContext), last_sync_date);
-                syncUtils.syncProcessing();
-                syncUtils.syncTankTrunk();
             }
             model.onSyncFinished();
         } catch (Exception e) {
