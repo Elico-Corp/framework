@@ -62,6 +62,7 @@ public class OdooLogin extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base_login);
         mApp = (App) getApplicationContext();
+        mApp.changeLanguage();
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             if (extras.containsKey(OdooAuthenticator.KEY_NEW_ACCOUNT_REQUEST))

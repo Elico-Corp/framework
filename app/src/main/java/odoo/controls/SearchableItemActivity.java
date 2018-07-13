@@ -43,11 +43,13 @@ import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.ServerDataHelper;
 import com.odoo.core.orm.fields.OColumn;
+import com.odoo.core.orm.fields.types.OSelection;
 import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.support.list.OListAdapter;
 import com.odoo.core.utils.OControls;
 import com.odoo.core.utils.OResource;
+import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
 
 import org.json.JSONArray;
@@ -134,12 +136,23 @@ public class SearchableItemActivity extends ActionBarActivity implements
                         }
                     // Add by Joseph 180521
                     if (!isNetwork) {
-                        objects.addAll(OSelectionField.getRecordItems(mRelModel, mCol, formData));
+                        List<ODataRow> rows = OSelectionField.getRecordItems(mRelModel, mCol, formData);
+                        if (mRelModel.getModelName().equals("blending.waste.category")) {
+                            objects.addAll(RecordUtils.nameGet(rows,
+                                    new String[]{"name", "name_local"}, ':'));
+                        } else {
+                            objects.addAll(rows);
+                        }
                     } else {
-                        SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(mRelModel, new OdooFields(mRelModel.getDefaultNameColumn()), liveDomain).setListener(new BaseAbstractListener(){
+                        SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(mRelModel, new OdooFields(mRelModel.getColumns()), liveDomain).setListener(new BaseAbstractListener(){
                             @Override
                             public void OnSuccessful(List<ODataRow> listRow) {
-                                objects.addAll(listRow);
+                                if (mRelModel.getModelName().equals("blending.waste.category")) {
+                                    objects.addAll(RecordUtils.nameGet(listRow, new String[]{"name", "name_local"}, ':'));
+                                } else {
+                                    objects.addAll(listRow);
+                                }
+                                mAdapter.notifyDataSetChanged();
                             }
                         });
                         utils.searchRecordsOnServer();

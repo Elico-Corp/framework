@@ -51,6 +51,7 @@ import com.odoo.core.utils.OResource;
 import com.odoo.core.utils.OdooRecordUtils;
 import com.odoo.core.utils.logger.OLog;
 import com.odoo.datas.OConstants;
+import com.suez.utils.LogUtils;
 import com.suez.utils.SuezSyncUtils;
 
 import java.util.ArrayList;
@@ -242,6 +243,7 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
             model.onSyncFinished();
         } catch (Exception e) {
             e.printStackTrace();
+            LogUtils.e(TAG, e.getMessage());
             model.onSyncFailed();
         }
         // Performing next sync if any in service

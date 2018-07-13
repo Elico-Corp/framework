@@ -24,6 +24,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -38,6 +39,7 @@ import com.suez.SuezConstants;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class App extends Application {
 
@@ -129,5 +131,18 @@ public class App extends Application {
     public String getLanguage() {
         OPreferenceManager pref = new OPreferenceManager(this);
         return pref.getString(SuezConstants.LANGUAGE_KEY, "zh");
+    }
+
+    public void changeLanguage() {
+        String language = getLanguage();
+        Configuration config = getResources().getConfiguration();
+        if (language.equals("zh")) {
+            Locale.setDefault(Locale.CHINA);
+            config.locale = Locale.CHINA;
+        } else {
+            Locale.setDefault(Locale.ENGLISH);
+            config.locale = Locale.ENGLISH;
+        }
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 }
