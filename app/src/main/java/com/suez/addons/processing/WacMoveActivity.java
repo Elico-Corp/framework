@@ -101,18 +101,18 @@ public class WacMoveActivity extends ProcessingActivity {
                     OValues remainValues = new OValues();
                     remainValues.put("lot_id", record.getInt("lot_id"));
                     remainValues.put("location_id", record.getInt("location_id"));
-                    remainValues.put("qty", RecordUtils.minusFloat(record.getString("qty"), record.getString("input_qty")));
+                    remainValues.put("qty", record.getFloat("input_qty"));
                     stockQuant.update(record.getInt("_id"), remainValues);
                     OValues newValues = new OValues();
                     newValues.put("lot_id", record.getInt("lot_id"));
                     newValues.put("location_id", destinationLocationId);
-                    newValues.put("qty", record.getFloat("input_qty"));
-                    stockQuant.insert(newValues);
+                    newValues.put("qty", RecordUtils.minusFloat(record.getString("qty"), record.getString("input_qty")));
+                    int newQuantId = stockQuant.insert(newValues);
+                    wizardValues.put("new_quant_ids", String.valueOf(newQuantId));
                 }
 
                 // Create the wizard record
                 wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-//                wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
                 wizardValues.put("destination_location_id", destinationLocationId);
                 wizardValues.put("qty", quantity);
                 wizardValues.put("remain_qty", remainQuantity);

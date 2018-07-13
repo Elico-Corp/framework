@@ -144,6 +144,7 @@ public class CreateBlendingActivity extends BlendingActivity {
             utils.callMethodOnServer();
         } else {
             OValues lotValues = new OValues();
+            List<Integer> newQuantIds = new ArrayList<>();
             String prefix = "B" + ODateUtils.getDate("yyMMdd");
             lotValues.put("name", prefix + new DecimalFormat("000").format((stockProductionLot.count("name like ?", new String[]{prefix + "%"}) + 1) % 1000));
             lotValues.put("product_qty", RecordUtils.sumField(records, "input_qty"));
@@ -173,13 +174,14 @@ public class CreateBlendingActivity extends BlendingActivity {
                 newQuantValues.put("lot_id", newLotId);
                 newQuantValues.put("location_id", inputValues.getInt("destination_location_id"));
                 newQuantValues.put("qty", record.getFloat("input_qty"));
-                stockQuant.insert(newQuantValues);
+                int newId = stockQuant.insert(newQuantValues);
+                newQuantIds.add(newId);
             }
             wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
             wizardValues.put("prodlot_id", lotIds.get(0));
             wizardValues.put("quant_line_qty", RecordUtils.getFieldString(records, "input_qty"));
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-            wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
+            wizardValues.put("new_quant_ids", RecordUtils.getArrayString(newQuantIds.toArray()));
             wizardValues.put("blending_location_id", inputValues.getInt("blending_location_id"));
             wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
             wizardValues.put("blending_waste_category_id", blendingWasteCategoryId);

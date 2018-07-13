@@ -105,9 +105,16 @@ public class AddBlendingActivity extends BlendingActivity {
                     new OArguments(), null, map).setListener(listener);
             utils.callMethodOnServer();
         } else {
+            List<Integer> newQuantIds = new ArrayList<>();
             for (ODataRow record: records) {
-                Integer targetLocationId = stockQuant.browse(null, "lot_id=?", new String[]{String.valueOf(prodlotId)}).getInt("_id");
-                int blendingLocationId = new StockLocation(this, null).browse(null, "is_blending=?", new String[]{"true"}).getInt("_id");
+                ODataRow targetLocation = stockQuant.browse(null, "lot_id = ?", new String[]{String.valueOf(prodlotId)});
+                int targetLocationId;
+                if (targetLocation == null) {
+                    targetLocationId = 0;
+                } else {
+                    targetLocationId = targetLocation.getInt("_id");
+                }
+                int blendingLocationId = new StockLocation(this, null).browse(null, "is_blending=?", new String[]{"True"}).getInt("_id");
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();
                     values.put("location_id", blendingLocationId);
@@ -129,8 +136,9 @@ public class AddBlendingActivity extends BlendingActivity {
                 newQuantValues.put("lot_id", prodlotId);
                 newQuantValues.put("location_id", targetLocationId);
                 newQuantValues.put("qty", record.getFloat("input_qty"));
-                stockQuant.insert(newQuantValues);
-
+                int newId = stockQuant.insert(newQuantValues);
+                newQuantIds.add(newId);
+            }
                 OValues lotValues = new OValues();
                 lotValues.put("is_finished", finish);
                 stockProductionLot.update(prodlotId, lotValues);
@@ -138,11 +146,10 @@ public class AddBlendingActivity extends BlendingActivity {
                 wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
                 wizardValues.put("quant_line_qty", RecordUtils.getFieldString(records, "input_qty"));
                 wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-                wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
+                wizardValues.put("new_quant_ids", RecordUtils.getArrayString(newQuantIds.toArray()));
                 wizardValues.put("is_finished", finish);
 
                 createAction();
-            }
         }
     }
 

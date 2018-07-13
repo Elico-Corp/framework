@@ -19,6 +19,7 @@ import com.suez.addons.models.StockLocation;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
 import com.suez.utils.MD5Utils;
+import com.suez.utils.RecordUtils;
 import com.suez.utils.SuezSyncUtils;
 import com.suez.utils.ToastUtil;
 
@@ -84,8 +85,9 @@ public class ProcessingTestActivity extends SuezActivity {
         int wacMoveCount = Integer.parseInt(wacMoveCountView.getText().toString());
         int repackingCount = Integer.parseInt(repackingCountView.getText().toString());
         int blendingCount = Integer.parseInt(blendingCountView.getText().toString());
-        records = stockQuant.query("select * from stock_quant where location_id " +
-                "in (select _id from stock_location where usage = ? limit ?", new String[]{"internal", String.valueOf(wacMoveCount + repackingCount + blendingCount)});
+        List<Object> locations = RecordUtils.getFieldList(stockLocation.select(new String[]{"_id"}, "usage = ?", new String[]{"internal"}), "_id");
+        records = stockQuant.select(null, "location_id " +
+                "in " + locations.toString().replace("[", "(").replace("]", ")") + " limit " + (wacMoveCount + repackingCount + blendingCount), null);
         createActions(SuezConstants.WAC_MOVE_KEY, 0, wacMoveCount);
         createActions(SuezConstants.REPACKING_KEY, wacMoveCount, repackingCount);
         createActions(SuezConstants.CREATE_BLENDING_KEY, wacMoveCount + repackingCount, blendingCount);

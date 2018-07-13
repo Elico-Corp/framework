@@ -198,7 +198,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/suez_home_button"
             android:padding="@dimen/default_8dp"
-            android:text="@string/label_cancel"
+            android:text="@string/dialog_cancel"
             android:textColor="@android:color/white"/>
 
         <Button

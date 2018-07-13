@@ -24,11 +24,6 @@
             android:summary=""
             android:title="@string/title_increment_db_url">
         </EditTextPreference>
-        <!--TODO-->
-        <!--<Preference-->
-        <!--android:key="download_db"-->
-        <!--android:summary=""-->
-        <!--android:title="@string/summary_download_db"></Preference>-->
     </PreferenceCategory>
     <PreferenceCategory
         android:key="account_switch_work_mode"

@@ -21,6 +21,7 @@ import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezConstants;
 import com.suez.addons.blending.MixBlendingMenusActivity;
+import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.processing.ProcessingActivity;
 import com.suez.addons.processing.ProcessingTestActivity;
 import com.suez.addons.scan.ScanZbarActivity;
@@ -77,9 +78,8 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
     }
 
     @Override
-    // FIXME
     public Class<?> database(){
-        return DeliveryRoute.class;
+        return StockProductionLot.class;
     }
 
     @Override
@@ -97,7 +97,6 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
         }
     }
 
-    //TODO
     @OnClick({R.id.btnTankTruck, R.id.btnWacInfo, R.id.btnMixBlending, R.id.btnMoveWac, R.id.btnRepackaging})
     public void onClick(View view){
         Intent intent;

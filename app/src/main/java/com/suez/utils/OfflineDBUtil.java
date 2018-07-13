@@ -29,6 +29,7 @@ import java.io.FileReader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Created by joseph on 18-5-8.
@@ -183,15 +184,16 @@ public class OfflineDBUtil {
         return true;
     }
 
-
     private String mergeSqlite (OSQLite sqLite) {
         SQLiteDatabase incrDB = sqLite.getReadableDatabase();
-        List<Object> tableNames = RecordUtils.getFieldList(queryList(incrDB, "select name from sqlite_master where name not in (?, ?, ?)", new String[] {
-                "sqlite_master", "android_metadata", "sqlite_sequence"
+        // Get tables
+        List<Object> tableNames = RecordUtils.getFieldList(queryList(incrDB, "select name from sqlite_master where type = ? and name not in (?, ?, ?)", new String[] {
+                "table", "sqlite_master", "android_metadata", "sqlite_sequence"
         }), "name");
         SQLiteDatabase db = new OModel(mContext, "res.partner", mUser).getWritableDatabase();
         try {
-        db.execSQL(String.format("ATTACH DATABASE '%s' AS incr", incrPath));
+            // Attach Incr
+            db.execSQL(String.format("ATTACH DATABASE '%s' AS incr", incrPath));
             db.beginTransaction();
             for (Object table: tableNames) {
             Log.v(TAG,"Merge start for table: " + table);
@@ -200,6 +202,7 @@ public class OfflineDBUtil {
         }
             db.setTransactionSuccessful();
             db.endTransaction();
+            // Detach
             db.execSQL("DETACH DATABASE incr");
             String lastSyncDate = updateSyncDate(incrDB, db, tableNames);
             incrDB.close();
@@ -282,7 +285,6 @@ public class OfflineDBUtil {
 //        model.update(rowId, many2oneValues);
 //    }
 
-    // FIXME: Remove the function, get the date from odoo.
     private String updateSyncDate(SQLiteDatabase incrDB, SQLiteDatabase offlineDB, List<Object> tables) {
         String date = getMaxWriteDate(incrDB, tables);
         if (date == null || date.equals("") || date.equals("false") || date.equals(false)) {
@@ -295,7 +297,7 @@ public class OfflineDBUtil {
         String date = "";
         for (Object table : tables) {
             String newDate = queryList(db, "select max(_write_date) from " + table, null).get(0).getString("max(_write_date)");
-            if (date.compareTo(newDate) <= 0) {
+            if (!newDate.equals("false") && date.compareTo(newDate) <= 0) {
                 date = newDate;
             }
         }
@@ -412,7 +414,7 @@ public class OfflineDBUtil {
 
                 @Override
                 public void onDownloading(int progress, Long size) {
-                    Log.v(TAG, "Downloading offline progress = " + progress + " size = " + size);
+                    Log.v(TAG, "Downloading MD5 File progress = " + progress + " size = " + size);
                     progressDialog.setProgress(progress);
                 }
 

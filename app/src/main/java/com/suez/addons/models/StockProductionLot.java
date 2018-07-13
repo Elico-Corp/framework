@@ -9,9 +9,12 @@ import com.odoo.base.addons.res.ResPartner;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.orm.fields.types.OBoolean;
+import com.odoo.core.orm.fields.types.ODateTime;
 import com.odoo.core.orm.fields.types.OFloat;
 import com.odoo.core.orm.fields.types.OVarchar;
 import com.odoo.core.support.OUser;
+import com.odoo.core.utils.OResource;
+import com.odoo.core.utils.notification.ONotificationBuilder;
 
 /**
  * Created by joseph on 18-5-11.
@@ -30,9 +33,21 @@ public class StockProductionLot extends OModel {
     OColumn pretreatment_id = new OColumn(getContext(), R.string.column_pretreatment_id, PretreatmentWac.class, OColumn.RelationType.ManyToOne);
     OColumn quant_ids = new OColumn(getContext(), R.string.column_quant_ids, StockQuant.class, OColumn.RelationType.OneToMany);
     OColumn is_finished = new OColumn("Is Finished", OBoolean.class).setDefaultValue(false);
+    OColumn truck_in_date = new OColumn(getContext(), R.string.column_truck_in_date, ODateTime.class);
+    OColumn wac_processing = new OColumn(getContext(), R.string.column_wac_processing, OVarchar.class);
 
     public StockProductionLot(Context context, OUser user) {
         super(context, "stock.production.lot", user);
+    }
+
+    @Override
+    public void onSyncFailed() {
+        ONotificationBuilder builder = new ONotificationBuilder(getContext(), 0)
+                .setIcon(R.drawable.ic_odoo)
+                .setTitle(OResource.string(getContext(), R.string.label_sync))
+                .setText(OResource.string(getContext(), R.string.message_sync_failed))
+                .setAutoCancel(true);
+        builder.build().show();
     }
 
     @Override

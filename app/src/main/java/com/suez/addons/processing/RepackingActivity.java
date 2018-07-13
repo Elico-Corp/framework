@@ -104,21 +104,26 @@ public class RepackingActivity extends ProcessingActivity {
             OValues prodlotValues = prodlot.toValues();
             prodlotValues.removeKey("_id");
             prodlotValues.removeKey("quant_ids");
+            prodlotValues.removeKey("id");
             String[] newLotIds = new String[packageNumber];
+            List<Integer> newQuantIds = new ArrayList<>();
             Float sum = 0.000f;
             // New lot ids and quant ids
-            for (int i=1; i<packageNumber; i++) {
+            int lotCount = stockProductionLot.count("name like ?", new String[]{prodlot.getString("name").split("-")[0] + "-%"}) + 1;
+            for (int i=0; i<packageNumber-1; i++) {
                 Float packagingQty = new BigDecimal(repackingQty / packageNumber).setScale(3, BigDecimal.ROUND_HALF_UP).floatValue();
                 prodlotValues.put("product_qty", packagingQty);
-                prodlotValues.put("name", prodlot.getString("name").split("-")[0] + "-" + stockProductionLot.count("name like ?", new String[]{prodlot.getString("name").split("-")[0] + "-%"}));
-                sum += packagingQty;
+                prodlotValues.put("name", prodlot.getString("name").split("-")[0] + "-" + lotCount);
                 int newLotId = stockProductionLot.insert(prodlotValues);
-                newLotIds[i-1] = String.valueOf(newLotId);
+                sum += packagingQty;
+                lotCount += 1;
+                newLotIds[i] = String.valueOf(newLotId);
                 OValues newQuantValues = new OValues();
                 newQuantValues.put("lot_id", newLotId);
                 newQuantValues.put("location_id", inputValues.getInt("destination_location_id"));
                 newQuantValues.put("qty", packagingQty);
-                stockQuant.insert(newQuantValues);
+                int id = stockQuant.insert(newQuantValues);
+                newQuantIds.add(id);
             }
             prodlotValues.put("product_qty", repackingQty - sum);
             int lastLotId = stockProductionLot.insert(prodlotValues);
@@ -147,7 +152,7 @@ public class RepackingActivity extends ProcessingActivity {
 
 //            wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-//            wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
+            wizardValues.put("new_quant_ids", RecordUtils.getArrayString(newQuantIds.toArray()));
             wizardValues.put("repacking_location_id", inputValues.getInt("repacking_location_id"));
             wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
             wizardValues.put("qty", repackingQty);

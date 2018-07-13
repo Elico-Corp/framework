@@ -228,8 +228,8 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         }
         String str = String.format("%s * %s%s", rows.get(0).getString("package_ids"), rows.get(0).getString("qty"),
                 rows.get(0).getString("remark").equals("false") ? "" : "(" + rows.get(0).getString("remark") + ")");
-        HashMap map = new HashMap<String, Object>();
-        map.put("res_id", R.id.txt_packaging_info);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("resId", R.id.txt_packaging_info);
         map.put("text", str);
         List<HashMap<String, Object>> specifiedFields = new ArrayList<>();
         specifiedFields.add(map);
@@ -237,14 +237,14 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         xrPackagingList.setAdapter(packagingAdapter);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.suez_menu_operation, menu);
-        if (prodlotId == 0) {
-            ((MenuItem) findViewById(R.id.menu_operation)).setVisible(false);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.suez_menu_operation, menu);
+//        if (prodlotId == 0) {
+//            ((MenuItem) findViewById(R.id.menu_operation)).setVisible(false);
+//        }
+//        return super.onCreateOptionsMenu(menu);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -293,6 +293,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

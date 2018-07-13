@@ -109,4 +109,21 @@ public class RecordUtils {
     public static float minusFloat(float f1, float f2) {
         return minusFloat(String.valueOf(f1), String.valueOf(f2));
     }
+
+    public static String fieldGet(ODataRow row, String[] fields, char sep) {
+        StringBuilder builder = new StringBuilder();
+        for (String field: fields) {
+            builder.append(row.getString(field));
+            builder.append(sep);
+        }
+        builder.deleteCharAt(builder.lastIndexOf(String.valueOf(sep)));
+        return builder.toString();
+    }
+
+    public static List<ODataRow> nameGet(List<ODataRow> rows, String[] fields, char sep) {
+        for (ODataRow row: rows) {
+            row.put("name", fieldGet(row, fields, sep));
+        }
+        return rows;
+    }
 }

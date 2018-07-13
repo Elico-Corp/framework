@@ -120,12 +120,12 @@ public class PretreatmentActivity extends ProcessingActivity {
                 newQuantValues.put("lot_id", newLotId);
                 newQuantValues.put("location_id", inputValues.getInt("destination_location_id"));
                 newQuantValues.put("qty", record.getFloat("input_qty"));
-                stockQuant.insert(newQuantValues);
+                int newQuantId = stockQuant.insert(newQuantValues);
 
                 // Create the wizard record
 //                wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
                 wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-//                wizardValues.put("quant_line_location_ids", RecordUtils.getFieldString(records, "location_id"));
+                wizardValues.put("new_quant_ids", String.valueOf(newQuantId));
                 wizardValues.put("pretreatment_location_id", inputValues.getInt("pretreatment_location_id"));
                 wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
                 wizardValues.put("qty", quantity);

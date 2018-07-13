@@ -72,21 +72,6 @@ public class SuezActivity extends OdooCompatActivity {
         super.onCreate(savedInstanceState);
         this.app = (App) this.getApplication();
         this.isNetwork = app.networkState;
-        this.changeAppLanguage();
-    }
-
-    public void changeAppLanguage(){
-        OPreferenceManager preferenceManager = new OPreferenceManager(app);
-        String language = preferenceManager.getString("key_language", "zh");
-        Configuration config = app.getResources().getConfiguration();
-        if (language.equals("zh")){
-            Locale.setDefault(Locale.CHINA);
-            config.locale = Locale.CHINA;
-        } else {
-            Locale.setDefault(Locale.ENGLISH);
-            config.locale = Locale.ENGLISH;
-        }
-        app.getResources().updateConfiguration(config, app.getResources().getDisplayMetrics());
     }
 
     protected void initToolbar(int id){

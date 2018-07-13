@@ -24,7 +24,8 @@ public class OperationsWizard extends OModel {
     OColumn new_prodlot_id = new OColumn("New Prodlot Id", StockProductionLot.class, OColumn.RelationType.ManyToOne);
     OColumn new_prodlot_ids = new OColumn("New Prodlot Ids", OVarchar.class);
     OColumn quant_line_ids = new OColumn(getContext(), R.string.column_quant_ids,OVarchar.class).setLocalColumn();
-    OColumn quant_line_location_ids = new OColumn("Locations", OVarchar.class).setLocalColumn();
+    // TODO: 18-7-11 Rename the field
+    OColumn new_quant_ids = new OColumn("New Quant Ids", OVarchar.class).setLocalColumn();
     OColumn quant_line_qty = new OColumn("Qty for lines", OFloat.class);
     OColumn pretreatment_location_id = new OColumn(getContext(), R.string.column_pretreatment_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_pretreatment", "=", "True");
     OColumn destination_location_id = new OColumn(getContext(), R.string.column_destination_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("usage", "=", "internal");
@@ -40,6 +41,7 @@ public class OperationsWizard extends OModel {
     OColumn exist_blending_id = new OColumn(getContext(), R.string.column_exist_blending_id, StockProductionLot.class, OColumn.RelationType.ManyToOne).setLocalColumn();
     OColumn delivery_route_id = new OColumn(getContext(), R.string.column_delivery_route, DeliveryRoute.class, OColumn.RelationType.ManyToOne).setLocalColumn();
     OColumn is_finished = new OColumn("Is Finished?", OBoolean.class).setLocalColumn().setDefaultValue(false);
+    OColumn has_conflict = new OColumn("Has conflicts?", OBoolean.class).setLocalColumn().setDefaultValue(false);
 
     public OperationsWizard(Context context, OUser user) {
         super(context, "operations.wizard", user);
