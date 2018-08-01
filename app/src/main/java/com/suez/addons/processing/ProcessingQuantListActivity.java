@@ -112,7 +112,7 @@ public class ProcessingQuantListActivity extends SuezActivity implements CommonT
         ODataRow lot = stockProductionLot.browse(prodlotId);
         stockProductionLotForm.initForm(new RecordUtils(stockProductionLot).parseMany2oneRecords(lot,
                 new String[]{"product_id", "delivery_route_line", "delivery_route", "customer_id", "pretreatment_id"},
-                new String[]{"name", "sequence", "name", "name", "name"}));
+                new String[]{"name", "name", "name", "name", "name"}));
         List<ODataRow> records = stockQuant.select(null, "lot_id = ? and location_id in (select _id from stock_location where usage = ?)", new String[]{String.valueOf(prodlotId), "internal"});
         if (records.isEmpty()) {
             mainView.setVisibility(View.GONE);

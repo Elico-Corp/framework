@@ -32,7 +32,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="sequence"
+                    app:fieldName="lot_id_name"
+                    app:controlLabel="@string/column_prodlot_id"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                <odoo.controls.OField
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:fieldLabelColor="@color/theme_secondary"
+                    app:fieldName="name"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -90,6 +98,7 @@
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
                     app:fieldName="route_id_name"
+                    app:controlLabel="@string/column_route_id"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -104,6 +113,7 @@
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
                     app:fieldName="pretreatment_id_name"
+                    app:controlLabel="@string/column_pretreatment_id"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -132,6 +142,7 @@
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
                     app:fieldName="hw_code_name"
+                    app:controlLabel="@string/column_hw_code"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -188,6 +199,7 @@
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
                     app:fieldName="deviation_reasons_id_name"
+                    app:controlLabel="@string/column_deviation_reasons"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <!-- hide -->
@@ -207,7 +219,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="sequence"
+                    app:fieldName="lot_id_name"
+                    app:controlLabel="@string/column_prodlot_id"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                <odoo.controls.OField
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:fieldLabelColor="@color/theme_secondary"
+                    app:fieldName="name"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField

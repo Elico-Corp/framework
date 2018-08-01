@@ -111,16 +111,16 @@
             android:multiprocess="true"/>
 
 
-        <service android:name="com.suez.addons.services.StockProductionLotSyncService"
+        <service android:name="com.suez.addons.services.StockQuantSyncService"
             android:exported="true"
-            android:process=":sync_stock_production_lot">
+            android:process=":sync_stock_quant">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/stock_production_lot_sync_adapter"/>
+                android:resource="@xml/stock_quant_sync_adapter"/>
         </service>
 
 
@@ -167,6 +167,9 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name="com.suez.addons.processing.ProcessingTestActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.wac_info.DebugSqlActivity"
             android:screenOrientation="portrait"/>
     </application>
 

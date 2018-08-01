@@ -2,7 +2,8 @@
 <sync-adapter
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="com.odoo.auth"
-    android:contentAuthority="com.odoo.core.provider.content.sync.stock_production_lot"
+    android:contentAuthority="com.odoo.core.provider.content.sync.stock_quant"
     android:supportsUploading="true"
     android:userVisible="true"
+    android:isAlwaysSyncable="false"
     />

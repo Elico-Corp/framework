@@ -179,7 +179,7 @@ public class TankTruckActivity extends SuezActivity implements View.OnClickListe
                             values.put("state", "pumping");
                             Boolean row;
                             if (position == NO_POSITION){
-                                row = deliveryRoute.update("id=?", new String[]{String.valueOf(id)},values)>0 ? true: false;
+                                row = deliveryRoute.update("id=?", new String[]{String.valueOf(id)},values) > 0 ;
                             } else {
                                 row = deliveryRoute.update(records.get(position).getInt("_id"), values);
                             }

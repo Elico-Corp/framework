@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by joseph on 18-6-4.
@@ -78,6 +79,7 @@ public class WacMoveActivity extends ProcessingActivity {
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.WAC_MOVE_KEY);
+            map.put("action_id", UUID.randomUUID().toString());
             BaseAbstractListener listener = new BaseAbstractListener() {
                 @Override
                 public void OnSuccessful(Object obj) {
@@ -113,6 +115,7 @@ public class WacMoveActivity extends ProcessingActivity {
 
                 // Create the wizard record
                 wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
+                wizardValues.put("before_ids", RecordUtils.getFieldString(records, "wizard_id"));
                 wizardValues.put("destination_location_id", destinationLocationId);
                 wizardValues.put("qty", quantity);
                 wizardValues.put("remain_qty", remainQuantity);

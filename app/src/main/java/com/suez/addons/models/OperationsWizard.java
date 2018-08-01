@@ -20,11 +20,11 @@ public class OperationsWizard extends OModel {
     private static final String TAG = OperationsWizard.class.getSimpleName();
 
     OColumn action = new OColumn("action", OVarchar.class);
+    OColumn before_ids = new OColumn("Before Id(s)", OVarchar.class);
     OColumn prodlot_id = new OColumn(getContext(), R.string.column_prodlot_id, StockProductionLot.class, OColumn.RelationType.ManyToOne);
     OColumn new_prodlot_id = new OColumn("New Prodlot Id", StockProductionLot.class, OColumn.RelationType.ManyToOne);
     OColumn new_prodlot_ids = new OColumn("New Prodlot Ids", OVarchar.class);
     OColumn quant_line_ids = new OColumn(getContext(), R.string.column_quant_ids,OVarchar.class).setLocalColumn();
-    // TODO: 18-7-11 Rename the field
     OColumn new_quant_ids = new OColumn("New Quant Ids", OVarchar.class).setLocalColumn();
     OColumn quant_line_qty = new OColumn("Qty for lines", OFloat.class);
     OColumn pretreatment_location_id = new OColumn(getContext(), R.string.column_pretreatment_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_pretreatment", "=", "True");

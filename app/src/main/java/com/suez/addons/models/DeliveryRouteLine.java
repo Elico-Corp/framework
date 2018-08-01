@@ -21,7 +21,7 @@ public class DeliveryRouteLine extends OModel {
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".core.provider.content.sync.delivery_route_line";
     private static final String TAG = DeliveryRouteLine.class.getSimpleName();
 
-    OColumn sequence = new OColumn(getContext(), R.string.column_reference, OVarchar.class).setSize(64);
+    OColumn name = new OColumn(getContext(), R.string.column_name, OVarchar.class).setSize(64);
     OColumn copy_no = new OColumn(getContext(), R.string.column_copy_no, OVarchar.class);
     OColumn customer_weight = new OColumn(getContext(), R.string.column_customer_weight, OFloat.class);
     OColumn weighing_weight = new OColumn(getContext(), R.string.column_weighing_weight, OFloat.class);

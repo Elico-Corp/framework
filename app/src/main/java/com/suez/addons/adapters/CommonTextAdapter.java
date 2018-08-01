@@ -70,9 +70,7 @@ public class CommonTextAdapter extends RecyclerView.Adapter<CommonTextAdapter.Co
         }
 
         if (specify != null && specify.size() > 0) {
-            for (HashMap map: specify) {
-                ((TextView) holder.itemView.findViewById((Integer) map.get("resId"))).setText(String.valueOf(map.get("text")));
-            }
+            ((TextView) holder.itemView.findViewById((Integer) specify.get(position).get("resId"))).setText(String.valueOf(specify.get(position).get("text")));
         }
 
         if (mOnItemClickListener != null) {

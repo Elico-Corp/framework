@@ -203,11 +203,13 @@ public class ScanZbarActivity extends SuezActivity {
                 intent = new Intent(this, WacInfoActivity.class);
                 intent.putExtra(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, id);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);
+                intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
                 startActivity(intent);
                 break;
             case SuezConstants.WAC_INFO_WAC_KEY:
                 intent = new Intent(this, WacInfoDrlLIstActivity.class);
                 intent.putExtra(SuezConstants.WAC_ID_KEY, id);
+                intent.putExtra(SuezConstants.PRODLOT_NAME_KEY, code);
                 startActivity(intent);
                 break;
             case SuezConstants.CREATE_BLENDING_KEY:

@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by joseph on 18-5-20.
@@ -90,6 +91,7 @@ public class RepackingActivity extends ProcessingActivity {
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.REPACKING_KEY);
+            map.put("action_id", UUID.randomUUID().toString());
             BaseAbstractListener listener = new BaseAbstractListener() {
                 @Override
                 public void OnSuccessful(Object obj) {
@@ -153,6 +155,7 @@ public class RepackingActivity extends ProcessingActivity {
 //            wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
             wizardValues.put("new_quant_ids", RecordUtils.getArrayString(newQuantIds.toArray()));
+            wizardValues.put("before_ids", RecordUtils.getFieldString(records, "wizard_id"));
             wizardValues.put("repacking_location_id", inputValues.getInt("repacking_location_id"));
             wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));
             wizardValues.put("qty", repackingQty);

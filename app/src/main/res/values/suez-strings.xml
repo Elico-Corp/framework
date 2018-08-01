@@ -8,6 +8,7 @@
     <string name="dialog_change_quantity">Change Quantity</string>
     <string name="dialog_blending">Blending</string>
     <string name="dialog_blending_finish">Blending &amp; Finish</string>
+    <string name="dialog_run">Execute</string>
     <!-- Labels -->
     <string name="label_input_tank_truck">INPUT TANK TRUCK NUMBER</string>
     <string name="suez_label_suez">Suez</string>
@@ -60,6 +61,10 @@
     <string name="title_suez_mix_blending_add">Add Blending</string>
     <string name="title_not_blending_lot">Wrong Blending Lot</string>
     <string name="title_check_md5">Checking MD5</string>
+    <string name="title_flush_data">Uploading Datas</string>
+    <string name="title_sync_failed">Sync Failed</string>
+
+
 
     <!--Messages-->
     <string name="message_tank_truck_pumping">Tank truck %1$s will be sent to pumping.</string>
@@ -78,7 +83,9 @@
     <string name="message_processing_success">Process Success</string>
     <string name="message_db_size_error">Warning, DB Size Decreased</string>
     <string name="message_check_md5">Checking Integrity</string>
-    <string name="message_sync_failed">Sync Failed</string>
+    <string name="message_flush_data">Flushing Data to odoo, please wait</string>
+    <string name="message_sync_failed">%1$s for %2$s sync failed.</string>
+    <string name="message_sync_conflict">%1$s for %2$s has conflicts, cancelled.</string>
 
     <!--Toast-->
     <string name="toast_successful">Successful</string>
@@ -97,6 +104,8 @@
 
     <!-- Colums -->
     <string name="column_name">Name</string>
+    <string name="column_id">id</string>
+    <string name="column_id_local">_id</string>
     <string name="column_plate_number">Plate Number</string>
     <string name="column_state">State</string>
     <string name="column_truck_weight">Truck Weight</string>

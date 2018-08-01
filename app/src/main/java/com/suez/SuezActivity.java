@@ -160,8 +160,8 @@ public class SuezActivity extends OdooCompatActivity {
         // Validate Datas
         OValues values = form.getValues();
         for (String key: values.keys()) {
-            if (values.get(key) == null || values.get(key).equals(false) || values.get(key).equals("0")) {
-                ToastUtil.toastShow(String.format(OResource.string(this, R.string.toast_invalid_field), key), this);
+            if (values.get(key) == null || values.get(key).equals(false) || values.getString(key).equals("0")) {
+                ToastUtil.toastShow(String.format(OResource.string(this, R.string.toast_invalid_field), form.getField(key).getLabelText()), this);
                 return false;
             }
         }

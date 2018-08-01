@@ -8,6 +8,7 @@
     <string name="dialog_change_quantity">更改数量</string>
     <string name="dialog_blending">混合</string>
     <string name="dialog_blending_finish">混合并结束</string>
+    <string name="dialog_run">运行</string>
     <!-- Labels -->
     <string name="label_input_tank_truck">输入车辆编号</string>
     <string name="language_note">切换语言</string>
@@ -59,6 +60,10 @@
     <string name="title_suez_mix_blending_add">添加混合</string>
     <string name="title_not_blending_lot">混合序列号错误</string>
     <string name="title_check_md5">校验文件</string>
+    <string name="title_flush_data">上传中</string>
+    <string name="title_sync_failed">同步失败</string>
+
+
 
     <!--Messages-->
     <string name="message_tank_truck_pumping">卸载编号为 %1$s 的卡车.</string>
@@ -77,7 +82,10 @@
     <string name="message_processing_success">操作成功</string>
     <string name="message_db_size_error">警告： 数据库变小</string>
     <string name="message_check_md5">正在校验文件完整性</string>
-    <string name="message_sync_failed">同步失败</string>
+    <string name="message_flush_data">正在同步数据，请稍候</string>
+    <string name="message_sync_failed">%1$s %2$s 失败</string>
+    <string name="message_sync_conflict">%1$s %2$s 与odoo记录冲突，已跳过.</string>
+
 
     <!--Toast-->
     <string name="toast_successful">成功</string>
@@ -140,7 +148,7 @@
     <string name="column_packaging">入厂包装信息</string>
     <string name="column_wac_processing">Wac 处理</string>
     <string name="column_delivery_date">运输日期</string>
-    <string name="column_origin">原始标识</string>
+    <string name="column_origin">销售订单</string>
     <string name="column_order_line_weight">客户称重 (t)</string>
     <string name="column_actual_packaging">实际包装</string>
     <string name="column_remark">备注</string>

@@ -9,6 +9,7 @@ import com.odoo.R;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.utils.OResource;
+import com.odoo.datas.OConstants;
 
 import java.util.HashMap;
 
@@ -65,7 +66,13 @@ public class CallMethodsOnlineUtils {
         @Override
         protected Object doInBackground(Void... voids) {
             try {
-                return mModel.getServerDataHelper().callMethod(method, args, context, kwargs);
+                int retry = 0;
+                Object obj = null;
+                while (obj == null || String.valueOf(obj).equals("false") && retry <= OConstants.RPC_REQUEST_RETRIES) {
+                    obj = mModel.getServerDataHelper().callMethod(method, args, context, kwargs);
+                    retry ++ ;
+                }
+                return obj;
             } catch (Exception e) {
                 e.printStackTrace();
                 LogUtils.e(TAG, e.getMessage());

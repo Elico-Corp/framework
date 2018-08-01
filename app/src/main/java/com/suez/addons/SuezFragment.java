@@ -1,6 +1,7 @@
 package com.suez.addons;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,11 +23,10 @@ import com.odoo.core.utils.OResource;
 import com.suez.SuezConstants;
 import com.suez.addons.blending.MixBlendingMenusActivity;
 import com.suez.addons.models.StockProductionLot;
-import com.suez.addons.processing.ProcessingActivity;
 import com.suez.addons.processing.ProcessingTestActivity;
 import com.suez.addons.scan.ScanZbarActivity;
 import com.suez.addons.tank_truck.TankTruckActivity;
-import com.suez.addons.models.DeliveryRoute;
+import com.suez.addons.wac_info.DebugSqlActivity;
 import com.suez.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -41,6 +41,7 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
     private static final int SCANNING_REQUEST_CODE = 1;
     private Long mExitTime;
     private OPreferenceManager pref;
+    private NotificationManager notificationManager;
 
     @Nullable
     @Override
@@ -49,6 +50,7 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
         this.setHasOptionsMenu(true);
         this.mExitTime = 0L;
         pref = new OPreferenceManager(getContext());
+        notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         View view = inflater.inflate(R.layout.suez_fragment, container,false);
         ButterKnife.bind(this, view);
         return view;
@@ -130,13 +132,23 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
         }
     }
 
-    @OnLongClick(R.id.btnMixBlending)
-    public boolean onLongClick() {
-         if (OUser.current(getContext()).getUsername().equals("admin") && pref.getBoolean(About.DEVELOPER_MODE, false)) {
-             Log.d(TAG, "Start Flush Testing");
-             Intent intent = new Intent(getContext(), ProcessingTestActivity.class);
-             startActivity(intent);
-         }
+    @OnLongClick({R.id.btnMixBlending, R.id.btnTankTruck})
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnMixBlending:
+                if (OUser.current(getContext()).getUsername().equals("admin") && pref.getBoolean(About.DEVELOPER_MODE, false)) {
+                    Log.d(TAG, "Start Flush Testing");
+                    Intent intent = new Intent(getContext(), ProcessingTestActivity.class);
+                    startActivity(intent);
+                }
+                break;
+            case R.id.btnTankTruck:
+                if (pref.getBoolean(About.DEVELOPER_MODE, false)) {
+                    Intent intent = new Intent(getContext(), DebugSqlActivity.class);
+                    startActivity(intent);
+                }
+                break;
+        }
         return true;
     }
 
@@ -148,6 +160,7 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
                 mExitTime = System.currentTimeMillis();
             } else {
                 getActivity().finish();
+                notificationManager.cancelAll();
                 System.exit(0);
             }
             return true;

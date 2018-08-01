@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.odoo.App;
@@ -47,6 +49,7 @@ public class OfflineDBUtil {
     private OPreferenceManager preferenceManager;
     private BaseAbstractListener listener;
     private String offlineVersion;
+    private ProgressDialog progressDialog;
 
     public OfflineDBUtil(Context context, String offlineUrl, String incrUrl) {
         mContext = context;
@@ -57,7 +60,9 @@ public class OfflineDBUtil {
         this.incrUrl = incrUrl;
         offlinePath = new OModel(mContext, "res.partner", mUser).getDatabaseLocalPath();
         incrPath = new OSQLite(mContext, mUser, mUser.getIncrDBName()).databaseLocalPath();
+
         offlineVersion = preferenceManager.getString(SuezConstants.OFFLINE_DB_VERSION_KEY, "0");
+        progressDialog = new ProgressDialog(mContext);
     }
 
     public void download() {
@@ -81,9 +86,9 @@ public class OfflineDBUtil {
         task.execute();
     }
 
-    public void checkMD5() {
+    public void checkMD5(boolean check) {
         MD5Task task = new MD5Task();
-        task.execute();
+        task.execute(check);
     }
 
     public void mergeDB() {
@@ -92,7 +97,6 @@ public class OfflineDBUtil {
     }
 
     private class DownloadDBTask extends AsyncTask<String, Void, Void> {
-        private ProgressDialog progressDialog = new ProgressDialog(mContext);
 
         @Override
         protected void onPreExecute() {
@@ -130,6 +134,9 @@ public class OfflineDBUtil {
                 @Override
                 public void onDownloadSuccess(Long size) {
                     Log.v(TAG, "Download Offline Success");
+                    if (listener != null) {
+                        listener.OnSuccessful(size > 0);
+                    }
                 }
 
                 @Override
@@ -142,21 +149,13 @@ public class OfflineDBUtil {
                 public void onDownloadFailed(String error) {
                     Log.v(TAG, "Download failed: " + error);
                     progressDialog.dismiss();
+                    preferenceManager.putString(SuezConstants.OFFLINE_DB_VERSION_KEY, "0");
                     toastError(error);
                 }
             });
             preferenceManager.putString(SuezConstants.OFFLINE_DB_VERSION_KEY, offline_version);
             return null;
         }
-
-            @Override
-            protected void onPostExecute(Void v) {
-                super.onPostExecute(v);
-                progressDialog.dismiss();
-                if (listener != null) {
-                    listener.OnSuccessful("Success");
-                }
-            }
 
             private void toastError(String error) {
                 if (error.equals("404")) {
@@ -338,15 +337,19 @@ public class OfflineDBUtil {
     }
 
     public class MergeTask extends AsyncTask<OSQLite, Void, String> {
-        private ProgressDialog progressDialog = new ProgressDialog(mContext);
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog.setTitle(R.string.title_merge_db);
-            progressDialog.setMessage(OResource.string(mContext, R.string.message_merge_db));
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.setTitle(R.string.title_merge_db);
+                    progressDialog.setMessage(OResource.string(mContext, R.string.message_merge_db));
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                }
+            });
         }
 
         @Override
@@ -365,33 +368,35 @@ public class OfflineDBUtil {
         }
     }
 
-    public class MD5Task extends AsyncTask<Void, Void, Void> {
-        private ProgressDialog progressDialog = new ProgressDialog(mContext);
+    public class MD5Task extends AsyncTask<Boolean, Void, Void> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog.setTitle(R.string.title_check_md5);
-            progressDialog.setMessage(OResource.string(mContext, R.string.message_check_md5));
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setMax(100);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.setTitle(R.string.title_check_md5);
+                    progressDialog.setMessage(OResource.string(mContext, R.string.message_check_md5));
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    progressDialog.setMax(100);
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                }
+            });
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            progressDialog.dismiss();
-            if (listener != null) {
-                listener.OnSuccessful("Success");
+        protected Void doInBackground(Boolean... params) {
+            Boolean check = params[0];
+            if (!check) {
+                if (listener != null) {
+                    listener.OnSuccessful("Success");
+                }
+                return null;
             }
-        }
-
-        @Override
-        protected Void doInBackground(Void... v) {
-            String checksumUrl = offlineUrl.substring(0, offlineUrl.lastIndexOf('/')) + SuezConstants.MD5_FILE_NAME;
-            final String checksumPath = offlinePath.substring(0, offlinePath.lastIndexOf('/')) + SuezConstants.MD5_FILE_NAME;
+            String checksumUrl = offlineUrl.substring(0, offlineUrl.lastIndexOf('/') + 1) + SuezConstants.MD5_FILE_NAME;
+            final String checksumPath = offlinePath.substring(0, offlinePath.lastIndexOf('/') + 1) + SuezConstants.MD5_FILE_NAME;
             DownloadUtils.get().downloadDB(checksumUrl, checksumPath, new DownloadUtils.OnDownloadListener() {
                 @Override
                 public void onDownloadSuccess(Long size) {
@@ -432,27 +437,29 @@ public class OfflineDBUtil {
 
         private void validateMD5(List<String> digests) {
             String offlineDigest = MD5Utils.getMD5(new File(offlinePath));
-            String incrDigest = MD5Utils.getMD5(new File(incrPath));
+//            String incrDigest = MD5Utils.getMD5(new File(incrPath));
             if (!offlineDigest.equals(digests.get(0))) {
                 Log.w(TAG, "Verify MD5 For Offline DB Failed");
                 if (listener != null) {
-                    listener.OnFail(SuezConstants.OFFLINE_MD5_CHECK_FAIL_KEY);
+                    listener.OnFail("Failed");
+                    progressDialog.dismiss();
                 }
             } else {
+                Log.d(TAG, "Verify MD5 Success");
                 if (listener != null) {
-                    listener.OnSuccessful(true);
+                    listener.OnSuccessful("Success");
                 }
             }
-            if (!incrDigest.equals(digests.get(1))) {
-                Log.w(TAG, "Verity MD5 For Incremental DB Failed");
-                if (listener != null) {
-                    listener.OnFail(SuezConstants.INCR_MD5_CHECK_FAIL_KEY);
-                }
-            } else {
-                if (listener != null) {
-                    listener.OnSuccessful(true);
-                }
-            }
+//            if (!incrDigest.equals(digests.get(1))) {
+//                Log.w(TAG, "Verity MD5 For Incremental DB Failed");
+//                if (listener != null) {
+//                    listener.OnFail(SuezConstants.INCR_MD5_CHECK_FAIL_KEY);
+//                }
+//            } else {
+//                if (listener != null) {
+//                    listener.OnSuccessful(true);
+//                }
+//            }
         }
     }
 }

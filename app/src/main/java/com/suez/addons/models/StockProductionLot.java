@@ -41,16 +41,6 @@ public class StockProductionLot extends OModel {
     }
 
     @Override
-    public void onSyncFailed() {
-        ONotificationBuilder builder = new ONotificationBuilder(getContext(), 0)
-                .setIcon(R.drawable.ic_odoo)
-                .setTitle(OResource.string(getContext(), R.string.label_sync))
-                .setText(OResource.string(getContext(), R.string.message_sync_failed))
-                .setAutoCancel(true);
-        builder.build().show();
-    }
-
-    @Override
     public Uri uri() {
         return buildURI(AUTHORITY);
     }

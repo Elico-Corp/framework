@@ -160,7 +160,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
         records = initInputQty(new RecordUtils(stockQuant).parseMany2oneRecords(stockQuantRecords, new String[]{"location_id"}, new String[]{"name"}));
         lot = new RecordUtils(stockProductionLot).parseMany2oneRecords(stockProductionLot.browse(prodlot_id),
                 new String[]{"product_id", "delivery_route_line", "delivery_route", "customer_id", "pretreatment_id"},
-                new String[]{"name", "sequence", "name", "name", "name"});
+                new String[]{"name", "name", "name", "name", "name"});
         initForm();
     }
 
@@ -340,7 +340,12 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
 
     @Override
     protected void createAction() {
-        wizard.insert(wizardValues);
+        int id = wizard.insert(wizardValues);
+        for (String quantId: wizardValues.getString("new_quant_ids").split(",")) {
+            OValues values = new OValues();
+            values.put("wizard_id", id);
+            stockQuant.update(Integer.parseInt(quantId), values);
+        }
         super.createAction();
     }
 }

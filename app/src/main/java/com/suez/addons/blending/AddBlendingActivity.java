@@ -44,6 +44,7 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -95,6 +96,7 @@ public class AddBlendingActivity extends BlendingActivity {
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.ADD_BLENDING_KEY);
+            map.put("action_id", UUID.randomUUID().toString());
             BaseAbstractListener listener = new BaseAbstractListener() {
                 @Override
                 public void OnSuccessful(Object obj) {
@@ -145,18 +147,12 @@ public class AddBlendingActivity extends BlendingActivity {
 
                 wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
                 wizardValues.put("quant_line_qty", RecordUtils.getFieldString(records, "input_qty"));
-                wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
+            wizardValues.put("before_ids", RecordUtils.getFieldString(records, "wizard_id"));
+            wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
                 wizardValues.put("new_quant_ids", RecordUtils.getArrayString(newQuantIds.toArray()));
                 wizardValues.put("is_finished", finish);
 
                 createAction();
         }
-    }
-
-    @Override
-    protected void createAction() {
-        wizard.insert(wizardValues);
-        super.createAction();
-        finish();
     }
 }

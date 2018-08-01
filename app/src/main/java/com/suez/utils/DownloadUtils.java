@@ -96,6 +96,7 @@ public class DownloadUtils {
 
             res = String.valueOf(connection.getHeaderFieldDate("Last-Modified", 0));
             if (version != null && Long.parseLong(version) >= Long.parseLong(res)) {
+                listener.onDownloadSuccess(0L);
                 return res;
             }
             createDownload(connection, path, listener);
@@ -130,6 +131,9 @@ public class DownloadUtils {
                 listener.onDownloading(progress, total);
             }
             fos.flush();
+            if (file.length() < total) {
+                listener.onDownloadFailed("Failed");
+            }
             listener.onDownloadSuccess(total);
         } catch (Exception e) {
             e.printStackTrace();

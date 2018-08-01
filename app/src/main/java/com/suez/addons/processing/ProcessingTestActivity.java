@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
 import com.suez.SuezActivity;
 import com.suez.SuezConstants;
@@ -116,7 +117,7 @@ public class ProcessingTestActivity extends SuezActivity {
         try {
             SuezSyncUtils utils = new SuezSyncUtils(this, OUser.current(this), null);
             utils.setRecords(actions);
-            utils.syncProcessing();
+            utils.syncProcessing(new OdooResult());
         } catch (Exception e){
             e.printStackTrace();
             ToastUtil.toastShow(e.getMessage(), this);

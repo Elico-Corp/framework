@@ -46,4 +46,6 @@ public class SuezConstants {
     public static final String SCAN_BLENDING_KEY = "scan_blending";
     public static final String WAC_MOVE_KEY = "wac_move";
     public static final String MD5_FILE_NAME = "md5_checksum.txt";
+    public static final String SYNC_DONE_ACTION = "Sync Done";
+    public static final String SYNC_FAIL_ACTION = "Sync Failed";
 }

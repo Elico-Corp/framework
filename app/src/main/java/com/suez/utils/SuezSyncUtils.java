@@ -1,6 +1,8 @@
 package com.suez.utils;
 
 import android.content.Context;
+import android.support.annotation.IdRes;
+import android.support.annotation.StringRes;
 import android.util.Log;
 
 import com.google.gson.internal.LinkedTreeMap;
@@ -8,12 +10,14 @@ import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.rpc.Odoo;
 import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.rpc.helper.utils.gson.OdooRecord;
 import com.odoo.core.rpc.helper.utils.gson.OdooResponse;
 import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
 import com.odoo.core.utils.OResource;
+import com.odoo.core.utils.notification.ONotificationBuilder;
 import com.suez.SuezConstants;
 import com.suez.addons.models.DeliveryRoute;
 import com.suez.addons.models.OperationsWizard;
@@ -25,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by joseph on 18-5-9.
@@ -39,7 +44,10 @@ public class SuezSyncUtils {
     private StockProductionLot stockProductionLot;
     private StockQuant stockQuant;
     private StockLocation stockLocation;
+    private DeliveryRoute deliveryRoute;
     private List<ODataRow> records;
+    private List<ODataRow> conflictRecords;
+    private int notificationCount = 1;
 
     public SuezSyncUtils(Context context, OUser user, String date) {
         mUser = user;
@@ -49,6 +57,7 @@ public class SuezSyncUtils {
         stockProductionLot = new StockProductionLot(mContext, mUser);
         stockQuant = new StockQuant(mContext, mUser);
         stockLocation = new StockLocation(mContext, mUser);
+        deliveryRoute = new DeliveryRoute(mContext, mUser);
     }
 
     public void getRecords() {
@@ -60,10 +69,16 @@ public class SuezSyncUtils {
         records = rows;
     }
 
-    public void syncProcessing() throws Exception {
+    public void syncProcessing(OdooResult response) throws Exception {
+        // Get Response IDs
+        List<Integer> responseIds = getResponseRecords(response);
+        conflictRecords = new ArrayList<>();
         // Get records from the wizard model
         for (final ODataRow record: records) {
             final String[] quantLineIds = record.getString("quant_line_ids").split(",");
+            if (!verifyConflict(responseIds, quantLineIds, record)) {
+                continue;
+            }
             String[] quantLineQty = record.getString("quant_line_qty").split(",");
             String[] newQuantIds = record.getString("new_quant_ids").split(",");
             float remainQty = record.getFloat("remain_qty");
@@ -71,6 +86,7 @@ public class SuezSyncUtils {
             final String[] newLotId = record.getString("new_prodlot_ids").split(",");
             Float qty = record.getFloat("qty");
             HashMap<String, Object> map = new HashMap<>();
+            map.put("action_id", UUID.randomUUID().toString());
             int pretreatmentLocationId;
             int destinationLocationId;
             HashMap<String, Object> kwargs;
@@ -174,7 +190,8 @@ public class SuezSyncUtils {
 //                @Override
 //                public void OnSuccessful(Object obj) {
                     // Write back the ids
-                    Object obj = stockProductionLot.getServerDataHelper().callMethod("get_flush_data", new OArguments(), null, map);
+            Object obj;
+            obj = stockProductionLot.getServerDataHelper().callMethod("get_flush_data", new OArguments(), null, map);
                     if (obj == null) {
                         LogUtils.e(TAG, "Response null");
                         throw new Exception("Resopn Null From Server");
@@ -206,14 +223,19 @@ public class SuezSyncUtils {
                         OValues values = new OValues();
                         values.put("synced", true);
                         wizard.update(record.getInt("_id"), values);
-                }
+                } else if (obj instanceof Boolean) {
+                        if (!(Boolean) obj) {
+                            showNotification(String.format(OResource.string(mContext, R.string.message_sync_failed),
+                                    record.getString("action"), record.getM2ORecord("prodlot_id").getName()));
+                        }
+                    }
 //            });
 //            syncUtils.callMethodOnServer(false);
         }
+        records.removeAll(conflictRecords);
     }
 
     public void syncTankTrunk() {
-        DeliveryRoute deliveryRoute = new DeliveryRoute(mContext, mUser);
         records = wizard.select(new String[]{"delivery_route_id"}, "create_date > ? and synced = ?",
                 new String[]{syncDate, "false"});
         List<Integer> ids = new ArrayList<>();
@@ -225,28 +247,54 @@ public class SuezSyncUtils {
         kwargs.put("ids", ids);
         map.put("action", SuezConstants.TANK_TRUCK_KEY);
         map.put("data", kwargs);
+        map.put("action_id", UUID.randomUUID().toString());
         CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(deliveryRoute, "get_flush_data",
                 new OArguments(), null, map);
         utils.callMethodOnServer(false);
     }
 
-    public void verifyConflicts(OdooResult response) {
-        List<OdooRecord> responseRecords = response.getRecords();
+    private boolean verifyConflict(List<Integer> responseIds, String[] localIds, ODataRow record) {
+        for (String localId: localIds) {
+            if (responseIds.contains(Integer.parseInt(localId))) {
+                conflictRecords.add(record);
+                OValues oValues = new OValues();
+                oValues.put("has_conflict", true);
+                wizard.update(record.getInt("_id"), oValues);
+                Log.v(TAG, "Conflict record: " + record);
+                showNotification(String.format(OResource.string(mContext, R.string.message_sync_conflict),
+                        record.getString("action"), record.getM2ORecord("prodlot_id").getName()));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private List<Integer> getResponseRecords(OdooResult result) {
+        List<OdooRecord> responseRecords = result.getRecords();
         List<Integer> responseIds = new ArrayList<>();
         for (OdooRecord responseRecord: responseRecords) {
             responseIds.add(responseRecord.getInt("id"));
         }
-        List<ODataRow> conflictRecords = new ArrayList<>();
-        for (ODataRow record: records) {
-            if (responseIds.contains(record.getM2ORecord("prodlot_id").browse().getInt("id"))) {
-                conflictRecords.add(record);
-                OValues value = new OValues();
-                value.put("has_conflict", true);
-                wizard.update(record.getInt("_id"), value);
-            }
-        }
-        Log.v(TAG, "Conflict records: " + conflictRecords);
-        records.removeAll(conflictRecords);
+        return responseIds;
     }
 
+    private void showNotification(@StringRes int resId) {
+        ONotificationBuilder builder = new ONotificationBuilder(mContext, notificationCount);
+        builder.setIcon(R.drawable.ic_odoo);
+        builder.setTitle(OResource.string(mContext, R.string.title_sync_failed));
+        builder.setText(OResource.string(mContext, resId));
+        builder.setAutoCancel(false);
+        builder.show();
+        notificationCount++;
+    }
+
+    private void showNotification(String message) {
+        ONotificationBuilder builder = new ONotificationBuilder(mContext, notificationCount);
+        builder.setIcon(R.drawable.ic_odoo);
+        builder.setTitle(OResource.string(mContext, R.string.title_sync_failed));
+        builder.setText(message);
+        builder.setAutoCancel(false);
+        builder.show();
+        notificationCount++;
+    }
 }

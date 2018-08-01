@@ -70,6 +70,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
 
     private int delivery_route_line_id;
     private int prodlotId;
+    private String prodlotName;
     private DeliveryRouteLine deliveryRouteLine;
     private WmdsParameterMainComponent component;
     private StockProductionLot stockProductionLot;
@@ -89,6 +90,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         ButterKnife.bind(this);
         delivery_route_line_id = getIntent().getIntExtra(SuezConstants.DELIVERY_ROUTE_LINE_ID_KEY, 0);
         prodlotId = getIntent().getIntExtra(SuezConstants.PRODLOT_ID_KEY, 0);
+        prodlotName = getIntent().getStringExtra(SuezConstants.PRODLOT_NAME_KEY);
         initView();
 
         deliveryRouteLine = new DeliveryRouteLine(this, null);
@@ -125,8 +127,9 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         deliveryRouteLineForm.setVisibility(View.VISIBLE);
         if (app.getLanguage().equals("zh")) {
             wacInfoCustomerZh.setVisibility(View.VISIBLE);
-        } else
+        } else {
             wacInfoCustomer.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -155,6 +158,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
             public void OnSuccessful(List<ODataRow> listRow) {
                 if (listRow != null && !listRow.isEmpty()) {
                     ODataRow row = SuezJsonUtils.parseRecords(deliveryRouteLine, listRow).get(0);
+                    row.put("lot_id_name", prodlotName);
                     deliveryRouteLineForm.initForm(row);
                     deliveryRouteLineFormHide.initForm(row);
                     OdooFields componentFields = new OdooFields(component.getColumns());
@@ -202,6 +206,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         drlRow = new RecordUtils(deliveryRouteLine).parseMany2oneRecords(drlRow, new String[]{"address_id", "route_id", "pretreatment_id", "hw_code", "deviation_reasons_id"},
                 new String[]{"name", "name", "name", "name", "name"});
         drlRow.put("address_name_zh", drlRow.getM2ORecord("wac_id").browse().getString("partner_name_local"));
+        drlRow.put("lot_id_name", prodlotName);
         deliveryRouteLineForm.initForm(drlRow);
         deliveryRouteLineFormHide.initForm(drlRow);
         List<ODataRow> wmdsRows = component.query("select wm.name as component, wpm.min as min, wpm.max as max, wpm.average " +
@@ -226,13 +231,15 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         if (rows == null || rows.size() == 0) {
             return;
         }
-        String str = String.format("%s * %s%s", rows.get(0).getString("package_ids"), rows.get(0).getString("qty"),
-                rows.get(0).getString("remark").equals("false") ? "" : "(" + rows.get(0).getString("remark") + ")");
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("resId", R.id.txt_packaging_info);
-        map.put("text", str);
         List<HashMap<String, Object>> specifiedFields = new ArrayList<>();
-        specifiedFields.add(map);
+        for (ODataRow row: rows) {
+            String str = String.format("%s * %s%s", row.getString("package_ids_name"), row.getString("qty"),
+                    row.getString("remark").equals("false") ? "" : "(" + row.getString("remark") + ")");
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("resId", R.id.txt_packaging_info);
+            map.put("text", str);
+            specifiedFields.add(map);
+        }
         packagingAdapter = new CommonTextAdapter(rows, R.layout.suez_wac_info_packaging_list_items, new String[]{}, new int[]{}, specifiedFields);
         xrPackagingList.setAdapter(packagingAdapter);
     }

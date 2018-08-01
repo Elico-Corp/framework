@@ -295,4 +295,15 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
                 }).create();
         dialog.show();
     }
+
+    @Override
+    protected void createAction() {
+        int id = wizard.insert(wizardValues);
+        for (String quantId: wizardValues.getString("new_quant_ids").split(",")) {
+            OValues values = new OValues();
+            values.put("wizard_id", id);
+            stockQuant.update(Integer.parseInt(quantId), values);
+        }
+        super.createAction();
+    }
 }
