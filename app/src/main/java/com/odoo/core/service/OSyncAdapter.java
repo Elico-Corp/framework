@@ -23,12 +23,16 @@ import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.odoo.App;
 import com.odoo.R;
+import com.odoo.SettingsActivity;
 import com.odoo.base.addons.ir.IrModel;
 import com.odoo.base.addons.res.ResCompany;
 import com.odoo.core.account.About;
@@ -51,6 +55,7 @@ import com.odoo.core.utils.OResource;
 import com.odoo.core.utils.OdooRecordUtils;
 import com.odoo.core.utils.logger.OLog;
 import com.odoo.datas.OConstants;
+import com.suez.SuezConstants;
 import com.suez.utils.LogUtils;
 import com.suez.utils.SuezSyncUtils;
 
@@ -203,8 +208,7 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
             if (mService != null) {
                 SuezSyncUtils syncUtils = new SuezSyncUtils(mContext, OUser.current(mContext), last_sync_date);
                 syncUtils.getRecords();
-                syncUtils.verifyConflicts(response);
-                syncUtils.syncProcessing();
+                syncUtils.syncProcessing(response);
                 syncUtils.syncTankTrunk();
             } else {
 
@@ -240,11 +244,16 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
                 IrModel irModel = new IrModel(mContext, user);
                 irModel.setLastSyncDateTimeToNow(model);
             }
+            // FIXME: 18-7-30 For test only
             model.onSyncFinished();
+            Intent intent = new Intent(SuezConstants.SYNC_DONE_ACTION);
+            mContext.sendBroadcast(intent);
         } catch (Exception e) {
             e.printStackTrace();
             LogUtils.e(TAG, e.getMessage());
             model.onSyncFailed();
+            Intent intent = new Intent(SuezConstants.SYNC_FAIL_ACTION);
+            mContext.sendBroadcast(intent);
         }
         // Performing next sync if any in service
         if (mSyncFinishListeners.containsKey(model.getModelName())) {

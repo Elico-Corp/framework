@@ -20,10 +20,15 @@
 package com.odoo;
 
 import android.accounts.Account;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SyncAdapterType;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -37,6 +42,9 @@ import com.odoo.core.support.sync.SyncUtils;
 import com.odoo.core.utils.OAppBarUtils;
 import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
+import com.odoo.core.utils.notification.ONotificationBuilder;
+import com.suez.SuezConstants;
+import com.suez.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +52,42 @@ import java.util.List;
 public class SettingsActivity extends AppCompatActivity {
     public static final String TAG = SettingsActivity.class.getSimpleName();
     public static final String ACTION_ABOUT = "com.odoo.ACTION_ABOUT";
+    public static ProgressDialog progressDialog;
+    private BroadcastReceiver broadcastSuccessReceiver;
+    private BroadcastReceiver broadcastFailReceiver;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastSuccessReceiver);
+        unregisterReceiver(broadcastFailReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        broadcastSuccessReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                progressDialog.dismiss();
+                ToastUtil.toastShow(R.string.column_sync_finished, SettingsActivity.this);
+            }
+        };
+        IntentFilter intentFilterSuccess = new IntentFilter();
+        intentFilterSuccess.addAction(SuezConstants.SYNC_DONE_ACTION);
+
+        broadcastFailReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                progressDialog.dismiss();
+                ToastUtil.toastShow(R.string.message_sync_failed, SettingsActivity.this);
+            }
+        };
+        IntentFilter intentFilterFail = new IntentFilter(SuezConstants.SYNC_FAIL_ACTION);
+
+        registerReceiver(broadcastSuccessReceiver, intentFilterSuccess);
+        registerReceiver(broadcastFailReceiver, intentFilterFail);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +100,10 @@ public class SettingsActivity extends AppCompatActivity {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setTitle(R.string.title_application_settings);
         }
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(R.string.title_flush_data);
+        progressDialog.setMessage(OResource.string(this, R.string.message_flush_data));
+        progressDialog.setCancelable(false);
     }
 
     @Override
@@ -81,6 +129,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        showWorkMode();
         settingUpdated();
     }
 
@@ -115,5 +164,16 @@ public class SettingsActivity extends AppCompatActivity {
             Toast.makeText(this, OResource.string(this, R.string.toast_setting_saved),
                     Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void showWorkMode() {
+        ONotificationBuilder builder = new ONotificationBuilder(this, 0);
+        builder.setOngoing(true);
+        builder.setAutoCancel(false);
+        builder.setIcon(R.drawable.ic_odoo);
+        builder.setTitle(OResource.string(this, R.string.title_work_mode));
+        builder.setText(String.format(OResource.string(this, R.string.message_work_mode),
+                App.networkState? OResource.string(this, R.string.label_online) : OResource.string(this, R.string.label_offline)));
+        builder.show();
     }
 }

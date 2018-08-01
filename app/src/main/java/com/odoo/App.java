@@ -45,7 +45,7 @@ public class App extends Application {
 
     public static final String TAG = App.class.getSimpleName();
     public static String APPLICATION_NAME;
-    public boolean networkState;
+    public static boolean networkState;
     private static HashMap<String, Odoo> mOdooInstances = new HashMap<>();
     private static HashMap<String, OSQLite> mSQLiteObjecs = new HashMap<>();
     private static ModelRegistryUtils modelRegistryUtils = new ModelRegistryUtils();

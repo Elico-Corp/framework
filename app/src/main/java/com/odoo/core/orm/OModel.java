@@ -549,19 +549,19 @@ public class OModel implements ISyncServiceListener {
     }
 
     public boolean allowUpdateRecordOnServer() {
-        return true;
+        return false;
     }
 
     public boolean allowCreateRecordOnServer() {
-        return true;
+        return false;
     }
 
     public boolean allowDeleteRecordOnServer() {
-        return true;
+        return false;
     }
 
     public boolean allowDeleteRecordInLocal() {
-        return true;
+        return false;
     }
 
     // Database Operations
