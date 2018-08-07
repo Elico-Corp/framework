@@ -1,17 +1,23 @@
 package com.suez.addons.processing;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.orm.fields.types.OVarchar;
 import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.utils.ODateUtils;
 import com.suez.SuezConstants;
 import com.suez.utils.CallMethodsOnlineUtils;
+import com.suez.utils.LogUtils;
 import com.suez.utils.RecordUtils;
 import com.suez.utils.ToastUtil;
 
@@ -91,7 +97,7 @@ public class RepackingActivity extends ProcessingActivity {
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.REPACKING_KEY);
-            map.put("action_id", UUID.randomUUID().toString());
+            map.put("action_uid", UUID.randomUUID().toString());
             BaseAbstractListener listener = new BaseAbstractListener() {
                 @Override
                 public void OnSuccessful(Object obj) {
@@ -112,10 +118,11 @@ public class RepackingActivity extends ProcessingActivity {
             Float sum = 0.000f;
             // New lot ids and quant ids
             int lotCount = stockProductionLot.count("name like ?", new String[]{prodlot.getString("name").split("-")[0] + "-%"}) + 1;
+            String nameBase = prodlot.getString("name").split("-")[0] + '-';
             for (int i=0; i<packageNumber-1; i++) {
                 Float packagingQty = new BigDecimal(repackingQty / packageNumber).setScale(3, BigDecimal.ROUND_HALF_UP).floatValue();
                 prodlotValues.put("product_qty", packagingQty);
-                prodlotValues.put("name", prodlot.getString("name").split("-")[0] + "-" + lotCount);
+                prodlotValues.put("name", nameBase + lotCount);
                 int newLotId = stockProductionLot.insert(prodlotValues);
                 sum += packagingQty;
                 lotCount += 1;
@@ -127,9 +134,16 @@ public class RepackingActivity extends ProcessingActivity {
                 int id = stockQuant.insert(newQuantValues);
                 newQuantIds.add(id);
             }
-            prodlotValues.put("product_qty", repackingQty - sum);
+            prodlotValues.put("product_qty", RecordUtils.minusFloat(repackingQty, sum));
+            prodlotValues.put("name", nameBase + lotCount);
             int lastLotId = stockProductionLot.insert(prodlotValues);
             newLotIds[packageNumber-1] = String.valueOf(lastLotId);
+            OValues lastQuantValues = new OValues();
+            lastQuantValues.put("lot_id", lastLotId);
+            lastQuantValues.put("location_id", inputValues.getInt("destination_location_id"));
+            lastQuantValues.put("qty", RecordUtils.minusFloat(repackingQty, sum));
+            int lastQuantId = stockQuant.insert(lastQuantValues);
+            newQuantIds.add(lastQuantId);
             // Stock Quants
 //            for (ODataRow record: records) {
                 // No remaining
@@ -165,6 +179,26 @@ public class RepackingActivity extends ProcessingActivity {
             wizardValues.put("new_prodlot_ids", RecordUtils.getArrayString(newLotIds));
 
             super.performProcessing();
+        }
+    }
+
+    @Override
+    protected void postProcessing(Object response) {
+        if (response == null) {
+            alertWarning(R.string.message_response_null);
+        } else if (response instanceof ArrayList) {
+            List<LinkedTreeMap> results = (List<LinkedTreeMap>) response;
+            ArrayList<Integer> ids = new ArrayList<>();
+            for (LinkedTreeMap result: results) {
+                ids.add(((Double)result.getArray("lot_id").get(0)).intValue());
+            }
+            Intent intent = new Intent(this, RepackingResultActivity.class);
+            intent.putIntegerArrayListExtra(SuezConstants.REPACKING_RESULT_KEY, ids);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            ToastUtil.toastShow(R.string.toast_processing_failed, this);
+            LogUtils.e(TAG, String.valueOf(response));
         }
     }
 }

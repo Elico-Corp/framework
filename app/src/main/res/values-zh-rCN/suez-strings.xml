@@ -38,6 +38,7 @@
     <string name="label_no_data">没有可操作的记录</string>
     <string name="label_sync">同步</string>
     <string name="label_field_not_selected">请选择%s</string>
+    <string name="label_print">打印标签</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">卡车</string>
@@ -62,6 +63,7 @@
     <string name="title_check_md5">校验文件</string>
     <string name="title_flush_data">上传中</string>
     <string name="title_sync_failed">同步失败</string>
+    <string name="title_repacking_result">新包装</string>
 
 
 

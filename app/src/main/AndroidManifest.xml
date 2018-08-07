@@ -171,6 +171,9 @@
 
         <activity android:name="com.suez.addons.wac_info.DebugSqlActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name="com.suez.addons.processing.RepackingResultActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

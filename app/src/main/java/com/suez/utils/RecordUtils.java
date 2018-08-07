@@ -113,7 +113,9 @@ public class RecordUtils {
     public static String fieldGet(ODataRow row, String[] fields, char sep) {
         StringBuilder builder = new StringBuilder();
         for (String field: fields) {
-            builder.append(row.getString(field));
+            if (!row.getString(field).equals("false")) {
+                builder.append(row.getString(field));
+            }
             builder.append(sep);
         }
         builder.deleteCharAt(builder.lastIndexOf(String.valueOf(sep)));

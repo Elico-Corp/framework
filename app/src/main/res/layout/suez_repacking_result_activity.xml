@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <include layout="@layout/base_appbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <!--<odoo.controls.OForm-->
+            <!--android:id="@+id/repackingWasteCategoryForm"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="70dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--app:editableMode="true"-->
+            <!--app:modelName="repacking.waste.category">-->
+
+            <!--<odoo.controls.OField-->
+                <!--android:id="@+id/repackingWasteCategory"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--app:fieldName="category_id"-->
+                <!--app:valueArrayShowServer="true"-->
+                <!--app:showIcon="false"-->
+                <!--app:fieldTextAppearance="?android:textAppearanceMedium"-->
+                <!--app:widgetType="SearchableLive"-->
+                <!--app:withTextBackground="@color/suez_edit_back"/>-->
+        <!--</odoo.controls.OForm>-->
+
+        <com.jcodecraeer.xrecyclerview.XRecyclerView
+            android:id="@+id/xNewPackingList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:scrollbars="vertical">
+
+        </com.jcodecraeer.xrecyclerview.XRecyclerView>
+
+    </LinearLayout>
+
+</LinearLayout>

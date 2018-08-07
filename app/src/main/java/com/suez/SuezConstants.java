@@ -37,6 +37,7 @@ public class SuezConstants {
     public static final String PRODLOT_ID_KEY = "prodlot_id";
     public static final String WAC_ID_KEY = "wac_id";
     public static final String DELIVERY_ROUTE_LINE_ID_KEY = "delivery_route_line_id";
+    public static final String REPACKING_RESULT_KEY = "repacking_result_ids";
     public static final String STOCK_QUANT_ID_KEY = "quant_id";
     public static final String PRODLOT_NAME_KEY = "prodlot_name";
     public static final String IS_FINISHED_KEY = "is_finished";

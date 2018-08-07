@@ -39,6 +39,7 @@
     <string name="label_no_data">No quantity available for Processing</string>
     <string name="label_sync">Sync</string>
     <string name="label_field_not_selected">No %s Selected</string>
+    <string name="label_print">Print Label</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">Tank Truck</string>
@@ -63,7 +64,7 @@
     <string name="title_check_md5">Checking MD5</string>
     <string name="title_flush_data">Uploading Datas</string>
     <string name="title_sync_failed">Sync Failed</string>
-
+    <string name="title_repacking_result">Repacking Result</string>
 
 
     <!--Messages-->

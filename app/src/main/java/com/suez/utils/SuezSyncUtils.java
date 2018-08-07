@@ -18,6 +18,7 @@ import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.support.OUser;
 import com.odoo.core.utils.OResource;
 import com.odoo.core.utils.notification.ONotificationBuilder;
+import com.odoo.datas.OConstants;
 import com.suez.SuezConstants;
 import com.suez.addons.models.DeliveryRoute;
 import com.suez.addons.models.OperationsWizard;
@@ -86,7 +87,7 @@ public class SuezSyncUtils {
             final String[] newLotId = record.getString("new_prodlot_ids").split(",");
             Float qty = record.getFloat("qty");
             HashMap<String, Object> map = new HashMap<>();
-            map.put("action_id", UUID.randomUUID().toString());
+            map.put("action_uid", UUID.randomUUID().toString());
             int pretreatmentLocationId;
             int destinationLocationId;
             HashMap<String, Object> kwargs;
@@ -190,8 +191,12 @@ public class SuezSyncUtils {
 //                @Override
 //                public void OnSuccessful(Object obj) {
                     // Write back the ids
-            Object obj;
-            obj = stockProductionLot.getServerDataHelper().callMethod("get_flush_data", new OArguments(), null, map);
+            Object obj = null;
+            int retry = 0;
+            while (obj == null || String.valueOf(obj).equals("false") && retry <= OConstants.RPC_REQUEST_RETRIES) {
+                obj = stockProductionLot.getServerDataHelper().callMethod("get_flush_data", new OArguments(), null, map);
+                retry ++ ;
+            }
                     if (obj == null) {
                         LogUtils.e(TAG, "Response null");
                         throw new Exception("Resopn Null From Server");
@@ -247,7 +252,7 @@ public class SuezSyncUtils {
         kwargs.put("ids", ids);
         map.put("action", SuezConstants.TANK_TRUCK_KEY);
         map.put("data", kwargs);
-        map.put("action_id", UUID.randomUUID().toString());
+        map.put("action_uid", UUID.randomUUID().toString());
         CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(deliveryRoute, "get_flush_data",
                 new OArguments(), null, map);
         utils.callMethodOnServer(false);

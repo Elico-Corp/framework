@@ -305,5 +305,6 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
             stockQuant.update(Integer.parseInt(quantId), values);
         }
         super.createAction();
+        finish();
     }
 }

@@ -76,7 +76,7 @@ public class DirectBurnActivity extends ProcessingActivity {
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.DIRECT_BURN_KEY);
-            map.put("action_id", UUID.randomUUID().toString());
+            map.put("action_uid", UUID.randomUUID().toString());
             BaseAbstractListener listener = new BaseAbstractListener() {
                 @Override
                 public void OnSuccessful(Object obj) {

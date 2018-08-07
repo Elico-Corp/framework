@@ -341,10 +341,12 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     @Override
     protected void createAction() {
         int id = wizard.insert(wizardValues);
-        for (String quantId: wizardValues.getString("new_quant_ids").split(",")) {
-            OValues values = new OValues();
-            values.put("wizard_id", id);
-            stockQuant.update(Integer.parseInt(quantId), values);
+        if (wizardValues.keys().contains("new_quant_ids")) {
+            for (String quantId : wizardValues.getString("new_quant_ids").split(",")) {
+                OValues values = new OValues();
+                values.put("wizard_id", id);
+                stockQuant.update(Integer.parseInt(quantId), values);
+            }
         }
         super.createAction();
     }

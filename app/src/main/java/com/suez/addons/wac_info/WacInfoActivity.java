@@ -233,8 +233,8 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         }
         List<HashMap<String, Object>> specifiedFields = new ArrayList<>();
         for (ODataRow row: rows) {
-            String str = String.format("%s * %s%s", row.getString("package_ids_name"), row.getString("qty"),
-                    row.getString("remark").equals("false") ? "" : "(" + row.getString("remark") + ")");
+            String str = String.format("%s * %s%s", row.getString("package_ids"), row.getString("qty"),
+                    row.getString("remark").equals("") || row.getString("remark").equals("false") ? "" : "(" + row.getString("remark") + ")");
             HashMap<String, Object> map = new HashMap<>();
             map.put("resId", R.id.txt_packaging_info);
             map.put("text", str);
