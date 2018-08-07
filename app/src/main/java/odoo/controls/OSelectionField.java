@@ -623,7 +623,7 @@ public class OSelectionField extends LinearLayout implements IOControlData,
             where = whr.toString();
             args = args_list.toArray(new String[args_list.size()]);
         }
-        List<ODataRow> rows = rel_model.select(new String[]{rel_model.getDefaultNameColumn()}, where,
+        List<ODataRow> rows = rel_model.select(null , where,
                 args, rel_model.getDefaultNameColumn());
         ODataRow row = new ODataRow();
         row.put(OColumn.ROW_ID, -1);

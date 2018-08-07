@@ -80,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 progressDialog.dismiss();
-                ToastUtil.toastShow(R.string.message_sync_failed, SettingsActivity.this);
+                ToastUtil.toastShow(R.string.title_sync_failed, SettingsActivity.this);
             }
         };
         IntentFilter intentFilterFail = new IntentFilter(SuezConstants.SYNC_FAIL_ACTION);
