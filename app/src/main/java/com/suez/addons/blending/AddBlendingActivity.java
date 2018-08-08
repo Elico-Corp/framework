@@ -147,7 +147,7 @@ public class AddBlendingActivity extends BlendingActivity {
 
                 wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
                 wizardValues.put("quant_line_qty", RecordUtils.getFieldString(records, "input_qty"));
-            wizardValues.put("before_ids", RecordUtils.getFieldString(records, "wizard_id"));
+            wizardValues.put("before_ids", RecordUtils.getOriginIds(records));
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
                 wizardValues.put("new_quant_ids", RecordUtils.getArrayString(newQuantIds.toArray()));
                 wizardValues.put("is_finished", finish);

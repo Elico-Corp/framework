@@ -44,7 +44,6 @@ public class SuezSyncUtils {
     private OperationsWizard wizard;
     private StockProductionLot stockProductionLot;
     private StockQuant stockQuant;
-    private StockLocation stockLocation;
     private DeliveryRoute deliveryRoute;
     private List<ODataRow> records;
     private List<ODataRow> conflictRecords;
@@ -57,7 +56,6 @@ public class SuezSyncUtils {
         wizard = new OperationsWizard(context, user);
         stockProductionLot = new StockProductionLot(mContext, mUser);
         stockQuant = new StockQuant(mContext, mUser);
-        stockLocation = new StockLocation(mContext, mUser);
         deliveryRoute = new DeliveryRoute(mContext, mUser);
     }
 
@@ -76,15 +74,16 @@ public class SuezSyncUtils {
         conflictRecords = new ArrayList<>();
         // Get records from the wizard model
         for (final ODataRow record: records) {
-            final String[] quantLineIds = record.getString("quant_line_ids").split(",");
-            if (!verifyConflict(responseIds, quantLineIds, record)) {
+            final String[] quantLineIds = parseStringIds(record.getString("quant_line_ids"));
+            if (conflictRecords.contains(record)) {
+                onConflict(record);
                 continue;
             }
-            String[] quantLineQty = record.getString("quant_line_qty").split(",");
-            String[] newQuantIds = record.getString("new_quant_ids").split(",");
+            String[] quantLineQty = parseStringIds(record.getString("quant_line_qty"));
+            String[] newQuantIds = parseStringIds(record.getString("new_quant_ids"));
             float remainQty = record.getFloat("remain_qty");
             int lotId = record.getM2ORecord("prodlot_id").browse().getInt("id");
-            final String[] newLotId = record.getString("new_prodlot_ids").split(",");
+            final String[] newLotId = parseStringIds(record.getString("new_prodlot_ids"));
             Float qty = record.getFloat("qty");
             HashMap<String, Object> map = new HashMap<>();
             map.put("action_uid", UUID.randomUUID().toString());
@@ -197,43 +196,47 @@ public class SuezSyncUtils {
                 obj = stockProductionLot.getServerDataHelper().callMethod("get_flush_data", new OArguments(), null, map);
                 retry ++ ;
             }
-                    if (obj == null) {
-                        LogUtils.e(TAG, "Response null");
-                        throw new Exception("Resopn Null From Server");
-                    } else if (obj instanceof String) {
-                        LogUtils.e(TAG, String.valueOf(obj));
-                    } else if (obj instanceof ArrayList) {
-                        List<LinkedTreeMap> results = new ArrayList<>();
-                        results.addAll((Collection<? extends LinkedTreeMap>) obj);
-                        if (results.size() == 0) {
-                            OValues values = new OValues();
-                            values.put("synced", true);
-                            wizard.update(record.getInt("_id"), values);
-                            continue;
-                        }
-                        for (int i=0; i<results.size(); i++) {
-                            for (int n=results.get(i).getArray("quant_id").size()-1; n>=0; n--) {
-                                OValues quantValues = new OValues();
-                                quantValues.put("id", results.get(i).getArray("quant_id").get(n));
-                                stockQuant.update(Integer.parseInt(newQuantIds[n+i]), quantValues);
-                            }
-                            if (results.get(i).getArray("lot_id") != null && newLotId.length >0 && !newLotId[0].equals("false")) {
-                                for (int m=results.get(i).getArray("lot_id").size()-1; m>=0; m--) {
-                                    OValues lotValues = new OValues();
-                                    lotValues.put("id", results.get(i).getArray("lot_id").get(m));
-                                    stockProductionLot.update(Integer.parseInt(newLotId[m+i]), lotValues);
-                                }
-                            }
-                        }
-                        OValues values = new OValues();
-                        values.put("synced", true);
-                        wizard.update(record.getInt("_id"), values);
-                } else if (obj instanceof Boolean) {
-                        if (!(Boolean) obj) {
-                            showNotification(String.format(OResource.string(mContext, R.string.message_sync_failed),
-                                    record.getString("action"), record.getM2ORecord("prodlot_id").getName()));
+            if (obj == null) {
+                LogUtils.e(TAG, "Response null");
+                throw new Exception("Resopn Null From Server");
+            } else if (obj instanceof String && ((String) obj).contains("error")) {
+                LogUtils.e(TAG, String.valueOf(obj));
+            } else if (obj instanceof String && ((String) obj).contains("conflict")) {
+                handleConflict(record);
+            } else if (obj instanceof ArrayList) {
+                List<LinkedTreeMap> results = new ArrayList<>();
+                results.addAll((Collection<? extends LinkedTreeMap>) obj);
+                if (results.size() == 0) {
+                    OValues values = new OValues();
+                    values.put("synced", true);
+                    wizard.update(record.getInt("_id"), values);
+                    continue;
+                }
+                for (int i = 0; i < results.size(); i++) {
+                    if (newQuantIds != null) {
+                        for (int n = results.get(i).getArray("quant_id").size() - 1; n >= 0; n--) {
+                            OValues quantValues = new OValues();
+                            quantValues.put("id", results.get(i).getArray("quant_id").get(n));
+                            stockQuant.update(Integer.parseInt(newQuantIds[n + i]), quantValues);
                         }
                     }
+                    if (newLotId != null && results.get(i).getArray("lot_id") != null && newLotId.length > 0) {
+                        for (int m = results.get(i).getArray("lot_id").size() - 1; m >= 0; m--) {
+                            OValues lotValues = new OValues();
+                            lotValues.put("id", results.get(i).getArray("lot_id").get(m));
+                            stockProductionLot.update(Integer.parseInt(newLotId[m + i]), lotValues);
+                        }
+                    }
+                }
+                OValues values = new OValues();
+                values.put("synced", true);
+                wizard.update(record.getInt("_id"), values);
+            } else if (obj instanceof Boolean) {
+                if (!(Boolean) obj) {
+                    showNotification(String.format(OResource.string(mContext, R.string.message_sync_failed),
+                            record.getString("action"), record.getM2ORecord("prodlot_id").getName()));
+                }
+            }
 //            });
 //            syncUtils.callMethodOnServer(false);
         }
@@ -258,21 +261,23 @@ public class SuezSyncUtils {
         utils.callMethodOnServer(false);
     }
 
-    private boolean verifyConflict(List<Integer> responseIds, String[] localIds, ODataRow record) {
-        for (String localId: localIds) {
-            if (responseIds.contains(Integer.parseInt(localId))) {
+    private void handleConflict(ODataRow row) {
+        String[] originIds = parseStringIds(row.getString("before_ids"));
+        for (ODataRow record: records) {
+            if (originIds != null && parseStringIds(row.getString("before_ids")) == originIds) {
                 conflictRecords.add(record);
+            }
+        }
+    }
+
+    private void onConflict(ODataRow record) {
                 OValues oValues = new OValues();
                 oValues.put("has_conflict", true);
                 wizard.update(record.getInt("_id"), oValues);
                 Log.v(TAG, "Conflict record: " + record);
                 showNotification(String.format(OResource.string(mContext, R.string.message_sync_conflict),
                         record.getString("action"), record.getM2ORecord("prodlot_id").getName()));
-                return false;
             }
-        }
-        return true;
-    }
 
     private List<Integer> getResponseRecords(OdooResult result) {
         List<OdooRecord> responseRecords = result.getRecords();
@@ -301,5 +306,12 @@ public class SuezSyncUtils {
         builder.setAutoCancel(false);
         builder.show();
         notificationCount++;
+    }
+
+    private String[] parseStringIds(String recordString) {
+        if (recordString.equals("false")) {
+            return null;
+        }
+        return recordString.split(",");
     }
 }

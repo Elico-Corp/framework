@@ -183,7 +183,7 @@ public class CreateBlendingActivity extends BlendingActivity {
             wizardValues.put("prodlot_id", lotIds.get(0));
             wizardValues.put("quant_line_qty", RecordUtils.getFieldString(records, "input_qty"));
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-            wizardValues.put("before_ids", RecordUtils.getFieldString(records, "wizard_id"));
+            wizardValues.put("before_ids", RecordUtils.getOriginIds(records));
             wizardValues.put("new_quant_ids", RecordUtils.getArrayString(newQuantIds.toArray()));
             wizardValues.put("blending_location_id", inputValues.getInt("blending_location_id"));
             wizardValues.put("destination_location_id", inputValues.getInt("destination_location_id"));

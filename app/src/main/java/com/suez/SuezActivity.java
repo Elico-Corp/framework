@@ -19,6 +19,7 @@ import android.widget.Spinner;
 
 import com.odoo.App;
 import com.odoo.R;
+import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
 import com.odoo.core.support.OUser;
 import com.odoo.core.support.OdooCompatActivity;
@@ -26,9 +27,11 @@ import com.odoo.core.support.addons.fragment.IOnSearchViewChangeListener;
 import com.odoo.core.utils.OAppBarUtils;
 import com.odoo.core.utils.OPreferenceManager;
 import com.odoo.core.utils.OResource;
+import com.suez.utils.RecordUtils;
 import com.suez.utils.ToastUtil;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 
 import odoo.controls.OForm;

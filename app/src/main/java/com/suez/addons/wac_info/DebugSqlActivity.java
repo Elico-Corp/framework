@@ -74,6 +74,7 @@ public class DebugSqlActivity extends SuezActivity implements CommonTextAdapter.
             adapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
+            txtSql.setText(e.getMessage());
             Log.e(TAG, e.getMessage());
         }
     }

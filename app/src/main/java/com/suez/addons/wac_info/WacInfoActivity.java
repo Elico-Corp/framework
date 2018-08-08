@@ -213,7 +213,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
                 "as average from wmds_main_component as wm left outer join wmds_parameter_main_component as wpm where wm._id " +
                 "= wpm.component and wpm.wac_id = " + drlRow.getString("wac_id"));
         initComponentList(wmdsRows);
-        List<ODataRow> packagingRows = actualPackaging.query("select ap.qty, ap.remark, pp.name as package_ids from actual_packaging as ap " +
+        List<ODataRow> packagingRows = actualPackaging.query("select ap.qty, ap.remark, pp.name as package_ids_name from actual_packaging as ap " +
                 "left outer join product_packaging as pp where ap.package_ids = pp._id and ap.route_line_id = " + drlRow.getString("_id"));
         initPackagingList(packagingRows);
     }
@@ -233,7 +233,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         }
         List<HashMap<String, Object>> specifiedFields = new ArrayList<>();
         for (ODataRow row: rows) {
-            String str = String.format("%s * %s%s", row.getString("package_ids"), row.getString("qty"),
+            String str = String.format("%s * %s%s", row.getString("package_ids_name"), row.getString("qty"),
                     row.getString("remark").equals("") || row.getString("remark").equals("false") ? "" : "(" + row.getString("remark") + ")");
             HashMap<String, Object> map = new HashMap<>();
             map.put("resId", R.id.txt_packaging_info);

@@ -108,7 +108,7 @@ public class DirectBurnActivity extends ProcessingActivity {
             }
             //        wizardValues.put("quant_line_quantity", RecordUtils.getFieldString(records, "input_qty"));
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-            wizardValues.put("before_ids", RecordUtils.getFieldString(records, "wizard_id"));
+            wizardValues.put("before_ids", RecordUtils.getOriginIds(records));
 //        wizardValues.put("new_quant_ids", RecordUtils.getFieldString(records, "location_id"));
             wizardValues.put("pretreatment_location_id", inputValues.getInt("pretreatment_location_id"));
             wizardValues.put("qty", qty);

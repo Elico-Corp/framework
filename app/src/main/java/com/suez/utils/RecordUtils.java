@@ -128,4 +128,14 @@ public class RecordUtils {
         }
         return rows;
     }
+
+    public static String getOriginIds(List<ODataRow> records) {
+        StringBuilder builder = new StringBuilder();
+        for (ODataRow record: records) {
+            if (!record.getString("wizard_id").equals("false")) {
+                builder.append(record.getM2ORecord("wizard_id").browse().getString("before_ids"));
+            }
+        }
+        return builder.toString();
+    }
 }
