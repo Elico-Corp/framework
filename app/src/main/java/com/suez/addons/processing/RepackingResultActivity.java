@@ -1,13 +1,17 @@
 package com.suez.addons.processing;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Spinner;
 
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.odoo.BaseAbstractListener;
+import com.odoo.OdooActivity;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.rpc.helper.ODomain;
@@ -75,5 +79,33 @@ public class RepackingResultActivity extends SuezActivity {
             }
         });
         utils.searchRecordsOnServer();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            intentToHome();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void intentToHome() {
+        Intent intent = new Intent(this, OdooActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                intentToHome();
+                break;
+            case R.id.menu_new_repacking_print:
+                // TODO: 18-8-9 Print Repacking Label 
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -192,7 +192,7 @@ public class SuezSyncUtils {
                     // Write back the ids
             Object obj = null;
             int retry = 0;
-            while (obj == null || String.valueOf(obj).equals("false") && retry <= OConstants.RPC_REQUEST_RETRIES) {
+            while (obj == null || String.valueOf(obj).equals("false") && retry <= SuezConstants.RPC_MAX_RETRY) {
                 obj = stockProductionLot.getServerDataHelper().callMethod("get_flush_data", new OArguments(), null, map);
                 retry ++ ;
             }

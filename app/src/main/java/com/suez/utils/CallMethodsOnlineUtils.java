@@ -10,6 +10,7 @@ import com.odoo.core.orm.OModel;
 import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.utils.OResource;
 import com.odoo.datas.OConstants;
+import com.suez.SuezConstants;
 
 import java.util.HashMap;
 
@@ -68,7 +69,7 @@ public class CallMethodsOnlineUtils {
             try {
                 int retry = 0;
                 Object obj = null;
-                while (obj == null || String.valueOf(obj).equals("false") && retry <= OConstants.RPC_REQUEST_RETRIES) {
+                while (obj == null || String.valueOf(obj).equals("false") && retry <= SuezConstants.RPC_MAX_RETRY) {
                     obj = mModel.getServerDataHelper().callMethod(method, args, context, kwargs);
                     retry ++ ;
                 }

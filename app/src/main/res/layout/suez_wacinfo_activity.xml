@@ -134,7 +134,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:fieldLabelColor="@color/theme_secondary"
-                    app:fieldName="wac_number"
+                    app:fieldName="wac_id_name"
+                    app:controlLabel="@string/column_wac_code"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -231,11 +232,23 @@
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
+                    android:id="@+id/wac_info_customer_online"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:controlLabel="@string/column_partner_id"
                     app:fieldLabelColor="@color/theme_secondary"
                     app:fieldName="address_id_name"
+                    android:visibility="gone"
+                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                <odoo.controls.OField
+                    android:id="@+id/wac_info_customer_online_zh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:controlLabel="@string/column_partner_id"
+                    app:fieldLabelColor="@color/theme_secondary"
+                    app:fieldName="partner_name_local"
+                    android:visibility="gone"
                     app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
                 <odoo.controls.OField
@@ -489,7 +502,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/default_8dp"
                 android:layout_marginRight="20dp"
-                android:gravity="right"
+                android:gravity="left"
                 android:text="@string/label_more"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

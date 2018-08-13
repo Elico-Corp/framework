@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -66,6 +65,10 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
     OForm deliveryRouteLineFormOnline;
     @BindView(R.id.delivery_route_line_form_online_hide)
     OForm deliveryRouteLineFormOnlineHide;
+    @BindView(R.id.wac_info_customer_online)
+    OField wacInfoCustomerOnline;
+    @BindView(R.id.wac_info_customer_online_zh)
+    OField wacInfoCustomerOnlineZh;
 
 
     private int delivery_route_line_id;
@@ -119,6 +122,11 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         deliveryRouteLineForm = deliveryRouteLineFormOnline;
         deliveryRouteLineFormHide = deliveryRouteLineFormOnlineHide;
         deliveryRouteLineForm.setVisibility(View.VISIBLE);
+        if (app.getLanguage().equals("zh")) {
+            wacInfoCustomerOnlineZh.setVisibility(View.VISIBLE);
+        } else {
+            wacInfoCustomerOnline.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initViewOffline() {
@@ -203,8 +211,8 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
             deliveryRouteLineFormHide.initForm(null);
             return;
         }
-        drlRow = new RecordUtils(deliveryRouteLine).parseMany2oneRecords(drlRow, new String[]{"address_id", "route_id", "pretreatment_id", "hw_code", "deviation_reasons_id"},
-                new String[]{"name", "name", "name", "name", "name"});
+        drlRow = new RecordUtils(deliveryRouteLine).parseMany2oneRecords(drlRow, new String[]{"wac_id", "address_id", "route_id", "pretreatment_id", "hw_code", "deviation_reasons_id"},
+                new String[]{"wac_code", "name", "name", "name", "name", "name"});
         drlRow.put("address_name_zh", drlRow.getM2ORecord("wac_id").browse().getString("partner_name_local"));
         drlRow.put("lot_id_name", prodlotName);
         deliveryRouteLineForm.initForm(drlRow);
@@ -232,7 +240,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
             return;
         }
         List<HashMap<String, Object>> specifiedFields = new ArrayList<>();
-        for (ODataRow row: rows) {
+        for (ODataRow row : rows) {
             String str = String.format("%s * %s%s", row.getString("package_ids_name"), row.getString("qty"),
                     row.getString("remark").equals("") || row.getString("remark").equals("false") ? "" : "(" + row.getString("remark") + ")");
             HashMap<String, Object> map = new HashMap<>();

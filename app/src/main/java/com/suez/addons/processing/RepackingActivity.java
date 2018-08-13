@@ -194,7 +194,6 @@ public class RepackingActivity extends ProcessingActivity {
             }
             Intent intent = new Intent(this, RepackingResultActivity.class);
             intent.putIntegerArrayListExtra(SuezConstants.REPACKING_RESULT_KEY, ids);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
             ToastUtil.toastShow(R.string.toast_processing_failed, this);

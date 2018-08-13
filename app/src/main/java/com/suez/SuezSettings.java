@@ -128,6 +128,7 @@ public class SuezSettings extends BaseSettings {
                 if ((boolean) newValue) {
                     app.networkState = true;
                     SettingsActivity.progressDialog.show();
+                    cancelDialog();
                     syncUtils.requestSync(StockQuant.AUTHORITY);
 //                    Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
 //                    startActivity(intent);
@@ -215,6 +216,15 @@ public class SuezSettings extends BaseSettings {
             }
         };
         util.setListener(downloadListener).download();
+    }
+
+    private void cancelDialog() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((SettingsActivity) mContext).progressDialog.setCancelable(true);
+            }
+        }, 1000 * 60 * 5);
     }
 
 //    private void downloadDB(final HashMap<String, String> version, final String offline_url, final String incr_url, final BaseAbstractListener listener) {

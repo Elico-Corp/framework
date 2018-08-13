@@ -41,6 +41,7 @@ public class DeliveryRouteLine extends OModel {
     OColumn wac_id = new OColumn(getContext(), R.string.column_wac_id, ProductWac.class, OColumn.RelationType.ManyToOne);
     OColumn hw_code = new OColumn(getContext(), R.string.column_hw_code, HwCode.class, OColumn.RelationType.ManyToOne);
     OColumn deviation_reasons_id = new OColumn(getContext(), R.string.column_deviation_reasons, DeliveryDeviationReason.class, OColumn.RelationType.ManyToOne);
+    OColumn partner_name_local = new OColumn(getContext(), R.string.column_partner_name_local, OVarchar.class);
 
 
     public DeliveryRouteLine(Context context, OUser user) {
