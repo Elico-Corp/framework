@@ -114,7 +114,6 @@ public class SuezSyncUtils {
                     kwargs.put("lot_id", lotId);
                     kwargs.put("quant_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getInt("id"));
                     kwargs.put("available_quantity", qty + remainQty);
-                    kwargs.put("source_location_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getM2ORecord("location_id").browse().getInt("id"));
                     kwargs.put("quantity", qty);
                     kwargs.put("repacking_location_id", repackingLocationId);
                     kwargs.put("location_dest_id", destinationLocationId);
@@ -128,7 +127,6 @@ public class SuezSyncUtils {
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
                     kwargs.put("quant_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getInt("id"));
-                    kwargs.put("source_location_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getM2ORecord("location_id").browse().getInt("id"));
                     kwargs.put("quantity", qty);
                     kwargs.put("available_quantity", qty + remainQty);
                     kwargs.put("pretreatment_location", pretreatmentLocationId);

@@ -217,7 +217,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
         drlRow.put("lot_id_name", prodlotName);
         deliveryRouteLineForm.initForm(drlRow);
         deliveryRouteLineFormHide.initForm(drlRow);
-        List<ODataRow> wmdsRows = component.query("select wm.name as component, wpm.min as min, wpm.max as max, wpm.average " +
+        List<ODataRow> wmdsRows = component.query("select wm.name as component_name, wpm.min as min, wpm.max as max, wpm.average " +
                 "as average from wmds_main_component as wm left outer join wmds_parameter_main_component as wpm where wm._id " +
                 "= wpm.component and wpm.wac_id = " + drlRow.getString("wac_id"));
         initComponentList(wmdsRows);
@@ -231,7 +231,7 @@ public class WacInfoActivity extends SuezActivity implements View.OnClickListene
             return;
         }
         componentAdapter = new CommonTextAdapter(rows, R.layout.suez_wac_info_component_list_items,
-                new String[]{"component", "min", "max", "average"}, new int[]{R.id.txt_component, R.id.txt_min, R.id.txt_max, R.id.txt_average});
+                new String[]{"component_name", "min", "max", "average"}, new int[]{R.id.txt_component, R.id.txt_min, R.id.txt_max, R.id.txt_average});
         xrComponentList.setAdapter(componentAdapter);
     }
 

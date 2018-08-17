@@ -4,12 +4,14 @@ package com.suez.utils;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.fields.OColumn;
+import com.odoo.core.orm.fields.types.OFloat;
 import com.odoo.core.orm.fields.types.OInteger;
 import com.odoo.core.utils.JSONUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +70,9 @@ public class SuezJsonUtils extends JSONUtils {
                     // avoid error by gson transfers int to double
                     if (column.getType().equals(OInteger.class)) {
                         resRow.put(column.getName(), row.getFloat(column.getName()).intValue());
+                    } else if (column.getType().equals(OFloat.class)) {
+                        resRow.put(column.getName(), new BigDecimal(row.getString(column.getName()))
+                                .setScale(4, BigDecimal.ROUND_HALF_UP).floatValue());
                     }
                     // TODO: M2M and O2M columns
                     else if (column.getRelationType() == OColumn.RelationType.ManyToOne) {

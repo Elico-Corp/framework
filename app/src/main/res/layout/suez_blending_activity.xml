@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/blending_quant_lines"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -178,7 +178,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:gravity="center"
+        android:gravity="bottom|center"
         android:orientation="horizontal">
 
         <Button
@@ -188,7 +188,7 @@
             android:background="@drawable/suez_home_button"
             android:padding="@dimen/default_8dp"
             android:text="@string/label_scan"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/btn_blending"
@@ -198,7 +198,7 @@
             android:background="@drawable/suez_home_button"
             android:padding="@dimen/default_8dp"
             android:text="@string/dialog_blending"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/btn_blending_finish"
@@ -208,7 +208,7 @@
             android:background="@drawable/suez_home_button"
             android:padding="@dimen/default_8dp"
             android:text="@string/dialog_blending_finish"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 </LinearLayout>
