@@ -174,7 +174,8 @@ public class SuezSettings extends BaseSettings {
 //                                    downloadDB();
 //                                    offlineRetry += 1;
 //                                } else {
-                                    onSwitchFail(R.string.toast_fail, true);
+                                    onSwitchFail(R.string.toast_download_fail, true);
+                                    preferenceManager.putString(SuezConstants.OFFLINE_DB_VERSION_KEY, "0");
 //                                }
 //                                break;
 //                            case SuezConstants.INCR_MD5_CHECK_FAIL_KEY:

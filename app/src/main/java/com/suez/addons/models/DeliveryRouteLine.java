@@ -34,7 +34,7 @@ public class DeliveryRouteLine extends OModel {
     OColumn wac_processing = new OColumn(getContext(), R.string.column_wac_processing, OVarchar.class);
     OColumn address_id = new OColumn(getContext(), R.string.column_partner_id, ResPartner.class, OColumn.RelationType.ManyToOne);
     OColumn route_id = new OColumn(getContext(), R.string.column_delivery_route, DeliveryRoute.class, OColumn.RelationType.ManyToOne);
-    OColumn delivery_date = new OColumn(getContext(), R.string.column_delivery_date, ODate.class);
+    OColumn delivery_date = new OColumn(getContext(), R.string.column_delivery_date, OVarchar.class);
     OColumn pretreatment_id = new OColumn(getContext(), R.string.column_pretreatment_id, PretreatmentWac.class, OColumn.RelationType.ManyToOne);
     OColumn origin = new OColumn(getContext(), R.string.column_origin, OVarchar.class);
     OColumn order_line_weight = new OColumn(getContext(), R.string.column_order_line_weight, OFloat.class);

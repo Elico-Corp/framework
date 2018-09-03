@@ -102,6 +102,8 @@
     <string name="toast_repacking_one_record">Repacking can be done for only one record</string>
     <string name="toast_invalid_field">Invalid Input in %s</string>
     <string name="toast_processing_failed">Processing Failed</string>
+    <string name="toast_download_fail">Download Failed, Please try again</string>
+
 
     <!-- Colums -->
     <string name="column_name">Name</string>

@@ -11,7 +11,8 @@
     <LinearLayout
         android:id="@+id/blending_quant_lines"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:orientation="vertical">
 
         <LinearLayout
@@ -67,117 +68,93 @@
             android:scrollbars="vertical" />
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <RelativeLayout
-            android:id="@+id/pretreatment_background"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:fontFamily="@string/font_light"
-                android:gravity="center"
-                android:text="@string/label_pretreatment"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#aaaaaa"
-                android:textStyle="bold"/>
-
-        </RelativeLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
             android:visibility="visible">
 
-            <odoo.controls.OForm
-                android:id="@+id/blending_wizard_form"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:background="@color/theme_text_white"
-                android:orientation="vertical"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp"
-                app:editableMode="true"
-                app:modelName="operations.wizard">
+                android:layout_height="match_parent">
 
-                <odoo.controls.OField
-                    android:id="@+id/exist_blending"
+                <odoo.controls.OForm
+                    android:id="@+id/blending_wizard_form"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:fieldName="exist_location"
-                    app:controlLabel="@string/column_exist_blending_id"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"/>
+                    android:layout_marginBottom="4dp"
+                    android:background="@color/theme_text_white"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp"
+                    app:editableMode="true"
+                    app:modelName="operations.wizard">
 
-                <odoo.controls.OField
-                    android:id="@+id/blending_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:fieldName="blending_location_id"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"
-                    app:widgetType="SearchableLive"/>
+                    <odoo.controls.OField
+                        android:id="@+id/exist_blending"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldName="exist_location"
+                        app:controlLabel="@string/column_exist_blending_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
 
-                <odoo.controls.OField
-                    android:id="@+id/destination_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:fieldName="destination_location_id"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"
-                    app:widgetType="SearchableLive"/>
+                    <odoo.controls.OField
+                        android:id="@+id/blending_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldName="blending_location_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"
+                        app:widgetType="SearchableLive"/>
 
-                <odoo.controls.OField
-                    android:id="@+id/blending_category"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:fieldName="blending_waste_category_id"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"
-                    app:widgetType="SearchableLive"/>
+                    <odoo.controls.OField
+                        android:id="@+id/destination_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldName="destination_location_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"
+                        app:widgetType="SearchableLive"/>
 
-                <odoo.controls.OField
-                    android:id="@+id/pretreatment_qty"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:fieldName="qty"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"
-                    />
+                    <odoo.controls.OField
+                        android:id="@+id/blending_category"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldName="blending_waste_category_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"
+                        app:widgetType="SearchableLive"/>
 
-                <odoo.controls.OField
-                    android:id="@+id/remain_qty"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:fieldName="remain_qty"
-                    app:fieldTextAppearance="?android:textAppearanceMedium"
-                    />
+                    <odoo.controls.OField
+                        android:id="@+id/pretreatment_qty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldName="qty"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"
+                        />
 
-            </odoo.controls.OForm>
+                    <odoo.controls.OField
+                        android:id="@+id/remain_qty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldName="remain_qty"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"
+                        />
 
+                </odoo.controls.OForm>
+            </ScrollView>
 
-        </RelativeLayout>
-        </ScrollView>
-    </RelativeLayout>
+        </LinearLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_gravity="bottom"
         android:gravity="bottom|center"
         android:orientation="horizontal">
 

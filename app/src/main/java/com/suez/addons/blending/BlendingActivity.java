@@ -57,8 +57,6 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
     XRecyclerView blendingQuantList;
     @BindView(R.id.blending_quant_lines)
     LinearLayout blendingQuantLines;
-    @BindView(R.id.title)
-    TextView title;
     @BindView(R.id.exist_blending)
     OField existBlending;
     @BindView(R.id.blending_location)

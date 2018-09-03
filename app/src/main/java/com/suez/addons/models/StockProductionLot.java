@@ -33,7 +33,7 @@ public class StockProductionLot extends OModel {
     OColumn pretreatment_id = new OColumn(getContext(), R.string.column_pretreatment_id, PretreatmentWac.class, OColumn.RelationType.ManyToOne);
     OColumn quant_ids = new OColumn(getContext(), R.string.column_quant_ids, StockQuant.class, OColumn.RelationType.OneToMany);
     OColumn is_finished = new OColumn("Is Finished", OBoolean.class).setDefaultValue(false);
-    OColumn truck_in_date = new OColumn(getContext(), R.string.column_truck_in_date, ODateTime.class);
+    OColumn truck_in_date = new OColumn(getContext(), R.string.column_truck_in_date, OVarchar.class);
     OColumn wac_processing = new OColumn(getContext(), R.string.column_wac_processing, OVarchar.class);
 
     public StockProductionLot(Context context, OUser user) {

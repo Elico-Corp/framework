@@ -194,22 +194,21 @@ public class SuezSyncUtils {
                 obj = stockProductionLot.getServerDataHelper().callMethod("get_flush_data", new OArguments(), null, map);
                 retry ++ ;
             }
+            OValues values = new OValues();
+            values.put("synced", true);
+            wizard.update(record.getInt("_id"), values);
             if (obj == null) {
                 LogUtils.e(TAG, "Response null");
                 throw new Exception("Resopn Null From Server");
             } else if (obj instanceof String && ((String) obj).contains("error")) {
                 LogUtils.e(TAG, String.valueOf(obj));
+                showNotification(String.valueOf(obj));
             } else if (obj instanceof String && ((String) obj).contains("conflict")) {
                 handleConflict(record);
+                showNotification(String.valueOf(obj));
             } else if (obj instanceof ArrayList) {
                 List<LinkedTreeMap> results = new ArrayList<>();
                 results.addAll((Collection<? extends LinkedTreeMap>) obj);
-                if (results.size() == 0) {
-                    OValues values = new OValues();
-                    values.put("synced", true);
-                    wizard.update(record.getInt("_id"), values);
-                    continue;
-                }
                 for (int i = 0; i < results.size(); i++) {
                     if (newQuantIds != null) {
                         for (int n = results.get(i).getArray("quant_id").size() - 1; n >= 0; n--) {
@@ -226,9 +225,6 @@ public class SuezSyncUtils {
                         }
                     }
                 }
-                OValues values = new OValues();
-                values.put("synced", true);
-                wizard.update(record.getInt("_id"), values);
             } else if (obj instanceof Boolean) {
                 if (!(Boolean) obj) {
                     showNotification(String.format(OResource.string(mContext, R.string.message_sync_failed),

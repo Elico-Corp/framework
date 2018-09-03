@@ -116,7 +116,7 @@ public class AddBlendingActivity extends BlendingActivity {
                 } else {
                     targetLocationId = targetLocation.getInt("_id");
                 }
-                int blendingLocationId = new StockLocation(this, null).browse(null, "is_blending=?", new String[]{"True"}).getInt("_id");
+                int blendingLocationId = new StockLocation(this, null).browse(null, "is_blending=?", new String[]{"true"}).getInt("_id");
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();
                     values.put("location_id", blendingLocationId);

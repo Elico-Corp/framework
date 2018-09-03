@@ -103,6 +103,7 @@
     <string name="toast_repacking_one_record">一次只能操作一条记录</string>
     <string name="toast_invalid_field">%s 输入错误</string>
     <string name="toast_processing_failed">操作失败</string>
+    <string name="toast_download_fail">下载失败，请重试</string>
 
     <!-- Colums -->
     <string name="column_name">名称</string>
