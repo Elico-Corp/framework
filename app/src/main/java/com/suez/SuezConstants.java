@@ -49,5 +49,5 @@ public class SuezConstants {
     public static final String MD5_FILE_NAME = "md5_checksum.txt";
     public static final String SYNC_DONE_ACTION = "Sync Done";
     public static final String SYNC_FAIL_ACTION = "Sync Failed";
-    public static final int RPC_MAX_RETRY = 999;
+    public static final int RPC_MAX_RETRY = 99;
 }

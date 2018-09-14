@@ -321,7 +321,7 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
         } else if (response instanceof String) {
             ToastUtil.toastShow(R.string.toast_processing_failed, this);
             LogUtils.e(TAG, String.valueOf(response));
-        } else if (response instanceof ArrayList || response instanceof LinkedTreeMap) {
+        } else if (response instanceof ArrayList || response instanceof LinkedTreeMap || response.equals(true)) {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.toast_successful)
                     .setMessage(R.string.message_processing_success)

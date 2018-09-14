@@ -99,7 +99,7 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
         }
     }
 
-    @OnClick({R.id.btnTankTruck, R.id.btnWacInfo, R.id.btnMixBlending, R.id.btnMoveWac, R.id.btnRepackaging})
+    @OnClick({R.id.btnTankTruck, R.id.btnWacInfo, R.id.btnMixBlending, R.id.btnMoveWac, R.id.btnRepackaging, R.id.btnDirectBurn})
     public void onClick(View view){
         Intent intent;
         switch (view.getId()){
@@ -127,6 +127,12 @@ public class SuezFragment extends BaseFragment implements View.OnKeyListener{
                 intent = new Intent(getActivity(), ScanZbarActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 intent.putExtra(SuezConstants.COMMON_KEY, SuezConstants.REPACKING_KEY);
+                startActivity(intent);
+                break;
+            case R.id.btnDirectBurn:
+                intent = new Intent(getActivity(), ScanZbarActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra(SuezConstants.COMMON_KEY, SuezConstants.DIRECT_BURN_KEY);
                 startActivity(intent);
                 break;
         }

@@ -40,6 +40,7 @@
     <string name="label_sync">Sync</string>
     <string name="label_field_not_selected">No %s Selected</string>
     <string name="label_print">Print Label</string>
+    <string name="label_clear">Clear</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">Tank Truck</string>
@@ -167,6 +168,7 @@
     <string name="column_quant_line_ids">Original Locations</string>
     <string name="column_pretreatment_location_id">Pretreatment Location</string>
     <string name="column_destination_location_id">Destination Location</string>
+    <string name="column_int_location_id">Incineration Location</string>
     <string name="column_pretreatment_type_id">Pretreatment Type</string>
     <string name="column_repacking_location_id">Repacking Location</string>
     <string name="column_packaging_id">Packaging</string>

@@ -49,6 +49,7 @@ public class DirectBurnActivity extends ProcessingActivity {
         wizardValues.put("qty", 0.00f);
         wizardValues.put("remain_qty", 0.00f);
         wizardValues.put("action", SuezConstants.DIRECT_BURN_KEY);
+        wizardValues.put("prodlot_id", prodlot_id);
         super.initForm();
     }
 

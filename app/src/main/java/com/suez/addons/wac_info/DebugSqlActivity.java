@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,8 +15,10 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OModel;
+import com.odoo.core.utils.OPreferenceManager;
 import com.suez.SuezActivity;
 import com.suez.addons.adapters.CommonTextAdapter;
+import com.suez.utils.ToastUtil;
 import com.suez.view.ClearEditText;
 
 import java.util.ArrayList;
@@ -80,6 +84,12 @@ public class DebugSqlActivity extends SuezActivity implements CommonTextAdapter.
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.suez_menu_clear_version, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public void onItemClick(int position) {
         txtSql.setText(rows.get(position - 1).toString());
     }
@@ -93,5 +103,20 @@ public class DebugSqlActivity extends SuezActivity implements CommonTextAdapter.
     public void onTextLength(int length) {
         sql = sqlView.getEditableText().toString();
         txtSql.setText(sql);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.home:
+                finish();
+                break;
+            case R.id.menu_clear_version:
+                OPreferenceManager preferenceManager = new OPreferenceManager(this);
+                preferenceManager.putString("offline_version", "0");
+                ToastUtil.toastShow(R.string.toast_successful, this);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

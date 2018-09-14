@@ -48,13 +48,13 @@
             android:textColor="@android:color/white"/>
 
         <Button
-            android:id="@+id/btnTankTruck"
+            android:id="@+id/btnDirectBurn"
             android:layout_width="120dp"
             android:layout_height="70dp"
             android:layout_marginLeft="15dp"
             android:background="@drawable/suez_home_button"
             android:gravity="center"
-            android:text="@string/title_suez_tanktruck"
+            android:text="@string/label_direct_burn"
             android:textColor="@android:color/white"/>
     </LinearLayout>
 
@@ -74,15 +74,15 @@
             android:text="@string/title_suez_mix_blending"
             android:textColor="@android:color/white"/>
 
-        <!--<Button-->
-            <!--android:id="@+id/btnLims"-->
-            <!--android:layout_width="120dp"-->
-            <!--android:layout_height="70dp"-->
-            <!--android:layout_marginLeft="15dp"-->
-            <!--android:background="@drawable/suez_home_button"-->
-            <!--android:gravity="center"-->
-            <!--android:text="@string/title_suez_lims"-->
-            <!--android:textColor="@android:color/white"/>-->
+        <Button
+            android:id="@+id/btnTankTruck"
+            android:layout_width="120dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/suez_home_button"
+            android:gravity="center"
+            android:text="@string/title_suez_tanktruck"
+            android:textColor="@android:color/white"/>
     </LinearLayout>
 
 </LinearLayout>

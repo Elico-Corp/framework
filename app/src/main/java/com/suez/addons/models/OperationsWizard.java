@@ -27,9 +27,10 @@ public class OperationsWizard extends OModel {
     OColumn quant_line_ids = new OColumn(getContext(), R.string.column_quant_ids,OVarchar.class).setLocalColumn();
     OColumn new_quant_ids = new OColumn("New Quant Ids", OVarchar.class).setLocalColumn();
     OColumn quant_line_qty = new OColumn("Qty for lines", OFloat.class);
-    OColumn pretreatment_location_id = new OColumn(getContext(), R.string.column_pretreatment_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_pretreatment", "=", "true");
+    OColumn pretreatment_location_id = new OColumn(getContext(), R.string.column_int_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_int", "=", "true");
     OColumn destination_location_id = new OColumn(getContext(), R.string.column_destination_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("usage", "=", "internal");
     OColumn pretreatment_type_id = new OColumn(getContext(), R.string.column_pretreatment_type_id, PretreatmentWac.class, OColumn.RelationType.ManyToOne);
+//    OColumn int_location = new OColumn(getContext(), R.string.column_int_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).addDomain("is_int", "=", "true");
     OColumn qty = new OColumn(getContext(), R.string.column_qty, OFloat.class).setLocalColumn();
     OColumn repacking_location_id = new OColumn(getContext(), R.string.column_repacking_location_id, StockLocation.class, OColumn.RelationType.ManyToOne).setLocalColumn().addDomain("is_repacking", "=", "true");
     OColumn package_id = new OColumn(getContext(), R.string.column_packaging_id, StockQuantPackage.class, OColumn.RelationType.ManyToOne).setLocalColumn();

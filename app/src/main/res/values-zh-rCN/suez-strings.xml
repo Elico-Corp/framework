@@ -164,6 +164,7 @@
     <string name="column_quant_line_ids">原始库位</string>
     <string name="column_pretreatment_location_id">预处理库位</string>
     <string name="column_destination_location_id">目标库位</string>
+    <string name="column_int_location_id">焚烧库位</string>
     <string name="column_pretreatment_type_id">操作类型</string>
     <string name="column_repacking_location_id">重包装库位</string>
     <string name="column_packaging_id">包装</string>
