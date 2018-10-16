@@ -182,6 +182,7 @@
     <string name="column_blending_waste_category_id">Blending Waste Category</string>
     <string name="column_exist_blending_id">Exist Blending</string>
     <string name="column_truck_in_date">Truck in Date</string>
+    <string name="column_repacking_waste_category_id">Waste Category</string>
     <!--Summaries-->
     <string name="summary_work_online">Start Work Online</string>
     <!--String Arrays-->

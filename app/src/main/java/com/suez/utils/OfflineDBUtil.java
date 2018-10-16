@@ -353,7 +353,7 @@ public class OfflineDBUtil {
         }
 
         @Override
-        protected String  doInBackground(OSQLite... params) {
+        protected String doInBackground(OSQLite... params) {
             OSQLite incrSqlite = params[0];
             return mergeSqlite(incrSqlite);
         }

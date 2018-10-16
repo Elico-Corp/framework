@@ -178,6 +178,7 @@
     <string name="column_blending_waste_category_id">混合废料类别</string>
     <string name="column_exist_blending_id">已有混合</string>
     <string name="column_truck_in_date">卡车进厂时间</string>
+    <string name="column_repacking_waste_category_id">废料类型</string>
     <!--Summaries-->
     <string name="summary_work_online">切换在线模式</string>
     <!--String Arrays-->

@@ -122,6 +122,15 @@
                         app:widgetType="SearchableLive" />
 
                     <odoo.controls.OField
+                        android:id="@+id/int_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:fieldName="int_location_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"
+                        app:widgetType="SearchableLive" />
+
+                    <odoo.controls.OField
                         android:id="@+id/destination_location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

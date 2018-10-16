@@ -22,7 +22,6 @@ import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
 import com.odoo.core.rpc.helper.ODomain;
-import com.odoo.core.rpc.helper.utils.gson.OdooResult;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezActivity;
 import com.suez.SuezConstants;
@@ -46,8 +45,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import odoo.controls.OField;
 import odoo.controls.OForm;
-
-import static com.suez.utils.RecordUtils.sumField;
 
 /**
  * Created by joseph on 18-5-17.
@@ -76,6 +73,14 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     OForm pretreatmentWizardForm;
     @BindView(R.id.remain_qty)
     OField remainQty;
+    @BindView(R.id.btn_confirm)
+    Button btnConfirm;
+    @BindView(R.id.relayoutList)
+    RelativeLayout relayoutList;
+    @BindView(R.id.btn_cancel)
+    Button btnCancel;
+    @BindView(R.id.int_location)
+    OField intLocation;
 
     private static final String TAG = ProcessingActivity.class.getSimpleName();
     protected int prodlot_id;
@@ -89,14 +94,6 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
     protected List<ODataRow> records;
     protected OValues wizardValues;
     protected ODataRow lot;
-
-    @BindView(R.id.btn_confirm)
-    Button btnConfirm;
-    @BindView(R.id.relayoutList)
-    RelativeLayout relayoutList;
-    @BindView(R.id.btn_cancel)
-    Button btnCancel;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

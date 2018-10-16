@@ -7,18 +7,21 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Spinner;
 
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.odoo.BaseAbstractListener;
 import com.odoo.OdooActivity;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
+import com.odoo.core.orm.OModel;
+import com.odoo.core.orm.OValues;
 import com.odoo.core.rpc.helper.ODomain;
 import com.suez.SuezActivity;
 import com.suez.SuezConstants;
 import com.suez.addons.adapters.CommonTextAdapter;
+import com.suez.addons.models.OperationsWizard;
 import com.suez.addons.models.StockProductionLot;
+import com.suez.utils.CallMethodsOnlineUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
 
 import java.util.ArrayList;
@@ -26,6 +29,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import odoo.controls.OField;
+import odoo.controls.OForm;
 
 /**
  * Created by joseph on 18-8-2.
@@ -34,9 +39,14 @@ import butterknife.ButterKnife;
 public class RepackingResultActivity extends SuezActivity {
     @BindView(R.id.xNewPackingList)
     XRecyclerView xNewPackingList;
+    @BindView(R.id.repackingWasteCategory)
+    OField repackingWasteCategory;
+    @BindView(R.id.repackingWasteCategoryForm)
+    OForm repackingWasteCategoryForm;
 
     private ArrayList<Integer> ids;
     private StockProductionLot stockProductionLot;
+    private OperationsWizard wizard;
     private List<ODataRow> records;
     private CommonTextAdapter adapter;
 
@@ -50,6 +60,10 @@ public class RepackingResultActivity extends SuezActivity {
         initView();
         ids = getIntent().getIntegerArrayListExtra(SuezConstants.REPACKING_RESULT_KEY);
         stockProductionLot = new StockProductionLot(this, null);
+        wizard = new OperationsWizard(this, null);
+        OValues values = new OValues();
+        values.put("repacking_waste_category_id", 0);
+        repackingWasteCategoryForm.initForm(values.toDataRow());
         initData();
     }
 
@@ -71,7 +85,7 @@ public class RepackingResultActivity extends SuezActivity {
     private void initData() {
         ODomain domain = new ODomain();
         domain.add("id", "in", ids);
-        SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(stockProductionLot, domain).setListener(new BaseAbstractListener(){
+        SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(stockProductionLot, domain).setListener(new BaseAbstractListener() {
             @Override
             public void OnSuccessful(List<ODataRow> listRow) {
                 records.addAll(listRow);
@@ -103,7 +117,7 @@ public class RepackingResultActivity extends SuezActivity {
                 intentToHome();
                 break;
             case R.id.menu_new_repacking_print:
-                // TODO: 18-8-9 Print Repacking Label 
+                int repackingWasteCategoryId = repackingWasteCategoryForm.getValues().getInt("repacking_waste_category_id");
                 break;
         }
         return super.onOptionsItemSelected(item);

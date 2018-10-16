@@ -38,14 +38,14 @@ public class DirectBurnActivity extends ProcessingActivity {
     @Override
     protected void initView() {
         super.initView();
-        pretreatmentLocation.setVisibility(View.VISIBLE);
+        intLocation.setVisibility(View.VISIBLE);
         remainQty.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void initForm() {
         wizardValues = new OValues();
-        wizardValues.put("pretreatment_location_id", 0);
+        wizardValues.put("int_location_id", 0);
         wizardValues.put("qty", 0.00f);
         wizardValues.put("remain_qty", 0.00f);
         wizardValues.put("action", SuezConstants.DIRECT_BURN_KEY);
@@ -73,7 +73,7 @@ public class DirectBurnActivity extends ProcessingActivity {
 //                quantLines.add(quantLine);
 //            }
 //            kwargs.put("quant_lines", quantLines);
-            kwargs.put("pretreatment_location", stockLocation.browse(inputValues.getInt("pretreatment_location_id")).getInt("id"));
+            kwargs.put("pretreatment_location", stockLocation.browse(inputValues.getInt("int_location_id")).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.DIRECT_BURN_KEY);
@@ -92,7 +92,7 @@ public class DirectBurnActivity extends ProcessingActivity {
             ODataRow record = records.get(0);
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();
-                    values.put("location_id", inputValues.getInt("pretreatment_location_id"));
+                    values.put("location_id", inputValues.getInt("int_location_id"));
                     stockQuant.update(record.getInt("_id"), values);
                 } else {
                     OValues remainValues = new OValues();
@@ -102,7 +102,7 @@ public class DirectBurnActivity extends ProcessingActivity {
                     stockQuant.update(record.getInt("_id"), remainValues);
                     OValues newValues = new OValues();
                     newValues.put("lot_id", record.getInt("lot_id"));
-                    newValues.put("location_id", inputValues.getInt("pretreatment_location_id"));
+                    newValues.put("location_id", inputValues.getInt("int_location_id"));
                     newValues.put("qty", record.getFloat("input_qty"));
                     stockQuant.insert(newValues);
 //                }
@@ -111,7 +111,7 @@ public class DirectBurnActivity extends ProcessingActivity {
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
             wizardValues.put("before_ids", RecordUtils.getOriginIds(records));
 //        wizardValues.put("new_quant_ids", RecordUtils.getFieldString(records, "location_id"));
-            wizardValues.put("pretreatment_location_id", inputValues.getInt("pretreatment_location_id"));
+            wizardValues.put("int_location_id", inputValues.getInt("int_location_id"));
             wizardValues.put("qty", qty);
             wizardValues.put("remain_qty", remainQuantity);
             super.performProcessing();

@@ -123,7 +123,7 @@ public class SuezSyncUtils {
                     map.put("data", kwargs);
                     break;
                 case SuezConstants.DIRECT_BURN_KEY:
-                    pretreatmentLocationId = record.getM2ORecord("pretreatment_location_id").browse().getInt("id");
+                    pretreatmentLocationId = record.getM2ORecord("int_location_id").browse().getInt("id");
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
                     kwargs.put("quant_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getInt("id"));
