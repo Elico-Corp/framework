@@ -281,7 +281,7 @@ public class SearchableItemActivity extends ActionBarActivity implements
                 ODomain domain = new ODomain();
                 domain.add(mRelModel.getDefaultNameColumn(), "ilike", params[0]);
                 domain.append(liveDomain);
-                return helper.searchRecords(new OdooFields(mRelModel.getColumns()), domain, 10);
+                return helper.searchRecords(new OdooFields(mRelModel.getColumns()), domain, 100);
             } catch (Exception e) {
                 e.printStackTrace();
             }
