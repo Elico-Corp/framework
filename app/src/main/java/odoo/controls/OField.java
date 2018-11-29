@@ -84,6 +84,7 @@ public class OField extends LinearLayout implements IOControlData.ValueUpdateLis
     private float textSize = -1;
     private float labelSize = -1;
     private Boolean withStroke = false;
+    private Boolean showSpinner = false;
     private IOnFieldValueChangeListener mValueUpdateListener = null;
 
     public enum WidgetType {
@@ -199,6 +200,7 @@ public class OField extends LinearLayout implements IOControlData.ValueUpdateLis
             labelSize = types.getDimension(R.styleable.OField_fieldLabelSize, -1);
             defaultImage = types.getResourceId(R.styleable.OField_defaultImage, -1);
             withStroke = types.getBoolean(R.styleable.OField_withStroke, false);
+            showSpinner = types.getBoolean(R.styleable.OField_showSpinner, false);
             types.recycle();
         }
         if (mContext.getClass().getSimpleName().contains("BridgeContext"))
@@ -446,6 +448,7 @@ public class OField extends LinearLayout implements IOControlData.ValueUpdateLis
         selection.setArrayResourceId(mValueArrayId);
         selection.setColumn(mColumn);
         selection.setWidgetType(mWidgetType);
+        selection.setShowSpinner(showSpinner);
         return selection;
     }
 

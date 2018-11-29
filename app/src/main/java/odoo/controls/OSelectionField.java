@@ -84,6 +84,7 @@ public class OSelectionField extends LinearLayout implements IOControlData,
     private int appearance = -1;
     private int textColor = Color.BLACK;
     private OForm formView;
+    private Boolean showSpinner = false;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public OSelectionField(Context context, AttributeSet attrs,
@@ -236,6 +237,7 @@ public class OSelectionField extends LinearLayout implements IOControlData,
         intent.putExtra("selected_position", getPos());
         intent.putExtra(OColumn.ROW_ID, getPos());
         intent.putExtra("search_hint", getLabel());
+        intent.putExtra("show_spinner", showSpinner);
         if (mCol != null) {
             intent.putExtra("column_name", mCol.getName());
             if (mCol.hasDomainFilterColumn()) {
@@ -474,6 +476,10 @@ public class OSelectionField extends LinearLayout implements IOControlData,
 
     public void setArrayResourceId(int res_id) {
         mResourceArray = res_id;
+    }
+
+    public void setShowSpinner(Boolean showSpinner) {
+        this.showSpinner = showSpinner;
     }
 
     public void setColumn(OColumn col) {
