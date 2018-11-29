@@ -44,6 +44,7 @@ public class SuezConstants {
     public static final String PRETREATMENT_KEY = "processing";
     public static final String REPACKING_KEY = "repacking";
     public static final String DIRECT_BURN_KEY = "direct_burn";
+    public static final String REPACKING_LABEL_PRINT_KEY = "repacking_label_print";
     public static final String SCAN_BLENDING_KEY = "scan_blending";
     public static final String WAC_MOVE_KEY = "wac_move";
     public static final String MD5_FILE_NAME = "md5_checksum.txt";

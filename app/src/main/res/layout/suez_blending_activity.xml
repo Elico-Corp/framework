@@ -116,6 +116,7 @@
                         android:visibility="gone"
                         app:fieldName="destination_location_id"
                         app:fieldTextAppearance="?android:textAppearanceMedium"
+                        app:showSpinner="true"
                         app:widgetType="SearchableLive"/>
 
                     <odoo.controls.OField

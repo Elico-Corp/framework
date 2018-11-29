@@ -193,6 +193,7 @@ public class RepackingActivity extends ProcessingActivity {
                 ids.add(((Double)result.getArray("lot_id").get(0)).intValue());
             }
             Intent intent = new Intent(this, RepackingResultActivity.class);
+            intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlot_id);
             intent.putIntegerArrayListExtra(SuezConstants.REPACKING_RESULT_KEY, ids);
             startActivity(intent);
         } else {

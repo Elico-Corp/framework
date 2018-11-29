@@ -39,6 +39,7 @@
     <string name="label_sync">同步</string>
     <string name="label_field_not_selected">请选择%s</string>
     <string name="label_print">打印标签</string>
+    <string name="label_others">其它</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">卡车</string>
@@ -104,6 +105,7 @@
     <string name="toast_invalid_field">%s 输入错误</string>
     <string name="toast_processing_failed">操作失败</string>
     <string name="toast_download_fail">下载失败，请重试</string>
+    <string name="toast_repacking_label_print_success">标签打印成功.</string>
 
     <!-- Colums -->
     <string name="column_name">名称</string>

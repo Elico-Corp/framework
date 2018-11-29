@@ -68,9 +68,7 @@ public class SuezSyncUtils {
         records = rows;
     }
 
-    public void syncProcessing(OdooResult response) throws Exception {
-        // Get Response IDs
-        List<Integer> responseIds = getResponseRecords(response);
+    public void syncProcessing() throws Exception {
         conflictRecords = new ArrayList<>();
         // Get records from the wizard model
         for (final ODataRow record: records) {

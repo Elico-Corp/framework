@@ -117,7 +117,7 @@ public class ProcessingTestActivity extends SuezActivity {
         try {
             SuezSyncUtils utils = new SuezSyncUtils(this, OUser.current(this), null);
             utils.setRecords(actions);
-            utils.syncProcessing(new OdooResult());
+            utils.syncProcessing();
         } catch (Exception e){
             e.printStackTrace();
             ToastUtil.toastShow(e.getMessage(), this);

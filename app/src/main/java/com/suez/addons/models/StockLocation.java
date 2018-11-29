@@ -22,6 +22,7 @@ public class StockLocation extends OModel {
     OColumn is_pretreatment = new OColumn(getContext(), R.string.column_is_pretreatment, OBoolean.class);
     OColumn is_repacking = new OColumn(getContext(), R.string.column_is_repacking, OBoolean.class);
     OColumn is_blending = new OColumn(getContext(), R.string.column_is_blending, OBoolean.class);
+    OColumn is_quick_filter = new OColumn("Is Quick Filter", OBoolean.class);
 
     public StockLocation(Context context, OUser user) {
         super(context, "stock.location", user);

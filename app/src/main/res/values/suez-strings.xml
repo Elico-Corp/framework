@@ -41,6 +41,7 @@
     <string name="label_field_not_selected">No %s Selected</string>
     <string name="label_print">Print Label</string>
     <string name="label_clear">Clear</string>
+    <string name="label_others">Others</string>
 
     <!-- Titles -->
     <string name="title_suez_tanktruck">Tank Truck</string>
@@ -104,6 +105,7 @@
     <string name="toast_invalid_field">Invalid Input in %s</string>
     <string name="toast_processing_failed">Processing Failed</string>
     <string name="toast_download_fail">Download Failed, Please try again</string>
+    <string name="toast_repacking_label_print_success">Repacking label printed successfully.</string>
 
 
     <!-- Colums -->
