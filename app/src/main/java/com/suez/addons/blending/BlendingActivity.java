@@ -22,6 +22,7 @@ import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OValues;
+import com.odoo.core.rpc.helper.OArguments;
 import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.utils.OResource;
 import com.suez.SuezActivity;
@@ -32,7 +33,9 @@ import com.suez.addons.models.StockLocation;
 import com.suez.addons.models.StockProductionLot;
 import com.suez.addons.models.StockQuant;
 import com.suez.addons.processing.ProcessingActivity;
+import com.suez.addons.processing.RepackingResultActivity;
 import com.suez.addons.scan.ScanZbarActivity;
+import com.suez.utils.CallMethodsOnlineUtils;
 import com.suez.utils.LogUtils;
 import com.suez.utils.RecordUtils;
 import com.suez.utils.SearchRecordsOnlineUtils;
@@ -40,7 +43,9 @@ import com.suez.utils.SuezJsonUtils;
 import com.suez.utils.ToastUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -191,17 +196,23 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
         }
     }
 
-    protected void postBlending(Object response) {
+    protected void postBlending(final Object response) {
         if (response == null) {
             alertWarning(R.string.message_response_null);
         } else if (response instanceof String) {
             ToastUtil.toastShow(R.string.toast_processing_failed, this);
             LogUtils.e(TAG, String.valueOf(response));
-        } else if (response instanceof ArrayList || response instanceof LinkedTreeMap) {
+        } else if (response instanceof ArrayList) {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.toast_successful)
-                    .setMessage(R.string.message_processing_success)
+                    .setMessage(R.string.message_blending_success)
                     .setCancelable(false)
+                    .setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            blendingLabelPrint((ArrayList) response);
+                        }
+                    })
                     .setNegativeButton(R.string.label_close, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -211,6 +222,34 @@ public class BlendingActivity extends SuezActivity implements CommonTextAdapter.
                     }).create();
             dialog.show();
         }
+    }
+
+    protected void blendingLabelPrint(ArrayList response) {
+        if (response.size() == 0) {
+            return;
+        }
+        HashMap<String, Object> kwargs = new HashMap<>();
+        kwargs.put("lot_id", ((LinkedTreeMap) response.get(0)).getArray("lot_id").get(0));
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("data", kwargs);
+        map.put("action", SuezConstants.BLENDING_LABEL_PRINT_KEY);
+        map.put("action_uid", UUID.randomUUID().toString());
+        BaseAbstractListener listener = new BaseAbstractListener(){
+            @Override
+            public void OnSuccessful(Object obj) {
+                if (obj == null) {
+                    ToastUtil.toastShow(R.string.message_response_null, BlendingActivity.this);
+                } else if (obj.equals(true)) {
+                    ToastUtil.toastShow(R.string.toast_blending_label_print_success, BlendingActivity.this);
+                    finish();
+                } else if (obj instanceof String) {
+                    ToastUtil.toastShow(obj.toString(), BlendingActivity.this);
+                }
+            }
+        };
+        CallMethodsOnlineUtils utils = new CallMethodsOnlineUtils(stockProductionLot, "get_flush_data", new OArguments(), null, map);
+        utils.setListener(listener);
+        utils.callMethodOnServer();
     }
 
     @Override

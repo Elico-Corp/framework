@@ -84,6 +84,7 @@
     <string name="message_is_finished">\"%s\" is already finished</string>
     <string name="message_response_null">Response is null!</string>
     <string name="message_processing_success">Process Success</string>
+    <string name="message_blending_success">Blending is successful, do you want to print the label?</string>
     <string name="message_db_size_error">Warning, DB Size Decreased</string>
     <string name="message_check_md5">Checking Integrity</string>
     <string name="message_flush_data">Flushing Data to odoo, please wait</string>
@@ -106,6 +107,7 @@
     <string name="toast_processing_failed">Processing Failed</string>
     <string name="toast_download_fail">Download Failed, Please try again</string>
     <string name="toast_repacking_label_print_success">Repacking label printed successfully.</string>
+    <string name="toast_blending_label_print_success">Mix label printed successfully.</string>
 
 
     <!-- Colums -->

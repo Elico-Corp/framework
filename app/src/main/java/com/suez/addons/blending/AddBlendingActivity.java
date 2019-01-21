@@ -108,7 +108,7 @@ public class AddBlendingActivity extends BlendingActivity {
             utils.callMethodOnServer();
         } else {
             List<Integer> newQuantIds = new ArrayList<>();
-            for (ODataRow record: records) {
+            for (ODataRow record : records) {
                 ODataRow targetLocation = stockQuant.browse(null, "lot_id = ?", new String[]{String.valueOf(prodlotId)});
                 int targetLocationId;
                 if (targetLocation == null) {
@@ -141,18 +141,18 @@ public class AddBlendingActivity extends BlendingActivity {
                 int newId = stockQuant.insert(newQuantValues);
                 newQuantIds.add(newId);
             }
-                OValues lotValues = new OValues();
-                lotValues.put("is_finished", finish);
-                stockProductionLot.update(prodlotId, lotValues);
+            OValues lotValues = new OValues();
+            lotValues.put("is_finished", finish);
+            stockProductionLot.update(prodlotId, lotValues);
 
-                wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
-                wizardValues.put("quant_line_qty", RecordUtils.getFieldString(records, "input_qty"));
+            wizardValues.put("qty", RecordUtils.sumField(records, "input_qty"));
+            wizardValues.put("quant_line_qty", RecordUtils.getFieldString(records, "input_qty"));
             wizardValues.put("before_ids", RecordUtils.getOriginIds(records));
             wizardValues.put("quant_line_ids", RecordUtils.getFieldString(records, "_id"));
-                wizardValues.put("new_quant_ids", RecordUtils.getArrayString(newQuantIds.toArray()));
-                wizardValues.put("is_finished", finish);
+            wizardValues.put("new_quant_ids", RecordUtils.getArrayString(newQuantIds.toArray()));
+            wizardValues.put("is_finished", finish);
 
-                createAction();
+            createAction();
         }
     }
 }

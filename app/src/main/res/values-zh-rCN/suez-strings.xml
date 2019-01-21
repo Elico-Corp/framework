@@ -83,6 +83,7 @@
     <string name="message_is_finished">\"%s\" 该混合已经完成</string>
     <string name="message_response_null">返回为空!</string>
     <string name="message_processing_success">操作成功</string>
+    <string name="message_blending_success">混合成功，是否打印标签？</string>
     <string name="message_db_size_error">警告： 数据库变小</string>
     <string name="message_check_md5">正在校验文件完整性</string>
     <string name="message_flush_data">正在同步数据，请稍候</string>
@@ -106,6 +107,7 @@
     <string name="toast_processing_failed">操作失败</string>
     <string name="toast_download_fail">下载失败，请重试</string>
     <string name="toast_repacking_label_print_success">标签打印成功.</string>
+    <string name="toast_blending_label_print_success">混合标签打印成功.</string>
 
     <!-- Colums -->
     <string name="column_name">名称</string>
