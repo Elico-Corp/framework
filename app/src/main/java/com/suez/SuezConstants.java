@@ -41,7 +41,7 @@ public class SuezConstants {
     public static final String STOCK_QUANT_ID_KEY = "quant_id";
     public static final String PRODLOT_NAME_KEY = "prodlot_name";
     public static final String IS_FINISHED_KEY = "is_finished";
-    public static final String PRETREATMENT_KEY = "processing";
+    public static final String PRETREATMENT_KEY = "pretreatment";
     public static final String REPACKING_KEY = "repacking";
     public static final String DIRECT_BURN_KEY = "direct_burn";
     public static final String REPACKING_LABEL_PRINT_KEY = "repacking_label_print";

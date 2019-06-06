@@ -242,6 +242,7 @@ public class ScanZbarActivity extends SuezActivity {
             case SuezConstants.DIRECT_BURN_KEY:
             case SuezConstants.WAC_MOVE_KEY:
             case SuezConstants.REPACKING_KEY:
+            case SuezConstants.PRETREATMENT_KEY:
                 intent = new Intent(this, ProcessingQuantListActivity.class);
                 intent.putExtra(SuezConstants.COMMON_KEY, key);
                 intent.putExtra(SuezConstants.PRODLOT_ID_KEY, prodlotId);

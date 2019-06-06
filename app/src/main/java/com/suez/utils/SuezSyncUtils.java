@@ -96,10 +96,10 @@ public class SuezSyncUtils {
                     destinationLocationId = record.getM2ORecord("destination_location_id").browse().getInt("id");
                     kwargs = new HashMap<>();
                     kwargs.put("lot_id", lotId);
-                    kwargs.put("product_qty", qty);
-                    kwargs.put("available_qty", qty + remainQty);
-                    kwargs.put("pretreatment_location", pretreatmentLocationId);
-                    kwargs.put("dest_location", destinationLocationId);
+                    kwargs.put("quantity", qty);
+                    kwargs.put("quant_id", stockQuant.browse(Integer.parseInt(quantLineIds[0])).getInt("id"));
+                    kwargs.put("pretreatment_location_id", pretreatmentLocationId);
+                    kwargs.put("location_dest_id", destinationLocationId);
                     map.put("action", SuezConstants.PRETREATMENT_KEY);
                     map.put("data", kwargs);
                     break;

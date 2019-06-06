@@ -65,19 +65,10 @@ public class PretreatmentActivity extends ProcessingActivity {
             args.add(new JSONArray().put(prodlot_id));
             HashMap<String, Object> kwargs = new HashMap<>();
             kwargs.put("lot_id", prodlot_id);
-            kwargs.put("product_qty", quantity);
-            kwargs.put("available_quantity", records.get(0).getFloat("qty"));
-//            kwargs.put("date_planned_start", ODateUtils.getUTCDate(ODateUtils.DEFAULT_FORMAT));
-//            List<HashMap> quantLines  = new ArrayList<>();
-//            for (ODataRow record: records) {
-//                HashMap<String, Object> quantLine= new HashMap<>();
-//                quantLine.put("location_id", record.getInt("location_id"));
-//                quantLine.put("quantity", record.getFloat("input_qty"));
-//                quantLines.add(quantLine);
-//            }
-//            kwargs.put("quant_lines", quantLines);
-            kwargs.put("pretreatment_location", stockLocation.browse(inputValues.getInt("pretreatment_location_id")).getInt("id"));
-            kwargs.put("dest_location", stockLocation.browse(inputValues.getInt("destination_location_id")).getInt("id"));
+            kwargs.put("quantity", quantity);
+            kwargs.put("quant_id", quant_id);
+            kwargs.put("pretreatment_location_id", stockLocation.browse(inputValues.getInt("pretreatment_location_id")).getInt("id"));
+            kwargs.put("location_dest_id", stockLocation.browse(inputValues.getInt("destination_location_id")).getInt("id"));
             HashMap<String, Object> map = new HashMap<>();
             map.put("data", kwargs);
             map.put("action", SuezConstants.PRETREATMENT_KEY);
@@ -94,11 +85,12 @@ public class PretreatmentActivity extends ProcessingActivity {
         } else {
             ODataRow prodlot = stockProductionLot.browse(prodlot_id);
             OValues lotValues = prodlot.toValues();
+            lotValues.removeKey("_id");
+            lotValues.removeKey("id");
+            lotValues.removeKey("quant_ids");
             lotValues.put("product_qty", quantity);
             lotValues.put("name", ODateUtils.getDate("yyMMdd") + stockProductionLot.count("name like ?", new String[]{"1%"}) % 10000);
             int newLotId = stockProductionLot.insert(lotValues);
-//            for (ODataRow record: records) {
-                // All processing
             ODataRow record = records.get(0);
                 if (record.getFloat("qty").equals(record.getFloat("input_qty"))) {
                     OValues values = new OValues();

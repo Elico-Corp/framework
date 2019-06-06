@@ -20,6 +20,7 @@
             android:fontFamily="@string/font_light"
             android:text="@string/label_no_data"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAlignment="center"
             android:textColor="#aaaaaa"
             android:textStyle="bold"/>
 

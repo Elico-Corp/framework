@@ -294,7 +294,6 @@ public class ProcessingActivity extends SuezActivity implements CommonTextAdapte
      * Refresh qty according after the input quantity changed.
      */
     protected void refreshQty() {
-//        pretreatmentQty.setValue(sumField(records, "input_qty"));
         BigDecimal qty = new BigDecimal(records.get(0).getString("qty"));
         BigDecimal input_qty = new BigDecimal(records.get(0).getString("input_qty"));
         remainQty.setValue(qty.subtract(input_qty).floatValue());
