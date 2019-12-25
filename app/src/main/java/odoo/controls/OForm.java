@@ -332,6 +332,10 @@ public class OForm extends LinearLayout {
         }
     }
 
+    public OField getField(String key) {
+        return mFormFieldControls.get(key);
+    }
+
     private class OnChangeBackground extends
             AsyncTask<ODataRow, Void, ODataRow> {
         private ProgressDialog mDialog;

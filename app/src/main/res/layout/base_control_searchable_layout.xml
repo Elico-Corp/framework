@@ -40,6 +40,20 @@
 
             <requestFocus />
         </EditText>
+
+        <Spinner
+            android:id="@+id/locations"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="start"
+            android:layout_marginLeft="@dimen/default_8dp"
+            android:layout_marginStart="@dimen/default_8dp"
+            android:dropDownWidth="100dp"
+            style="?android:attr/spinnerDropDownItemStyle"
+            android:visibility="gone"
+            />
+
     </LinearLayout>
 
     <View style="@style/ViewSeparator" />

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="suez_edit_back">#eeeeee</color>
+    <color name="suez_black">#ff000000</color>
+    <color name="actionbar_spinner_text_color">#414141</color>
+    <color name="control_focused">#e5e5e5</color>
+</resources>

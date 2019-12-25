@@ -112,7 +112,7 @@ public class OSyncDataUtils {
                                 ODateUtils.DEFAULT_FORMAT, false);
                         Date _write_date_obj = ODateUtils.createDateObject(record.getString("_write_date"),
                                 ODateUtils.DEFAULT_FORMAT, false);
-                        if (_write_date_obj.compareTo(write_date_obj) > 0) {
+                        if (write_date_obj != null && _write_date_obj.compareTo(write_date_obj) > 0) {
                             // Local record is latest
                             updateToServerIds.add(server_id);
                         } else {

@@ -23,12 +23,16 @@ import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.odoo.App;
 import com.odoo.R;
+import com.odoo.SettingsActivity;
 import com.odoo.base.addons.ir.IrModel;
 import com.odoo.base.addons.res.ResCompany;
 import com.odoo.core.account.About;
@@ -51,8 +55,12 @@ import com.odoo.core.utils.OResource;
 import com.odoo.core.utils.OdooRecordUtils;
 import com.odoo.core.utils.logger.OLog;
 import com.odoo.datas.OConstants;
+import com.suez.SuezConstants;
+import com.suez.utils.LogUtils;
+import com.suez.utils.SuezSyncUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -143,84 +151,90 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.v(TAG, "Sync for (" + model.getModelName() + ") Started at " + ODateUtils.getDate());
         model.onSyncStarted();
         try {
-            ODomain domain = new ODomain();
-            domain.append(model.defaultDomain());
-            if (domain_filter != null) {
-                domain.append(domain_filter);
-            }
+            String last_sync_date = preferenceManager.getString("last_sync_date", ODateUtils.getDate(new Date(0), ODateUtils.DEFAULT_FORMAT));
+            if (mService != null) {
+                SuezSyncUtils syncUtils = new SuezSyncUtils(mContext, OUser.current(mContext), last_sync_date);
+                syncUtils.getRecords();
+                syncUtils.syncProcessing();
+                syncUtils.syncTankTrunk();
+            } else {
+                ODomain domain = new ODomain();
+                domain.append(model.defaultDomain());
+                if (domain_filter != null) {
+                    domain.append(domain_filter);
+                }
 
-            if (checkForWriteCreateDate) {
-                List<Integer> serverIds = model.getServerIds();
-                // Model Create date domain filters
-                if (model.checkForCreateDate() && checkForDataLimit) {
-                    if (serverIds.size() > 0) {
-                        if (model.checkForWriteDate()
-                                && !model.isEmptyTable()) {
-                            domain.add("|");
+                if (checkForWriteCreateDate) {
+                    List<Integer> serverIds = model.getServerIds();
+                    // Model Create date domain filters
+                    if (model.checkForCreateDate() && checkForDataLimit) {
+                        if (serverIds.size() > 0) {
+                            if (model.checkForWriteDate()
+                                    && !model.isEmptyTable()) {
+                                domain.add("|");
+                            }
+                            if (model.checkForWriteDate() && !model.isEmptyTable()
+                                    && createRelationRecords && model.getLastSyncDateTime() != null)
+                                domain.add("&");
                         }
-                        if (model.checkForWriteDate() && !model.isEmptyTable()
-                                && createRelationRecords && model.getLastSyncDateTime() != null)
-                            domain.add("&");
+                        int data_limit = preferenceManager.getInt("sync_data_limit", 60);
+                        domain.add("create_date", ">=", ODateUtils.getDateBefore(data_limit));
+                        if (serverIds.size() > 0) {
+                            domain.add("id", "not in", serverIds);
+                        }
                     }
-                    int data_limit = preferenceManager.getInt("sync_data_limit", 60);
-                    domain.add("create_date", ">=", ODateUtils.getDateBefore(data_limit));
-                    if (serverIds.size() > 0) {
-                        domain.add("id", "not in", serverIds);
-                    }
-                }
-                // Model write date domain filters
-                if (model.checkForWriteDate() && !model.isEmptyTable() && createRelationRecords) {
-                    String last_sync_date = model.getLastSyncDateTime();
-                    if (last_sync_date != null) {
-                        domain.add("write_date", ">", last_sync_date);
+                    // Model write date domain filters
+                    if (model.checkForWriteDate() && !model.isEmptyTable() && createRelationRecords) {
+                        if (last_sync_date != null) {
+                            domain.add("write_date", ">", last_sync_date);
+                        }
                     }
                 }
-            }
-            // Getting data
-            OdooResult response = mOdoo
-                    .withRetryPolicy(OConstants.RPC_REQUEST_TIME_OUT, OConstants.RPC_REQUEST_RETRIES)
-                    .searchRead(model.getModelName(), getFields(model)
-                            , domain, 0, mSyncDataLimit, "create_date DESC");
-            if (response == null) {
-                // FIXME: Check in library. May be timeout issue with slow network.
-                Log.w(TAG, "Response null from server.");
-                model.onSyncTimedOut();
-                return;
-            }
-            if (response.containsKey("error")) {
-                app.setOdoo(null, user);
-                OPreferenceManager pref = new OPreferenceManager(mContext);
-                if (pref.getBoolean(About.DEVELOPER_MODE, false)) {
-                    OdooResult error = response.getMap("error");
-                    OLog.log("ERROR ERROR :(" + error);
+                // Getting data
+                OdooResult response = mOdoo
+                        .withRetryPolicy(OConstants.RPC_REQUEST_TIME_OUT, OConstants.RPC_REQUEST_RETRIES)
+                        .searchRead(model.getModelName(), getFields(model)
+                                , domain, 0, mSyncDataLimit, "create_date DESC");
+                if (response == null) {
+                    // FIXME: Check in library. May be timeout issue with slow network.
+                    Log.w(TAG, "Response null from server.");
+                    model.onSyncTimedOut();
+                    return;
                 }
-                return;
-            }
+                if (response.containsKey("error")) {
+                    app.setOdoo(null, user);
+                    OPreferenceManager pref = new OPreferenceManager(mContext);
+                    if (pref.getBoolean(About.DEVELOPER_MODE, false)) {
+                        OdooResult error = response.getMap("error");
+                        OLog.log("ERROR ERROR :(" + error);
+                    }
+                    return;
+                }
+                Log.v(TAG, "Processing " + response.getRecords().size() + " records");
+                dataUtils.handleResult(model, user, result, response, createRelationRecords);
+                // Updating records on server if local are latest updated.
+                // if model allowed update record to server
+                if (model.allowUpdateRecordOnServer()) {
+                    dataUtils.updateRecordsOnServer(this);
+                }
 
-            Log.v(TAG, "Processing " + response.getRecords().size() + " records");
-            dataUtils.handleResult(model, user, result, response, createRelationRecords);
-            // Updating records on server if local are latest updated.
-            // if model allowed update record to server
-            if (model.allowUpdateRecordOnServer()) {
-                dataUtils.updateRecordsOnServer(this);
-            }
+                // Creating or updating relation records
+                handleRelationRecords(user, dataUtils.getRelationRecordsHashMap(), result);
 
-            // Creating or updating relation records
-            handleRelationRecords(user, dataUtils.getRelationRecordsHashMap(), result);
+                // If model allowed to create record on server
+                if (model.allowCreateRecordOnServer()) {
+                    createRecordsOnServer(model);
+                }
 
-            // If model allowed to create record on server
-            if (model.allowCreateRecordOnServer()) {
-                createRecordsOnServer(model);
-            }
+                // If model allowed to delete record on server
+                if (model.allowDeleteRecordOnServer()) {
+                    removeRecordOnServer(model);
+                }
 
-            // If model allowed to delete record on server
-            if (model.allowDeleteRecordOnServer()) {
-                removeRecordOnServer(model);
-            }
-
-            // If model allowed to delete server removed record from local database
-            if (model.allowDeleteRecordInLocal()) {
-                removeNonExistRecordFromLocal(model);
+                // If model allowed to delete server removed record from local database
+                if (model.allowDeleteRecordInLocal()) {
+                    removeNonExistRecordFromLocal(model);
+                }
             }
 
             Log.v(TAG, "Sync for (" + model.getModelName() + ") finished at " + ODateUtils.getDate());
@@ -229,9 +243,14 @@ public class OSyncAdapter extends AbstractThreadedSyncAdapter {
                 irModel.setLastSyncDateTimeToNow(model);
             }
             model.onSyncFinished();
+            Intent intent = new Intent(SuezConstants.SYNC_DONE_ACTION);
+            mContext.sendBroadcast(intent);
         } catch (Exception e) {
             e.printStackTrace();
+            LogUtils.e(TAG, e.getMessage());
             model.onSyncFailed();
+            Intent intent = new Intent(SuezConstants.SYNC_FAIL_ACTION);
+            mContext.sendBroadcast(intent);
         }
         // Performing next sync if any in service
         if (mSyncFinishListeners.containsKey(model.getModelName())) {

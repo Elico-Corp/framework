@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <include layout="@layout/base_appbar"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_8dp"
+                android:orientation="vertical">
+
+                <odoo.controls.OForm
+                    android:id="@+id/wacInfoForm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:modelName="product.wac">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="wac_version"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="partner_id"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="partner_name_local"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="waste_cate"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="signature_date"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="expiration_date"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                </odoo.controls.OForm>
+
+                <!--online form-->
+                <odoo.controls.OForm
+                    android:id="@+id/wacInfoFormOnLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:modelName="product.wac">
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="wac_version"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_partner_id"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="partner_name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="partner_name_local"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:controlLabel="@string/column_waste_category"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="waste_cate_name"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="signature_date"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+
+                    <odoo.controls.OField
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:fieldLabelColor="@color/theme_secondary"
+                        app:fieldName="expiration_date"
+                        app:fieldTextAppearance="?android:textAppearanceMedium"/>
+
+                </odoo.controls.OForm>
+                <!--online form end-->
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_drl_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/label_drl_list"
+                    android:textSize="17sp"
+                    android:textStyle="bold"/>
+
+                <include layout="@layout/suez_base_line"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <com.jcodecraeer.xrecyclerview.XRecyclerView
+                        android:id="@+id/xRecyWACList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical">
+
+                    </com.jcodecraeer.xrecyclerview.XRecyclerView>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

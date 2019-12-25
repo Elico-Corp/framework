@@ -19,10 +19,15 @@
  */
 package com.odoo.core.orm.fields;
 
+import android.content.Context;
+
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.annotation.Odoo;
 import com.odoo.core.orm.fields.utils.DomainFilterParser;
+import com.odoo.core.rpc.helper.ODomain;
+import com.odoo.core.utils.OResource;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,6 +81,17 @@ public class OColumn {
 
     public OColumn(String label, Class<?> type, RelationType relationType) {
         this(label, type);
+        this.relationType = relationType;
+    }
+
+    // Add by Joseph 18-04-28: allow create column with name from strings.xml
+    public OColumn(Context context, int res_id, Class<?> type){
+        this.label = OResource.string(context, res_id);
+        this.type = type;
+    }
+
+    public OColumn(Context context, int res_id, Class<?> type, RelationType relationType){
+        this(context, res_id, type);
         this.relationType = relationType;
     }
 
@@ -380,7 +396,7 @@ public class OColumn {
                 '}';
     }
 
-    public static class ColumnDomain {
+    public static class ColumnDomain implements Serializable{
 
         private String column = null;
         private String operator = null;
@@ -445,6 +461,12 @@ public class OColumn {
             }
             domain.append("]");
             return domain.toString();
+        }
+
+        public ODomain toODomain() {
+            ODomain domain = new ODomain();
+            domain.add(column, operator, value);
+            return domain;
         }
     }
 }

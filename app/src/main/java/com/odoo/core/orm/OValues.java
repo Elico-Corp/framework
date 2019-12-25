@@ -95,6 +95,11 @@ public class OValues implements Serializable {
             _values.put(key, values.get(key));
     }
 
+    // Add by Joseph 18-05-04
+    public void removeKey(String key) {
+        _values.remove(key);
+    }
+
     public int size() {
         return _values.size();
     }

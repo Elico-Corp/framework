@@ -19,9 +19,12 @@
  */
 package com.odoo;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -30,14 +33,19 @@ import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.OSQLite;
 import com.odoo.core.rpc.Odoo;
 import com.odoo.core.support.OUser;
+import com.odoo.core.utils.OPreferenceManager;
+import com.odoo.core.utils.OResource;
+import com.suez.SuezConstants;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class App extends Application {
 
     public static final String TAG = App.class.getSimpleName();
     public static String APPLICATION_NAME;
+    public static boolean networkState;
     private static HashMap<String, Odoo> mOdooInstances = new HashMap<>();
     private static HashMap<String, OSQLite> mSQLiteObjecs = new HashMap<>();
     private static ModelRegistryUtils modelRegistryUtils = new ModelRegistryUtils();
@@ -47,6 +55,7 @@ public class App extends Application {
         super.onCreate();
         App.APPLICATION_NAME = getPackageManager().getApplicationLabel(getApplicationInfo()).toString();
         App.modelRegistryUtils.makeReady(getApplicationContext());
+        networkState = inNetwork();
     }
 
     public static OSQLite getSQLite(String userName) {
@@ -117,5 +126,23 @@ public class App extends Application {
 
     public ModelRegistryUtils getModelRegistry() {
         return modelRegistryUtils;
+    }
+
+    public String getLanguage() {
+        OPreferenceManager pref = new OPreferenceManager(this);
+        return pref.getString(SuezConstants.LANGUAGE_KEY, "zh");
+    }
+
+    public void changeLanguage() {
+        String language = getLanguage();
+        Configuration config = getResources().getConfiguration();
+        if (language.equals("zh")) {
+            Locale.setDefault(Locale.CHINA);
+            config.locale = Locale.CHINA;
+        } else {
+            Locale.setDefault(Locale.ENGLISH);
+            config.locale = Locale.ENGLISH;
+        }
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 }

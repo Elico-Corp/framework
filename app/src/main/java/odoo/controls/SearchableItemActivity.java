@@ -31,27 +31,38 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 
+import com.google.gson.JsonArray;
+import com.odoo.App;
+import com.odoo.BaseAbstractListener;
 import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OModel;
 import com.odoo.core.orm.ServerDataHelper;
 import com.odoo.core.orm.fields.OColumn;
+import com.odoo.core.orm.fields.types.OSelection;
 import com.odoo.core.rpc.helper.ODomain;
 import com.odoo.core.rpc.helper.OdooFields;
 import com.odoo.core.support.list.OListAdapter;
 import com.odoo.core.utils.OControls;
 import com.odoo.core.utils.OResource;
+import com.suez.utils.RecordUtils;
+import com.suez.utils.SearchRecordsOnlineUtils;
+import com.suez.utils.StockLocationFlags;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchableItemActivity extends ActionBarActivity implements
+public class SearchableItemActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener,
         AdapterView.OnItemClickListener, TextWatcher, View.OnClickListener,
-        OListAdapter.OnSearchChange, IOnQuickRecordCreateListener {
+        OListAdapter.OnSearchChange, OListAdapter.RowFilterTextListener, IOnQuickRecordCreateListener {
     public static final String TAG = SearchableItemActivity.class.getSimpleName();
 
     private EditText edt_searchable_input;
@@ -67,6 +78,12 @@ public class SearchableItemActivity extends ActionBarActivity implements
     private LiveSearch mLiveDataLoader = null;
     private Bundle formData;
     private ODomain liveDomain = new ODomain();
+    private boolean isNetwork;
+    private boolean showSpinner = false;
+    private Spinner locationSpinner;
+    private StockLocationFlags locationFlags;
+    private ArrayAdapter<String> locationAdapter;
+    private List<String> locations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +92,8 @@ public class SearchableItemActivity extends ActionBarActivity implements
         setResult(RESULT_CANCELED);
         edt_searchable_input = (EditText) findViewById(R.id.edt_searchable_input);
         edt_searchable_input.addTextChangedListener(this);
+        locationSpinner = (Spinner) findViewById(R.id.locations);
+        isNetwork = ((App) getApplication()).networkState;
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
             if (extra.containsKey("resource_id")) {
@@ -96,6 +115,9 @@ public class SearchableItemActivity extends ActionBarActivity implements
                 edt_searchable_input.setHint("Search "
                         + extra.getString("search_hint"));
             }
+            if (extra.containsKey("show_spinner")) {
+                showSpinner = extra.getBoolean("show_spinner");
+            }
             if (resource_array_id != -1) {
                 String[] arrays = getResources().getStringArray(
                         resource_array_id);
@@ -110,11 +132,67 @@ public class SearchableItemActivity extends ActionBarActivity implements
                     OColumn mCol = mModel.getColumn(extra.getString("column_name"));
                     mRelModel = mModel.createInstance(mCol.getType());
 
+                    if (mRelModel.getModelName().equals("stock.location") && showSpinner) {
+                        locationSpinner.setVisibility(View.VISIBLE);
+                        locationFlags = StockLocationFlags.getInstance();
+                        locationFlags.setLocations(mRelModel.select(null, "is_quick_filter = ?", new String[]{"true"}, "name"));
+                        locations = locationFlags.getLocations(this);
+                        if (isNetwork) {
+                            ODomain domain = new ODomain();
+                            domain.add("is_quick_filter", "=", true);
+                            SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(mRelModel, new OdooFields(mRelModel.getColumns()), domain, 1000, 0, "name").setListener(new BaseAbstractListener(){
+                                @Override
+                                public void OnSuccessful(List<ODataRow> listRow) {
+                                    locationFlags.setLocations(listRow);
+                                    locations = locationFlags.getLocations(SearchableItemActivity.this);
+                                    locationAdapter.clear();
+                                    locationAdapter.addAll(locations);
+                                    locationAdapter.notifyDataSetChanged();
+                                }
+                            });
+                            utils.searchRecordsOnServer();
+                        }
+                        locationAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, locations);
+                        locationSpinner.setAdapter(locationAdapter);
+                        locationSpinner.setOnItemSelectedListener(this);
+                    }
                     if (mCol.hasDomainFilterColumn()) {
                         formData = extra.getBundle("form_data");
                         liveDomain = mCol.getDomainFilterParser(mModel).getRPCDomain(formData);
                     }
-                    objects.addAll(OSelectionField.getRecordItems(mRelModel, mCol, formData));
+
+                    if (!mCol.getDomains().values().isEmpty()){
+                        for (OColumn.ColumnDomain domain: mCol.getDomains().values()) {
+                            if (domain.getConditionalOperator() != null) {
+                                liveDomain.add(domain.getConditionalOperator());
+                            } else {
+                                liveDomain.add(domain.getColumn(), domain.getOperator(), domain.getValue());
+                            }
+                        }
+                    }
+                    // Add by Joseph 180521
+                    if (!isNetwork) {
+                        List<ODataRow> rows = OSelectionField.getRecordItems(mRelModel, mCol, formData);
+                        if (mRelModel.getModelName().equals("blending.waste.category")) {
+                            objects.addAll(RecordUtils.nameGet(rows,
+                                    new String[]{"name", "name_local"}, ':'));
+                        } else {
+                            objects.addAll(rows);
+                        }
+                    } else {
+                        SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(mRelModel, new OdooFields(mRelModel.getColumns()), liveDomain).setListener(new BaseAbstractListener(){
+                            @Override
+                            public void OnSuccessful(List<ODataRow> listRow) {
+                                if (mRelModel.getModelName().equals("blending.waste.category")) {
+                                    objects.addAll(RecordUtils.nameGet(listRow, new String[]{"name", "name_local"}, ':'));
+                                } else {
+                                    objects.addAll(listRow);
+                                }
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+                        utils.searchRecordsOnServer();
+                    }
                 }
             }
 
@@ -146,6 +224,7 @@ public class SearchableItemActivity extends ActionBarActivity implements
                 mAdapter.setOnSearchChange(this);
             }
             mList.setAdapter(mAdapter);
+            mAdapter.setRowFilterTextListener(this);
         } else {
             finish();
         }
@@ -164,6 +243,50 @@ public class SearchableItemActivity extends ActionBarActivity implements
     }
 
     @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        edt_searchable_input.setText(locations.get(position));
+        if (position == locations.size() - 1) {
+            if (isNetwork) {
+                ODomain domain = new ODomain();
+                for (String flag: locations) {
+                    domain.add("name", "not ilike", flag + "%");
+                }
+                domain.add("usage", "=", "internal");
+                SearchRecordsOnlineUtils utils = new SearchRecordsOnlineUtils(mRelModel, new OdooFields(mRelModel.getColumns()), domain)
+                        .setListener(new BaseAbstractListener(){
+                            @Override
+                            public void OnSuccessful(List<ODataRow> listRow) {
+                                objects.clear();
+                                objects.addAll(listRow);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+                utils.searchRecordsOnServer();
+            } else {
+                StringBuilder queryBuilder = new StringBuilder("usage = ? and ");
+                List<String> params = new ArrayList<>();
+                params.add("internal");
+                for (String flag: locations) {
+                    if (locations.indexOf(flag) != locations.size() - 1) {
+                        queryBuilder.append("name not like ? and ");
+                        params.add(flag + '%');
+                    }
+                }
+                queryBuilder.delete(queryBuilder.length() - 4, queryBuilder.length() - 1);
+                List<ODataRow> res = mRelModel.select(null, queryBuilder.toString(), params.toArray(new String[params.size()]));
+                objects.clear();
+                objects.addAll(res);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @Override
     public void onRecordCreated(ODataRow row) {
         Bundle extra = getIntent().getExtras();
         Intent intent = new Intent("searchable_value_select");
@@ -178,6 +301,14 @@ public class SearchableItemActivity extends ActionBarActivity implements
     }
 
     @Override
+    public String filterCompareWith(Object object) {
+        if (object instanceof ODataRow) {
+            return ((ODataRow) object).getString("name");
+        }
+        return object.toString();
+    }
+
+    @Override
     public void beforeTextChanged(CharSequence s, int start, int count,
                                   int after) {
 
@@ -185,7 +316,9 @@ public class SearchableItemActivity extends ActionBarActivity implements
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        mAdapter.getFilter().filter(s);
+        if (!s.toString().equals(OResource.string(this, R.string.label_others))) {
+            mAdapter.getFilter().filter(s);
+        }
         ImageView imgView = (ImageView) findViewById(R.id.search_icon);
         if (s.length() > 0) {
             imgView.setImageResource(R.drawable.ic_action_navigation_close);
@@ -214,7 +347,7 @@ public class SearchableItemActivity extends ActionBarActivity implements
         if (newRecords.size() <= 0) {
             if (mLiveDataLoader != null)
                 mLiveDataLoader.cancel(true);
-            if (edt_searchable_input.getText().length() >= 3) {
+            if (edt_searchable_input.getText().length() >= 1) {
                 mLiveDataLoader = new LiveSearch();
                 mLiveDataLoader.execute(edt_searchable_input.getText()
                         .toString());
@@ -239,7 +372,7 @@ public class SearchableItemActivity extends ActionBarActivity implements
                 ODomain domain = new ODomain();
                 domain.add(mRelModel.getDefaultNameColumn(), "ilike", params[0]);
                 domain.append(liveDomain);
-                return helper.searchRecords(new OdooFields(mRelModel.getColumns()), domain, 10);
+                return helper.searchRecords(new OdooFields(mRelModel.getColumns()), domain, 100);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -253,6 +386,7 @@ public class SearchableItemActivity extends ActionBarActivity implements
             findViewById(R.id.loading_progress).setVisibility(View.GONE);
             mList.setVisibility(View.VISIBLE);
             if (result != null && result.size() > 0) {
+                objects.clear();
                 objects.addAll(result);
                 mAdapter.notifiyDataChange(objects);
             }

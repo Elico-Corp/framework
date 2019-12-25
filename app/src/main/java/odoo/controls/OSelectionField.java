@@ -45,6 +45,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.odoo.R;
 import com.odoo.core.orm.ODataRow;
 import com.odoo.core.orm.OM2ORecord;
 import com.odoo.core.orm.OModel;
@@ -52,6 +53,7 @@ import com.odoo.core.orm.OValues;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.orm.fields.types.OSelection;
 import com.odoo.core.utils.OControls;
+import com.odoo.core.utils.OResource;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -82,6 +84,7 @@ public class OSelectionField extends LinearLayout implements IOControlData,
     private int appearance = -1;
     private int textColor = Color.BLACK;
     private OForm formView;
+    private Boolean showSpinner = false;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public OSelectionField(Context context, AttributeSet attrs,
@@ -234,6 +237,7 @@ public class OSelectionField extends LinearLayout implements IOControlData,
         intent.putExtra("selected_position", getPos());
         intent.putExtra(OColumn.ROW_ID, getPos());
         intent.putExtra("search_hint", getLabel());
+        intent.putExtra("show_spinner", showSpinner);
         if (mCol != null) {
             intent.putExtra("column_name", mCol.getName());
             if (mCol.hasDomainFilterColumn()) {
@@ -411,7 +415,7 @@ public class OSelectionField extends LinearLayout implements IOControlData,
                         row = getRecordData(row_id);
                     } else {
                         row = new ODataRow();
-                        row.put(mModel.getDefaultNameColumn(), "No " + mCol.getLabel() + " selected");
+                        row.put(mModel.getDefaultNameColumn(), String.format(OResource.string(mContext, R.string.label_select_item), mCol.getLabel()));
                     }
                 }
             }
@@ -472,6 +476,10 @@ public class OSelectionField extends LinearLayout implements IOControlData,
 
     public void setArrayResourceId(int res_id) {
         mResourceArray = res_id;
+    }
+
+    public void setShowSpinner(Boolean showSpinner) {
+        this.showSpinner = showSpinner;
     }
 
     public void setColumn(OColumn col) {
@@ -621,11 +629,11 @@ public class OSelectionField extends LinearLayout implements IOControlData,
             where = whr.toString();
             args = args_list.toArray(new String[args_list.size()]);
         }
-        List<ODataRow> rows = rel_model.select(new String[]{rel_model.getDefaultNameColumn()}, where,
+        List<ODataRow> rows = rel_model.select(null , where,
                 args, rel_model.getDefaultNameColumn());
         ODataRow row = new ODataRow();
         row.put(OColumn.ROW_ID, -1);
-        row.put(rel_model.getDefaultNameColumn(), "No " + column.getLabel() + " selected");
+        row.put(rel_model.getDefaultNameColumn(), String.format(OResource.string(rel_model.getContext(), R.string.label_field_not_selected), column.getLabel()));
         items.add(row);
         items.addAll(rows);
         return items;

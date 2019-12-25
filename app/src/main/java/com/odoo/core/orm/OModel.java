@@ -35,6 +35,7 @@ import com.odoo.core.auth.OdooAccountManager;
 import com.odoo.core.orm.annotation.Odoo;
 import com.odoo.core.orm.fields.OColumn;
 import com.odoo.core.orm.fields.types.OBoolean;
+import com.odoo.core.orm.fields.types.ODate;
 import com.odoo.core.orm.fields.types.ODateTime;
 import com.odoo.core.orm.fields.types.OInteger;
 import com.odoo.core.orm.fields.types.OSelection;
@@ -89,7 +90,7 @@ public class OModel implements ISyncServiceListener {
     private boolean hasMailChatter = false;
 
     // Base Columns
-    OColumn id = new OColumn("ID", OInteger.class).setDefaultValue(0);
+    OColumn id = new OColumn("ID", OInteger.class);
     @Odoo.api.v8
     @Odoo.api.v9
     @Odoo.api.v10
@@ -548,19 +549,19 @@ public class OModel implements ISyncServiceListener {
     }
 
     public boolean allowUpdateRecordOnServer() {
-        return true;
+        return false;
     }
 
     public boolean allowCreateRecordOnServer() {
-        return true;
+        return false;
     }
 
     public boolean allowDeleteRecordOnServer() {
-        return true;
+        return false;
     }
 
     public boolean allowDeleteRecordInLocal() {
-        return true;
+        return false;
     }
 
     // Database Operations
