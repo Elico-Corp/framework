@@ -34,6 +34,27 @@ public class StockLocationFlags {
         }
         res.add("RPT");
         res.add("INT");
+        res.add("Aisle");
+        res.add("Area");
+        res.add("Standby");
+        res.add("A-01");
+        res.add("A-02");
+        res.add("A-03");
+        res.add("A-04");
+        res.add("A-05");
+        res.add("A-06");
+        res.add("B-01");
+        res.add("B-02");
+        res.add("B-03");
+        res.add("B-04");
+        res.add("B-05");
+        res.add("B-06");
+        res.add("C-01");
+        res.add("C-02");
+        res.add("C-03");
+        res.add("C-04");
+        res.add("C-05");
+        res.add("C-06");
         res.add(OResource.string(mContext, R.string.label_others));
         return res;
     }
