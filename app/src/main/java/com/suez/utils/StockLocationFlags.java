@@ -55,6 +55,12 @@ public class StockLocationFlags {
         res.add("C-04");
         res.add("C-05");
         res.add("C-06");
+        res.add("D-01");
+        res.add("D-02");
+        res.add("D-03");
+        res.add("D-04");
+        res.add("D-05");
+        res.add("D-06");
         res.add(OResource.string(mContext, R.string.label_others));
         return res;
     }
