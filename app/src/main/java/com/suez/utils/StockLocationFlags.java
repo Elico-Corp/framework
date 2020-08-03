@@ -34,9 +34,9 @@ public class StockLocationFlags {
         }
         res.add("RPT");
         res.add("INT");
-        res.add("Aisle");
-        res.add("Area");
-        res.add("Standby");
+        res.add(mContext.getString(R.string.flag_aisle);
+        res.add(mContext.getString(R.string.flag_area));
+        res.add(mContext.getString(R.string.flag_standby));
         res.add("A-01");
         res.add("A-02");
         res.add("A-03");

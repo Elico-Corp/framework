@@ -189,6 +189,12 @@
     <string name="column_repacking_waste_category_id">Waste Category</string>
     <!--Summaries-->
     <string name="summary_work_online">Start Work Online</string>
+
+    <!--stock location flags-->
+    <string name="flag_aisle">Aisle</string>
+    <string name="flag_area">Area</string>
+    <string name="flag_standby">Standby</string>
+
     <!--String Arrays-->
     <string-array name="languages">
         <item name="zh">简体中文</item>
